@@ -7,6 +7,8 @@ A proof-of-concept tool for generating payloads that exploit unsafe Java object 
 
 ## Description
 
+Released as part of AppSecCali 2015 Talk ["Marshalling Pickles: how deserializing objects will ruin your day"](http://www.slideshare.net/frohoff1/appseccali-2015-marshalling-pickles) 
+
 ysoserial is a collection of utilities and property-oriented programming "gadget chains" discovered in common java 
 libraries. The main driver program takes a user-specified command and wraps it in the user-specified gadget chain, then
 serializes these objects to stdout. When an application with the required gadgets on the classpath unsafely deserializes
