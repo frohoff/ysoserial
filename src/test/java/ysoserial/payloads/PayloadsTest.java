@@ -3,8 +3,10 @@ package ysoserial.payloads;
 import static com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.DESERIALIZE_TRANSLET;
 
 import java.io.FilePermission;
+import java.util.Collections;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ProvideSecurityManager;
@@ -17,10 +19,6 @@ import ysoserial.ExecSerializable;
 import ysoserial.MockPayload;
 import ysoserial.MockSecurityManager;
 import ysoserial.Throwables;
-import ysoserial.payloads.CommonsCollections1;
-import ysoserial.payloads.Groovy1;
-import ysoserial.payloads.ObjectPayload;
-import ysoserial.payloads.Spring1;
 import ysoserial.payloads.util.Serializables;
 
 /*
@@ -46,6 +44,10 @@ public class PayloadsTest {
 	@Rule
 	public final ProvideSecurityManager psm = new ProvideSecurityManager(msm);
 	
+	// ensure that checks get cleared between tests, though current test setup seems to work without it
+	@Before
+	public void clearChecks() { msm.clearChecks(); }
+	
 	@DataPoints
 	public static ObjectPayload[] payloads() {
 		return new ObjectPayload[] { new CommonsCollections1(), new Groovy1(), new Spring1() };
@@ -67,8 +69,9 @@ public class PayloadsTest {
 			Assert.assertEquals(Throwables.getInnermostCause(e).getClass(), ExecException.class);
 		}		
 		
-		// confirm sm saw the check for file execution
-		Assert.assertTrue(msm.getChecks().contains(new FilePermission("<<ALL FILES>>", "execute")));
+		// confirm sm saw the check for file execution		
+		Assert.assertEquals(1,Collections.frequency(msm.getChecks(), new FilePermission("<<ALL FILES>>", "execute")));
+		
 	}
 	
 	// make sure test harness fails properly

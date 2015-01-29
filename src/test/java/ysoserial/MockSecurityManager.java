@@ -10,6 +10,10 @@ public class MockSecurityManager extends SecurityManager {
 	public List<Permission> getChecks() {
 		return checks;
 	}
+	
+	public void clearChecks() {
+		checks.clear();
+	}
 
 	@Override
 	public void checkPermission(final Permission perm) {
