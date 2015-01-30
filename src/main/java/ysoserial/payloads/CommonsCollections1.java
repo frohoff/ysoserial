@@ -10,6 +10,7 @@ import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.commons.collections.map.LazyMap;
 
+import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
@@ -37,6 +38,7 @@ import ysoserial.payloads.util.Reflections;
 		commons-collections
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
+@Dependencies({"commons-collections:commons-collections:3.1"})
 public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
 	
 	public InvocationHandler getObject(final String command) throws Exception {
@@ -70,7 +72,7 @@ public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<
 		return handler;
 	}
 	
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws Exception {
 		PayloadRunner.run(CommonsCollections1.class, args);
 	}
 }

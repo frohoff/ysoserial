@@ -88,7 +88,12 @@
 			<version>2.1.1</version>
 			<type>pom</type>
 		</dependency>
-
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.19.0-GA</version>
+		</dependency>
+		
 		<!-- gadget dependecies -->
 
 		<dependency>

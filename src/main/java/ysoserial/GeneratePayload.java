@@ -38,7 +38,7 @@ public class GeneratePayload {
 			final Object object = payload.getObject(command);
 			final ObjectOutputStream objOut = new ObjectOutputStream(System.out);
 			objOut.writeObject(object);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			System.err.println("Error while generating or serializing payload");
 			e.printStackTrace();
 			System.exit(INTERNAL_ERROR_CODE);

