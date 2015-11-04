@@ -7,7 +7,7 @@ A proof-of-concept tool for generating payloads that exploit unsafe Java object 
 
 ## Description
 
-Released as part of AppSecCali 2015 Talk ["Marshalling Pickles: how deserializing objects will ruin your day"](http://www.slideshare.net/frohoff1/appseccali-2015-marshalling-pickles) 
+Released as part of AppSecCali 2015 Talk ["Marshalling Pickles: how deserializing objects will ruin your day"](http://frohoff.github.io/appseccali-marshalling-pickles/) 
 
 __ysoserial__ is a collection of utilities and property-oriented programming "gadget chains" discovered in common java 
 libraries that can, under the right conditions, exploit Java applications performing __unsafe deserialization__ of objects. 
