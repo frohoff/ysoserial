@@ -64,7 +64,7 @@ public class PayloadsTest {
 		Dependencies depsAnn = payloadClass.getAnnotation(Dependencies.class);
 		String[] deps = depsAnn != null ? depsAnn.value() : new String[0];
 		ObjectPayload<?> payload = payloadClass.newInstance();
-		final Object f = payload.getObject(command);
+		final Object f = payload.getObjectExec(command);
 		final byte[] serialized = Serializables.serialize(f);		
 		try {			
 			deserializeWithDependencies(serialized, deps, addlClassesForClassLoader);
@@ -133,14 +133,20 @@ public class PayloadsTest {
 	}
 	
 	public static class ExecMockPayload implements ObjectPayload<ExecSerializable> {
-		public ExecSerializable getObject(String command) throws Exception {
+		public ExecSerializable getObjectExec(String command) throws Exception {
 			return new ExecSerializable(command);
 		}		
+		public ExecSerializable getObjectSleep(String command) throws Exception {
+			return new ExecSerializable(command);
+		}			
 	}
 	
 	public static class NoopMockPayload implements ObjectPayload<Integer> {
-		public Integer getObject(String command) throws Exception {
+		public Integer getObjectExec(String command) throws Exception {
 			return 1;
-		}		
+		}	
+		public Integer getObjectSleep(String command) throws Exception {
+			return 1;
+		}			
 	}	
 }
