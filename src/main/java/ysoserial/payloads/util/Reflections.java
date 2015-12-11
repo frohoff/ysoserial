@@ -7,10 +7,10 @@ public class Reflections {
 
 	public static Field getField(final Class<?> clazz, final String fieldName) throws Exception {
 		Field field = clazz.getDeclaredField(fieldName);
-		if (field == null && clazz.getSuperclass() != null) {
+		if (field != null)
+			field.setAccessible(true);
+		else if (clazz.getSuperclass() != null)
 			field = getField(clazz.getSuperclass(), fieldName);
-		}
-		field.setAccessible(true);
 		return field;
 	}
 
