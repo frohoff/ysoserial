@@ -4,7 +4,7 @@
 
 	<groupId>ysoserial</groupId>
 	<artifactId>ysoserial</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>ysoserial</name>
@@ -22,15 +22,15 @@
 				<version>3.2</version>
 				<configuration>
 					<source>1.5</source>
-					<target>1.5</target><!-- maximize compatibility -->					
+					<target>1.5</target><!-- maximize compatibility -->
 				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 				    <finalName>${project.artifactId}-${project.version}-all</finalName>
-					<appendAssemblyId>false</appendAssemblyId>				    				
-					<archive>					
+					<appendAssemblyId>false</appendAssemblyId>
+					<archive>
 						<manifest>
 							<mainClass>ysoserial.GeneratePayload</mainClass>
 						</manifest>
@@ -53,7 +53,7 @@
 	</build>
 
 	<dependencies>
-	
+
 		<!-- testing depedencies -->
 
 		<dependency>
@@ -93,7 +93,7 @@
 			<artifactId>javassist</artifactId>
 			<version>3.19.0-GA</version>
 		</dependency>
-		
+
 		<!-- gadget dependecies -->
 
 		<dependency>
@@ -105,7 +105,7 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
 			<version>4.0</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
