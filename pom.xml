@@ -22,15 +22,15 @@
 				<version>3.2</version>
 				<configuration>
 					<source>1.5</source>
-					<target>1.5</target><!-- maximize compatibility -->					
+					<target>1.5</target><!-- maximize compatibility -->
 				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-				    <finalName>${project.artifactId}-${project.version}-all</finalName>
-					<appendAssemblyId>false</appendAssemblyId>				    				
-					<archive>					
+					<finalName>${project.artifactId}-${project.version}-all</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+					<archive>
 						<manifest>
 							<mainClass>ysoserial.GeneratePayload</mainClass>
 						</manifest>
@@ -53,7 +53,7 @@
 	</build>
 
 	<dependencies>
-	
+
 		<!-- testing depedencies -->
 
 		<dependency>
@@ -93,7 +93,7 @@
 			<artifactId>javassist</artifactId>
 			<version>3.19.0-GA</version>
 		</dependency>
-		
+
 		<!-- gadget dependecies -->
 
 		<dependency>
@@ -105,11 +105,16 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
 			<version>4.0</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
@@ -126,5 +131,108 @@
 			<artifactId>spring-beans</artifactId>
 			<version>4.1.4.RELEASE</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>4.1.4.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>4.3.11.Final</version>
+			 <!-- <version>5.0.7.Final</version>  -->
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<dependency>
+			<artifactId>org.jenkins-ci</artifactId>
+			<groupId>remoting</groupId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/remoting.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.myfaces.core</groupId>
+			<artifactId>myfaces-impl</artifactId>
+			<version>2.2.9</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		
+		 <dependency>
+			<groupId>org.mortbay.jasper</groupId>
+			<artifactId>apache-el</artifactId>
+			<version>8.0.27</version>
+		</dependency>
+		
+		  <!-- <dependency>
+		 	<groupId>org.glassfish.web</groupId>
+		 	<artifactId>javax.el</artifactId>
+		 	<version>2.2.2</version>
+		 </dependency> -->
+		 
+<!-- 		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.el</artifactId>
+			<version>3.0.0</version>
+		</dependency>  -->
+		 
+		<!-- 
+		<dependency>
+			<groupId>de.odysseus.juel</groupId>
+			<artifactId>juel</artifactId>
+			<version>2.1.3</version>
+		</dependency>
+		 -->
+		 
+		 <dependency>
+		 	<groupId>org.jboss.logging</groupId>
+		 	<artifactId>jboss-logging</artifactId>
+		 	<version>3.3.0.Final</version>
+		 </dependency> 
+		 <dependency>
+		 	<groupId>org.jboss.remoting</groupId>
+		 	<artifactId>jboss-remoting</artifactId>
+		 	<version>4.0.19.Final</version>
+		 </dependency>
+		 <dependency>
+		 	<groupId>org.jboss</groupId>
+		 	<artifactId>jboss-common-core</artifactId>
+		 	<version>2.5.0.Final</version>
+		 	<exclusions>
+		 		<exclusion>
+		 			<groupId>org.jboss.logging</groupId>
+		 			<artifactId>jboss-logging-spi</artifactId>
+		 		</exclusion>
+		 	</exclusions>
+		 </dependency>
+		 <dependency>
+		 	<groupId>org.jboss.xnio</groupId>
+		 	<artifactId>xnio-nio</artifactId>
+		 	<version>3.3.4.Final</version>
+		 </dependency>
+		 <dependency>
+		 	<groupId>org.jboss.sasl</groupId>
+		 	<artifactId>jboss-sasl</artifactId>
+		 	<version>1.0.5.Final</version>
+		 </dependency>
+		 <dependency>
+		 	<groupId>org.jboss.remotingjmx</groupId>
+		 	<artifactId>remoting-jmx</artifactId>
+		 	<version>2.0.1.Final</version>
+		 </dependency>
+		 
+		 <dependency>
+		 	<groupId>xalan</groupId>
+		 	<artifactId>xalan</artifactId>
+		 	<version>2.7.2</version>
+		 </dependency>
+		
 	</dependencies>
 </project>
