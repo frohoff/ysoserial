@@ -1,9 +1,3 @@
-/**
- * © 2016 AgNO3 Gmbh & Co. KG
- * All right reserved.
- * 
- * Created: 23.01.2016 by mbechler
- */
 package ysoserial.payloads;
 
 
@@ -48,7 +42,14 @@ import ysoserial.payloads.util.Reflections;
     "restriction", "nls", "javadoc"
 } )
 @Dependencies ( {
-    "org.hibernate:hibernate-core:5.0.7.Final"
+    "org.hibernate:hibernate-core:5.0.7.Final",
+    // or (also change in POM)
+    // "org.hibernate:hibernate-core:4.3.11.Final",
+    
+    // test deps
+    "aopalliance:aopalliance:1.0", 
+    "org.jboss.logging:jboss-logging:3.3.0.Final", 
+    "javax.transaction:javax.transaction-api:1.2"
 } )
 public class Hibernate1 implements ObjectPayload<Object> {
 

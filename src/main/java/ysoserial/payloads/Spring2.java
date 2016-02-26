@@ -20,6 +20,9 @@ import ysoserial.payloads.util.Reflections;
 
 
 /**
+ * 
+ * Just a PoC to proof that the ObjectFactory stuff is not the real problem.
+ * 
  * Gadget chain:
  * TemplatesImpl.newTransformer()
  * Method.invoke(Object, Object...)
@@ -36,7 +39,9 @@ import ysoserial.payloads.util.Reflections;
     "restriction", "nls"
 } )
 @Dependencies ( {
-    "org.springframework:spring-core:4.1.4.RELEASE", "org.springframework:spring-aop:4.1.4.RELEASE"
+    "org.springframework:spring-core:4.1.4.RELEASE", "org.springframework:spring-aop:4.1.4.RELEASE", 
+    // test deps
+    "aopalliance:aopalliance:1.0", "commons-logging:commons-logging:1.2"
 } )
 public class Spring2 extends PayloadRunner implements ObjectPayload<Object> {
 

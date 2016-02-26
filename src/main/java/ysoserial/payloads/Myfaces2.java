@@ -1,12 +1,7 @@
-/**
- * © 2016 AgNO3 Gmbh & Co. KG
- * All right reserved.
- * 
- * Created: 24.01.2016 by mbechler
- */
 package ysoserial.payloads;
 
 
+import ysoserial.NoTest;
 import ysoserial.payloads.util.PayloadRunner;
 
 
@@ -27,13 +22,14 @@ import ysoserial.payloads.util.PayloadRunner;
  * 
  * Requires:
  * - MyFaces
- * - Matching EL impl
+ * - Matching EL impl (setup POM deps accordingly, so that the ValueExpression can be deserialized)
  * 
  * @author mbechler
  */
 @SuppressWarnings ( {
     "nls", "javadoc"
 } )
+@NoTest("Requires running MyFaces instance")
 public class Myfaces2 implements ObjectPayload<Object> {
 
     /**

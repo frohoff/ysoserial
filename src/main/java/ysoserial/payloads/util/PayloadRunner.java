@@ -1,24 +1,26 @@
 package ysoserial.payloads.util;
 
 
-import static ysoserial.payloads.util.Serializables.deserialize;
-import static ysoserial.payloads.util.Serializables.serialize;
+import static ysoserial.Deserializer.deserialize;
+import static ysoserial.Serializer.serialize;
 
 import java.util.concurrent.Callable;
 
-import ysoserial.ExecBlockingSecurityManager;
 import ysoserial.payloads.ObjectPayload;
+import ysoserial.secmgr.ExecCheckingSecurityManager;
 
 
 /*
  * utility class for running exploits locally from command line
  */
-@SuppressWarnings ( "unused" )
+@SuppressWarnings ( {
+    "javadoc", "nls"
+} )
 public class PayloadRunner {
 
     public static Object run ( final Class<? extends ObjectPayload<?>> clazz, final String[] args ) throws Exception {
         // ensure payload generation doesn't throw an exception
-        byte[] serialized = ExecBlockingSecurityManager.wrap(new Callable<byte[]>() {
+        byte[] serialized = new ExecCheckingSecurityManager().wrap(new Callable<byte[]>() {
 
             public byte[] call () throws Exception {
                 final String command = args.length > 0 && args[ 0 ] != null ? args[ 0 ] : "calc.exe";

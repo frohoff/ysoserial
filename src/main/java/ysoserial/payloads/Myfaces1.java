@@ -1,9 +1,3 @@
-/**
- * © 2016 AgNO3 Gmbh & Co. KG
- * All right reserved.
- * 
- * Created: 24.01.2016 by mbechler
- */
 package ysoserial.payloads;
 
 
@@ -23,6 +17,7 @@ import org.apache.myfaces.el.CompositeELResolver;
 import org.apache.myfaces.el.unified.FacesELContext;
 import org.apache.myfaces.view.facelets.el.ValueExpressionMethodExpression;
 
+import ysoserial.NoTest;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 
@@ -41,13 +36,14 @@ import ysoserial.payloads.util.PayloadRunner;
  * 
  * Requires:
  * - MyFaces
- * - Matching EL impl (so that the ValueExpression can be deserialized)
+ * - Matching EL impl (setup POM deps accordingly, so that the ValueExpression can be deserialized)
  * 
  * @author mbechler
  */
 @SuppressWarnings ( {
     "nls", "javadoc"
 } )
+@NoTest("Requires running MyFaces instance")
 public class Myfaces1 implements ObjectPayload<Object> {
 
     /**

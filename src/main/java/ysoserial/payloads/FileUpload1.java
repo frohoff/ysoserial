@@ -1,9 +1,3 @@
-/**
- * © 2016 AgNO3 Gmbh & Co. KG
- * All right reserved.
- * 
- * Created: 23.01.2016 by mbechler
- */
 package ysoserial.payloads;
 
 
@@ -18,6 +12,7 @@ import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.output.DeferredFileOutputStream;
 import org.apache.commons.io.output.ThresholdingOutputStream;
 
+import ysoserial.NoTest;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
@@ -47,6 +42,7 @@ import ysoserial.payloads.util.Reflections;
 @SuppressWarnings ( {
     "nls", "javadoc"
 } )
+@NoTest("No code execution")
 public class FileUpload1 implements ObjectPayload<DiskFileItem> {
 
     /**

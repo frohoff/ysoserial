@@ -1,9 +1,3 @@
-/**
- * © 2016 AgNO3 Gmbh & Co. KG
- * All right reserved.
- * 
- * Created: 22.01.2016 by mbechler
- */
 package ysoserial.payloads;
 
 
@@ -16,6 +10,7 @@ import java.util.Random;
 import sun.rmi.server.UnicastRef;
 import sun.rmi.transport.LiveRef;
 import sun.rmi.transport.tcp.TCPEndpoint;
+import ysoserial.NoTest;
 import ysoserial.payloads.util.PayloadRunner;
 
 
@@ -53,6 +48,7 @@ import ysoserial.payloads.util.PayloadRunner;
 @SuppressWarnings ( {
     "restriction", "javadoc"
 } )
+@NoTest("No code execution")
 public class JRMPClient extends PayloadRunner implements ObjectPayload<Registry> {
 
     public Registry getObject ( final String command ) throws Exception {
