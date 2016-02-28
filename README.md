@@ -33,6 +33,7 @@ $ java -jar target/ysoserial-0.0.4-all.jar
 Y SO SERIAL?
 Usage: java -jar ysoserial-[version]-all.jar [payload type] '[command to execute]'
         Available payload types:
+                BeanShell1 [org.beanshell:bsh:2.0b5]
                 CommonsBeanutilsCollectionsLogging1 [commons-beanutils:commons-beanutils:1.9.2, commons-collections:commons-collections:3.1, commons-logging:commons-logging:1.2]
                 CommonsCollections1 [commons-collections:commons-collections:3.1]
                 CommonsCollections2 [org.apache.commons:commons-collections4:4.0]
