@@ -12,7 +12,6 @@ import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
-import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 
 /*
 
@@ -52,7 +51,7 @@ LinkedHashSet.readObject()
                                 Runtime.exec()
  */
 
-@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
+@SuppressWarnings({ "rawtypes", "unchecked", "nls", "javadoc" })
 @Dependencies()
 @NoTest("JDK version dependency")
 public class Jdk7u21 implements ObjectPayload<Object> {

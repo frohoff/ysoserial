@@ -37,7 +37,7 @@ import ysoserial.payloads.util.Reflections;
 	Requires:
 		commons-collections
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked", "nls", "javadoc"})
 @Dependencies({"commons-collections:commons-collections:3.1"})
 public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
 	

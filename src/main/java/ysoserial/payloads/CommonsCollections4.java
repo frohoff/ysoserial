@@ -16,14 +16,13 @@ import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
-import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
 
 /*
  * Variation on CommonsCollections2 that uses InstantiateTransformer instead of
  * InvokerTransformer.
  */
-@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
+@SuppressWarnings({ "rawtypes", "unchecked", "restriction", "nls", "javadoc" })
 @Dependencies({"org.apache.commons:commons-collections4:4.0"})
 public class CommonsCollections4 implements ObjectPayload<Queue<Object>> {
 

@@ -25,7 +25,7 @@ import ysoserial.payloads.util.Reflections;
  */
 
 @SuppressWarnings ( {
-    "rawtypes", "unchecked", "restriction"
+    "rawtypes", "unchecked", "nls", "javadoc"
 } )
 @Dependencies ( {
     "org.apache.commons:commons-collections4:4.0"
