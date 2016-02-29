@@ -126,17 +126,7 @@ public class Gadgets {
     }
 
 
-    /**
-     * @param v1
-     * @param v2
-     * @return
-     * @throws Exception
-     * @throws ClassNotFoundException
-     * @throws NoSuchMethodException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     */
+   
     public static HashMap makeMap ( Object v1, Object v2 ) throws Exception, ClassNotFoundException, NoSuchMethodException, InstantiationException,
             IllegalAccessException, InvocationTargetException {
         HashMap s = new HashMap();
