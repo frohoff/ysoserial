@@ -6,6 +6,7 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -20,6 +21,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import ysoserial.Deserializer;
+import ysoserial.NoTest;
 import ysoserial.Serializer;
 import ysoserial.Throwables;
 import ysoserial.payloads.TestHarnessTest.ExecMockPayload;
@@ -44,7 +46,13 @@ public class PayloadsTest {
 	@Parameters(name = "payloadClass: {0}")
 	public static Class<? extends ObjectPayload<?>>[] payloads() {
 		Set<Class<? extends ObjectPayload>> payloadClasses = ObjectPayload.Utils.getPayloadClasses();
-		payloadClasses.removeAll(Arrays.asList(ExecMockPayload.class, NoopMockPayload.class));
+		for ( Iterator<Class<? extends ObjectPayload>> iterator = payloadClasses.iterator(); iterator.hasNext(); ) {
+            Class<? extends ObjectPayload> class1 = iterator.next();
+            
+            if ( class1.getAnnotation(NoTest.class) != null ) {
+                iterator.remove();
+            }
+        }
 		return payloadClasses.toArray(new Class[0]);
 	}
 
@@ -81,6 +89,10 @@ public class PayloadsTest {
 		} catch (Throwable e) {
 			// hopefully everything will reliably nest our ExecException
 			Throwable innerEx = Throwables.getInnermostCause(e);
+			if ( ! (innerEx instanceof ExecException ) ) {
+			    System.err.println(e.getMessage());
+			    innerEx.printStackTrace(System.err);
+			}
 			Assert.assertEquals(ExecException.class, innerEx.getClass());
 			Assert.assertEquals(command, ((ExecException) innerEx).getCmd());
 		}

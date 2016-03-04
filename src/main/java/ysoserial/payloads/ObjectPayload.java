@@ -6,6 +6,7 @@ import org.reflections.Reflections;
 
 import ysoserial.GeneratePayload;
 
+@SuppressWarnings({"javadoc", "nls", "rawtypes"})
 public interface ObjectPayload<T> {
 	/*
 	 * return armed payload object to be serialized that will execute specified
