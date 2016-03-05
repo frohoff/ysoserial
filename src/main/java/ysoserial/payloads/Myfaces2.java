@@ -31,28 +31,9 @@ import ysoserial.payloads.util.PayloadRunner;
 public class Myfaces2 implements ObjectPayload<Object>, DynamicDependencies {
     
     public static String[] getDependencies () {
-        if ( System.getProperty("el") == null || "apache".equals(System.getProperty("el")) ) {
-            return new String[] {
-                "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9", 
-                "org.mortbay.jasper:apache-el:8.0.27",
-                "javax.servlet:javax.servlet-api:3.1.0",
-
-                // deps for mocking the FacesContext
-                "org.mockito:mockito-core:1.10.19", "org.hamcrest:hamcrest-core:1.1", "org.objenesis:objenesis:2.1"
-            };
-        } else if ( "juel".equals(System.getProperty("el")) ) {
-            return new String[] {
-                "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9", 
-                "de.odysseus.juel:juel-impl:2.2.7", "de.odysseus.juel:juel-api:2.2.7",
-                "javax.servlet:javax.servlet-api:3.1.0",
-
-                // deps for mocking the FacesContext
-                "org.mockito:mockito-core:1.10.19", "org.hamcrest:hamcrest-core:1.1", "org.objenesis:objenesis:2.1"
-            };
-        }
-
-        throw new IllegalArgumentException("Invalid el type " + System.getProperty("el"));
+        return Myfaces1.getDependencies();
     }
+    
 
 
     /**

