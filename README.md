@@ -41,6 +41,7 @@ Usage: java -jar ysoserial-[version]-all.jar [payload type] '[command to execute
                 CommonsCollections4 [org.apache.commons:commons-collections4:4.0]
                 Groovy1 [org.codehaus.groovy:groovy:2.3.9]
                 Jdk7u21 []
+                Jython1 [org.python:jython-standalone:2.5.2]
                 Spring1 [org.springframework:spring-core:4.1.4.RELEASE, org.springframework:spring-beans:4.1.4.RELEASE]
 ```
 
