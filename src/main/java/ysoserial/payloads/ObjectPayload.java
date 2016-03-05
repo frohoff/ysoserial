@@ -42,5 +42,29 @@ public interface ObjectPayload<T> {
 			}
 			return clazz;
 		}
+		
+
+	    /**
+	     * @param payloadType
+	     * @param payloadArg
+	     * @return an payload object
+	     */
+	    public static Object makePayloadObject ( String payloadType, String payloadArg ) {
+	        final Class<? extends ObjectPayload> payloadClass = getPayloadClass(payloadType);
+	        if ( payloadClass == null || !ObjectPayload.class.isAssignableFrom(payloadClass) ) {
+	            throw new IllegalArgumentException("Invalid payload type '" + payloadType + "'");
+	            
+	        }
+
+	        final Object payloadObject;
+	        try {
+	            final ObjectPayload payload = payloadClass.newInstance();
+	            payloadObject = payload.getObject(payloadArg);
+	        }
+	        catch ( Exception e ) {
+	            throw new IllegalArgumentException("Failed to construct payload",e);
+	        }
+	        return payloadObject;
+	    }
 	}
 }

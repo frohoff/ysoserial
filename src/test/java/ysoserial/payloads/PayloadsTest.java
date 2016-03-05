@@ -66,7 +66,7 @@ public class PayloadsTest {
 	}
 
 	public static void testPayload(final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader) throws Exception {
-		final String command = "hostname";
+		String command = "hostname";
 		final String[] deps = buildDeps(payloadClass);
 		
 		PayloadTest t = payloadClass.getAnnotation(PayloadTest.class);
@@ -85,19 +85,25 @@ public class PayloadsTest {
 		if ( t != null && !t.harness().isEmpty() ) {
 		    wrapper = Class.forName(t.harness()).newInstance();
 		    
-		    if ( wrapper instanceof CustomTest ) {
-		        ( (CustomTest) wrapper ).run();
-		        return;
+		    if ( wrapper instanceof CustomTest ){ 
+		        command = ( (CustomTest) wrapper ).getPayloadArgs();
 		    }
 		}
 		
 		ExecCheckingSecurityManager sm = new ExecCheckingSecurityManager();
-		final byte[] serialized = sm.wrap(makeSerializeCallable(payloadClass, command));
+        final byte[] serialized = sm.wrap(makeSerializeCallable(payloadClass, command));
+		
+		Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized);
+        if ( wrapper instanceof WrappedTest ){
+            callable = ((WrappedTest)wrapper).createCallable(callable);
+        }  
+        
+        if ( wrapper instanceof CustomTest ) {
+            ( (CustomTest) wrapper ).run(callable);
+            return;
+        }
 		try {
-		    Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized);
-            if ( wrapper instanceof WrappedTest ){
-		        callable = ((WrappedTest)wrapper).createCallable(callable);
-		    }  
+		    
 			Object deserialized = sm.wrap(callable);
 			Assert.fail(ASSERT_MESSAGE); // should never get here
 		} catch (Throwable e) {
