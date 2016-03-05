@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import ysoserial.CustomPayloadArgs;
 import ysoserial.CustomTest;
 import ysoserial.Deserializer;
 import ysoserial.PayloadTest;
@@ -91,17 +92,23 @@ public class PayloadsTest {
             }
         }
 
+        String payloadCommand = command;
         Object wrapper = null;
         if ( t != null && !t.harness().isEmpty() ) {
-            wrapper = Class.forName(t.harness()).newInstance();
+            Class<?> wrapperClass = Class.forName(t.harness());
+            try {
+                wrapper = wrapperClass.getConstructor(String.class).newInstance(command);
+            } catch ( NoSuchMethodException e ) {
+                wrapper = wrapperClass.newInstance();
+            }
 
-            if ( wrapper instanceof CustomTest ) {
-                command = ( (CustomTest) wrapper ).getPayloadArgs();
+            if ( wrapper instanceof CustomPayloadArgs ) {
+                payloadCommand = ( (CustomPayloadArgs) wrapper ).getPayloadArgs();
             }
         }
 
         ExecCheckingSecurityManager sm = new ExecCheckingSecurityManager();
-        final byte[] serialized = sm.wrap(makeSerializeCallable(payloadClass, command));
+        final byte[] serialized = sm.wrap(makeSerializeCallable(payloadClass, payloadCommand));
         Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized);
         if ( wrapper instanceof WrappedTest ) {
             callable = ( (WrappedTest) wrapper ).createCallable(callable);
@@ -119,9 +126,13 @@ public class PayloadsTest {
         catch ( Throwable e ) {
             // hopefully everything will reliably nest our ExecException
             Throwable innerEx = Throwables.getInnermostCause(e);
+            if ( ! ( innerEx instanceof ExecException ) ) {
+                innerEx.printStackTrace();
+            }
             Assert.assertEquals(ExecException.class, innerEx.getClass());
             Assert.assertEquals(command, ( (ExecException) innerEx ).getCmd());
         }
+
         Assert.assertEquals(Arrays.asList(command), sm.getCmds());
     }
 
@@ -171,11 +182,11 @@ public class PayloadsTest {
     /**
      * @param payloadClass
      * @return
-     * @throws SecurityException 
-     * @throws NoSuchMethodException 
-     * @throws InvocationTargetException 
-     * @throws IllegalArgumentException 
-     * @throws IllegalAccessException 
+     * @throws SecurityException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
      */
     private static String[] buildDeps ( final Class<? extends ObjectPayload<?>> payloadClass ) throws Exception {
         String[] baseDeps;
