@@ -93,6 +93,11 @@
 			<artifactId>javassist</artifactId>
 			<version>3.19.0-GA</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.9</version>
+		</dependency>
 
 		<!-- gadget dependecies -->
 
@@ -146,6 +151,11 @@
 			<artifactId>json-lib</artifactId>
 			<classifier>jdk15</classifier>
 			<version>2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3</version>
 		</dependency>
 	</dependencies>
 
