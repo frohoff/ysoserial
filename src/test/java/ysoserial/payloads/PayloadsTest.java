@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import ysoserial.CustomDeserializer;
 import ysoserial.CustomPayloadArgs;
 import ysoserial.CustomTest;
 import ysoserial.Deserializer;
@@ -93,6 +94,7 @@ public class PayloadsTest {
         }
 
         String payloadCommand = command;
+        Class<?> customDeserializer = null;
         Object wrapper = null;
         if ( t != null && !t.harness().isEmpty() ) {
             Class<?> wrapperClass = Class.forName(t.harness());
@@ -105,11 +107,15 @@ public class PayloadsTest {
             if ( wrapper instanceof CustomPayloadArgs ) {
                 payloadCommand = ( (CustomPayloadArgs) wrapper ).getPayloadArgs();
             }
+            
+            if ( wrapper instanceof CustomDeserializer ) {
+                customDeserializer = ((CustomDeserializer)wrapper).getCustomDeserializer();
+            }
         }
 
         ExecCheckingSecurityManager sm = new ExecCheckingSecurityManager();
         final byte[] serialized = sm.wrap(makeSerializeCallable(payloadClass, payloadCommand));
-        Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized);
+        Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized, customDeserializer);
         if ( wrapper instanceof WrappedTest ) {
             callable = ( (WrappedTest) wrapper ).createCallable(callable);
         }
@@ -162,11 +168,11 @@ public class PayloadsTest {
      * @return
      */
     private static Callable<Object> makeDeserializeCallable ( PayloadTest t, final Class<?>[] addlClassesForClassLoader, final String[] deps,
-            final byte[] serialized ) {
+            final byte[] serialized, final Class<?> customDeserializer ) {
         return new Callable<Object>() {
 
             public Object call () throws Exception {
-                return deserializeWithDependencies(serialized, deps, addlClassesForClassLoader);
+                return deserializeWithDependencies(serialized, deps, addlClassesForClassLoader, customDeserializer);
             }
         };
     }
@@ -205,7 +211,7 @@ public class PayloadsTest {
     }
 
 
-    private static Object deserializeWithDependencies ( byte[] serialized, final String[] dependencies, final Class<?>[] classDependencies )
+    static Object deserializeWithDependencies ( byte[] serialized, final String[] dependencies, final Class<?>[] classDependencies, final Class<?> customDeserializer )
             throws Exception {
         File[] jars = dependencies.length > 0 ? Maven.resolver().resolve(dependencies).withoutTransitivity().asFile() : new File[0];
         URL[] urls = new URL[jars.length];
@@ -220,13 +226,27 @@ public class PayloadsTest {
                     byte[] classAsBytes = ClassFiles.classAsBytes(clazz);
                     defineClass(clazz.getName(), classAsBytes, 0, classAsBytes.length);
                 }
-                byte[] deserializerClassBytes = ClassFiles.classAsBytes(ysoserial.Deserializer.class);
-                defineClass(ysoserial.Deserializer.class.getName(), deserializerClassBytes, 0, deserializerClassBytes.length);
-
+                byte[] deserializerClassBytes = ClassFiles.classAsBytes(Deserializer.class);
+                defineClass(Deserializer.class.getName(), deserializerClassBytes, 0, deserializerClassBytes.length);
+                
+                if ( customDeserializer != null ) {
+                    
+                    try {
+                        Method method = customDeserializer.getMethod("getExtraDependencies");
+                        for ( Class extra : (Class[])method.invoke(null)) {
+                            deserializerClassBytes = ClassFiles.classAsBytes(extra);
+                            defineClass(extra.getName(), deserializerClassBytes, 0, deserializerClassBytes.length);
+                        }
+                    } catch ( NoSuchMethodException e ) { }
+                    
+                    deserializerClassBytes = ClassFiles.classAsBytes(customDeserializer);
+                    defineClass(customDeserializer.getName(), deserializerClassBytes, 0, deserializerClassBytes.length);
+                }
+                
             }
         };
 
-        Class<?> deserializerClass = isolatedClassLoader.loadClass(ysoserial.Deserializer.class.getName());
+        Class<?> deserializerClass = isolatedClassLoader.loadClass(customDeserializer != null ? customDeserializer.getName() : Deserializer.class.getName());
         Callable<Object> deserializer = (Callable<Object>) deserializerClass.getConstructors()[ 0 ].newInstance(serialized);
         final Object obj = deserializer.call();
         return obj;

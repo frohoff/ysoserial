@@ -75,12 +75,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-	    	<groupId>org.nanohttpd</groupId>
-	    	<artifactId>nanohttpd</artifactId>
-	    	<version>2.2.0</version>
-	    	<scope>test</scope>
+			<groupId>org.nanohttpd</groupId>
+			<artifactId>nanohttpd</artifactId>
+			<version>2.2.0</version>
+			<scope>test</scope>
 		</dependency>
-		
+
 
 		<!-- non-gadget dependencies -->
 
@@ -169,6 +169,16 @@
 			<artifactId>c3p0</artifactId>
 			<version>0.9.5.2</version>
 		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.myfaces.core</groupId>
+			<artifactId>myfaces-impl</artifactId>
+			<version>2.2.9</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -200,6 +210,46 @@
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-core</artifactId>
 					<version>5.0.7.Final</version>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>apache-el</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>el</name>
+					<value>apache</value>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.mortbay.jasper</groupId>
+					<artifactId>apache-el</artifactId>
+					<version>8.0.27</version>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>juel</id>
+			<activation>
+				<property>
+					<name>el</name>
+					<value>juel</value>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>de.odysseus.juel</groupId>
+					<artifactId>juel-impl</artifactId>
+					<version>2.2.7</version>
+				</dependency>
+				<dependency>
+					<groupId>de.odysseus.juel</groupId>
+					<artifactId>juel-api</artifactId>
+					<version>2.2.7</version>
 				</dependency>
 			</dependencies>
 		</profile>
