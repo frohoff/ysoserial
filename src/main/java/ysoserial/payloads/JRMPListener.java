@@ -7,7 +7,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 import sun.rmi.server.ActivationGroupImpl;
 import sun.rmi.server.UnicastServerRef;
-import ysoserial.PayloadTest;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 

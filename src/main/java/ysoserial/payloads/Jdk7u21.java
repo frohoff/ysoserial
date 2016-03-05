@@ -6,8 +6,8 @@ import java.util.LinkedHashSet;
 
 import javax.xml.transform.Templates;
 
-import ysoserial.PayloadTest;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;

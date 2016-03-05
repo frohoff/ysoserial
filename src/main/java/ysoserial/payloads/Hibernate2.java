@@ -1,7 +1,7 @@
 package ysoserial.payloads;
 
 
-import ysoserial.PayloadTest;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 
 import com.sun.rowset.JdbcRowSetImpl;
