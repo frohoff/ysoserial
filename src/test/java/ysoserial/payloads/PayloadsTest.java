@@ -36,7 +36,7 @@ import ysoserial.secmgr.ExecCheckingSecurityManager.ExecException;
 
 TODO: figure out better way to test exception behavior than comparing messages
  */
-@SuppressWarnings({"restriction", "unused", "unchecked"})
+@SuppressWarnings({"rawtypes", "unused", "unchecked"})
 @RunWith(Parameterized.class)
 public class PayloadsTest {
 	private static final String ASSERT_MESSAGE = "should have thrown " + ExecException.class.getSimpleName();
@@ -59,9 +59,9 @@ public class PayloadsTest {
 		testPayload(payloadClass, new Class[0]);
 	}
 
-	public static void testPayload(final Class<? extends ObjectPayload<?>> payloadClass, final Class[] addlClassesForClassLoader) throws Exception {
+	public static void testPayload(final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader) throws Exception {
 		final String command = "hostname";
-		final String[] deps = Dependencies.Utils.getDependencies(payloadClass);
+		final String[] deps = buildDeps(payloadClass);
 		ExecCheckingSecurityManager sm = new ExecCheckingSecurityManager();
 		final byte[] serialized = sm.wrap(new Callable<byte[]>(){
 			public byte[] call() throws Exception {
@@ -87,7 +87,20 @@ public class PayloadsTest {
 		Assert.assertEquals(Arrays.asList(command), sm.getCmds());
 	}
 
-	@SuppressWarnings({ "unchecked" })
+    /**
+     * @param payloadClass
+     * @return
+     */
+    private static String[] buildDeps ( final Class<? extends ObjectPayload<?>> payloadClass ) {
+        String[] baseDeps = Dependencies.Utils.getDependencies(payloadClass);
+		if ( System.getProperty("properXalan") != null ) {
+		    baseDeps = Arrays.copyOf(baseDeps, baseDeps.length+1);
+		    baseDeps[baseDeps.length-1] = "xalan:xalan:2.7.2";
+		}
+		final String[] deps = baseDeps;
+        return deps;
+    }
+
 	private static Object deserializeWithDependencies(byte[] serialized, final String[] dependencies, final Class<?>[] classDependencies) throws Exception {
 		File[] jars = dependencies.length > 0 ? Maven.resolver().resolve(dependencies).withoutTransitivity().asFile() : new File[0];
 		URL[] urls = new URL[jars.length];

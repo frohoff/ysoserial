@@ -30,6 +30,7 @@ public class GeneratePayload {
 			System.err.println("Invalid payload type '" + payloadType + "'");
 			printUsage();
 			System.exit(USAGE_CODE);
+			return; // make null analysis happy
 		}
 
 		try {

