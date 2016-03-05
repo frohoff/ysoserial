@@ -1,5 +1,6 @@
 package ysoserial.payloads;
 
+
 import static com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.DESERIALIZE_TRANSLET;
 
 import java.io.File;
@@ -35,6 +36,7 @@ import ysoserial.payloads.util.ClassFiles;
 import ysoserial.secmgr.ExecCheckingSecurityManager;
 import ysoserial.secmgr.ExecCheckingSecurityManager.ExecException;
 
+
 /*
  * tests each of the parameterize Payload classes by using a mock SecurityManager that throws
  * a special exception when an exec() attempt is made for more reliable detection; self-tests
@@ -42,78 +44,87 @@ import ysoserial.secmgr.ExecCheckingSecurityManager.ExecException;
 
 TODO: figure out better way to test exception behavior than comparing messages
  */
-@SuppressWarnings({"rawtypes", "unused", "unchecked"})
-@RunWith(Parameterized.class)
+@SuppressWarnings ( {
+    "rawtypes", "unused", "unchecked"
+} )
+@RunWith ( Parameterized.class )
 public class PayloadsTest {
-	private static final String ASSERT_MESSAGE = "should have thrown " + ExecException.class.getSimpleName();
 
-	@Parameters(name = "payloadClass: {0}")
-	public static Class<? extends ObjectPayload<?>>[] payloads() {
-		Set<Class<? extends ObjectPayload>> payloadClasses = ObjectPayload.Utils.getPayloadClasses();
-		payloadClasses.removeAll(Arrays.asList(ExecMockPayload.class, NoopMockPayload.class));
-		return payloadClasses.toArray(new Class[0]);
-	}
+    private static final String ASSERT_MESSAGE = "should have thrown " + ExecException.class.getSimpleName();
 
-	private final Class<? extends ObjectPayload<?>> payloadClass;
 
-	public PayloadsTest(Class<? extends ObjectPayload<?>> payloadClass) {
-		this.payloadClass = payloadClass;
-	}
+    @Parameters ( name = "payloadClass: {0}" )
+    public static Class<? extends ObjectPayload<?>>[] payloads () {
+        Set<Class<? extends ObjectPayload>> payloadClasses = ObjectPayload.Utils.getPayloadClasses();
+        payloadClasses.removeAll(Arrays.asList(ExecMockPayload.class, NoopMockPayload.class));
+        return payloadClasses.toArray(new Class[0]);
+    }
 
-	@Test
-	public void testPayload() throws Exception {
-		testPayload(payloadClass, new Class[0]);
-	}
+    private final Class<? extends ObjectPayload<?>> payloadClass;
 
-	public static void testPayload(final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader) throws Exception {
-		String command = "hostname";
-		final String[] deps = buildDeps(payloadClass);
-		
-		PayloadTest t = payloadClass.getAnnotation(PayloadTest.class);
-		
-		if ( t != null ) {
-		    if ( !t.skip().isEmpty()) {
+
+    public PayloadsTest ( Class<? extends ObjectPayload<?>> payloadClass ) {
+        this.payloadClass = payloadClass;
+    }
+
+
+    @Test
+    public void testPayload () throws Exception {
+        testPayload(payloadClass, new Class[0]);
+    }
+
+
+    public static void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader )
+            throws Exception {
+        String command = "hostname";
+        String[] deps = buildDeps(payloadClass);
+
+        PayloadTest t = payloadClass.getAnnotation(PayloadTest.class);
+
+        if ( t != null ) {
+            if ( !t.skip().isEmpty() ) {
                 Assume.assumeTrue(t.skip(), false);
             }
-		    
-		    if ( !t.precondition().isEmpty()) {
-		        Assume.assumeTrue("Precondition", checkPrecondition(payloadClass, t.precondition()));
-		    }
-		}
-		
-		Object wrapper = null;
-		if ( t != null && !t.harness().isEmpty() ) {
-		    wrapper = Class.forName(t.harness()).newInstance();
-		    
-		    if ( wrapper instanceof CustomTest ){ 
-		        command = ( (CustomTest) wrapper ).getPayloadArgs();
-		    }
-		}
-		
-		ExecCheckingSecurityManager sm = new ExecCheckingSecurityManager();
+
+            if ( !t.precondition().isEmpty() ) {
+                Assume.assumeTrue("Precondition", checkPrecondition(payloadClass, t.precondition()));
+            }
+        }
+
+        Object wrapper = null;
+        if ( t != null && !t.harness().isEmpty() ) {
+            wrapper = Class.forName(t.harness()).newInstance();
+
+            if ( wrapper instanceof CustomTest ) {
+                command = ( (CustomTest) wrapper ).getPayloadArgs();
+            }
+        }
+
+        ExecCheckingSecurityManager sm = new ExecCheckingSecurityManager();
         final byte[] serialized = sm.wrap(makeSerializeCallable(payloadClass, command));
-		
-		Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized);
-        if ( wrapper instanceof WrappedTest ){
-            callable = ((WrappedTest)wrapper).createCallable(callable);
-        }  
-        
+        Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized);
+        if ( wrapper instanceof WrappedTest ) {
+            callable = ( (WrappedTest) wrapper ).createCallable(callable);
+        }
+
         if ( wrapper instanceof CustomTest ) {
             ( (CustomTest) wrapper ).run(callable);
             return;
         }
-		try {
-		    
-			Object deserialized = sm.wrap(callable);
-			Assert.fail(ASSERT_MESSAGE); // should never get here
-		} catch (Throwable e) {
-			// hopefully everything will reliably nest our ExecException
-			Throwable innerEx = Throwables.getInnermostCause(e);
-			Assert.assertEquals(ExecException.class, innerEx.getClass());
-			Assert.assertEquals(command, ((ExecException) innerEx).getCmd());
-		}
-		Assert.assertEquals(Arrays.asList(command), sm.getCmds());
-	}
+        try {
+
+            Object deserialized = sm.wrap(callable);
+            Assert.fail(ASSERT_MESSAGE); // should never get here
+        }
+        catch ( Throwable e ) {
+            // hopefully everything will reliably nest our ExecException
+            Throwable innerEx = Throwables.getInnermostCause(e);
+            Assert.assertEquals(ExecException.class, innerEx.getClass());
+            Assert.assertEquals(command, ( (ExecException) innerEx ).getCmd());
+        }
+        Assert.assertEquals(Arrays.asList(command), sm.getCmds());
+    }
+
 
     /**
      * @param payloadClass
@@ -121,69 +132,92 @@ public class PayloadsTest {
      * @return
      */
     private static Callable<byte[]> makeSerializeCallable ( final Class<? extends ObjectPayload<?>> payloadClass, final String command ) {
-        return new Callable<byte[]>(){
-			public byte[] call() throws Exception {
-				ObjectPayload<?> payload = payloadClass.newInstance();
-				final Object f = payload.getObject(command);
-				return Serializer.serialize(f);
-		}};
+        return new Callable<byte[]>() {
+
+            public byte[] call () throws Exception {
+                ObjectPayload<?> payload = payloadClass.newInstance();
+                final Object f = payload.getObject(command);
+                return Serializer.serialize(f);
+            }
+        };
     }
 
+
     /**
-     * @param t 
+     * @param t
      * @param addlClassesForClassLoader
      * @param deps
      * @param serialized
      * @return
      */
-    private static Callable<Object> makeDeserializeCallable ( PayloadTest t, final Class<?>[] addlClassesForClassLoader, final String[] deps, final byte[] serialized ) {
-        return new Callable<Object>(){
-        	public Object call() throws Exception {
-        		return deserializeWithDependencies(serialized, deps, addlClassesForClassLoader);
-        	}
+    private static Callable<Object> makeDeserializeCallable ( PayloadTest t, final Class<?>[] addlClassesForClassLoader, final String[] deps,
+            final byte[] serialized ) {
+        return new Callable<Object>() {
+
+            public Object call () throws Exception {
+                return deserializeWithDependencies(serialized, deps, addlClassesForClassLoader);
+            }
         };
     }
 
-    
-    private static boolean checkPrecondition ( Class<? extends ObjectPayload<?>> pc, String precondition ) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+
+    private static boolean checkPrecondition ( Class<? extends ObjectPayload<?>> pc, String precondition )
+            throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Method precondMethod = pc.getMethod(precondition);
         return (Boolean) precondMethod.invoke(null);
     }
 
+
     /**
      * @param payloadClass
      * @return
+     * @throws SecurityException 
+     * @throws NoSuchMethodException 
+     * @throws InvocationTargetException 
+     * @throws IllegalArgumentException 
+     * @throws IllegalAccessException 
      */
-    private static String[] buildDeps ( final Class<? extends ObjectPayload<?>> payloadClass ) {
-        String[] baseDeps = Dependencies.Utils.getDependencies(payloadClass);
-		if ( System.getProperty("properXalan") != null ) {
-		    baseDeps = Arrays.copyOf(baseDeps, baseDeps.length+1);
-		    baseDeps[baseDeps.length-1] = "xalan:xalan:2.7.2";
-		}
-		final String[] deps = baseDeps;
-        return deps;
+    private static String[] buildDeps ( final Class<? extends ObjectPayload<?>> payloadClass ) throws Exception {
+        String[] baseDeps;
+        if ( DynamicDependencies.class.isAssignableFrom(payloadClass) ) {
+            Method method = payloadClass.getMethod("getDependencies");
+            baseDeps = (String[]) method.invoke(null);
+        }
+        else {
+            baseDeps = Dependencies.Utils.getDependencies(payloadClass);
+        }
+        if ( System.getProperty("properXalan") != null ) {
+            baseDeps = Arrays.copyOf(baseDeps, baseDeps.length + 1);
+            baseDeps[ baseDeps.length - 1 ] = "xalan:xalan:2.7.2";
+        }
+        return baseDeps;
     }
 
-	private static Object deserializeWithDependencies(byte[] serialized, final String[] dependencies, final Class<?>[] classDependencies) throws Exception {
-		File[] jars = dependencies.length > 0 ? Maven.resolver().resolve(dependencies).withoutTransitivity().asFile() : new File[0];
-		URL[] urls = new URL[jars.length];
-		for (int i = 0; i < jars.length; i++) {
-			urls[i] = jars[i].toURI().toURL();
-		}
 
-		URLClassLoader isolatedClassLoader = new URLClassLoader(urls, null) {{
-			for (Class<?> clazz : classDependencies) {
-				byte[] classAsBytes = ClassFiles.classAsBytes(clazz);
-				defineClass(clazz.getName(), classAsBytes, 0, classAsBytes.length);
-			}
-			byte[] deserializerClassBytes = ClassFiles.classAsBytes(ysoserial.Deserializer.class);
-			defineClass(ysoserial.Deserializer.class.getName(), deserializerClassBytes, 0, deserializerClassBytes.length);
+    private static Object deserializeWithDependencies ( byte[] serialized, final String[] dependencies, final Class<?>[] classDependencies )
+            throws Exception {
+        File[] jars = dependencies.length > 0 ? Maven.resolver().resolve(dependencies).withoutTransitivity().asFile() : new File[0];
+        URL[] urls = new URL[jars.length];
+        for ( int i = 0; i < jars.length; i++ ) {
+            urls[ i ] = jars[ i ].toURI().toURL();
+        }
 
-		}};
+        URLClassLoader isolatedClassLoader = new URLClassLoader(urls, null) {
 
-		Class<?> deserializerClass = isolatedClassLoader.loadClass(ysoserial.Deserializer.class.getName());
-		Callable<Object> deserializer = (Callable<Object>) deserializerClass.getConstructors()[0].newInstance(serialized);
-		final Object obj = deserializer.call();
-		return obj;
-	}
+            {
+                for ( Class<?> clazz : classDependencies ) {
+                    byte[] classAsBytes = ClassFiles.classAsBytes(clazz);
+                    defineClass(clazz.getName(), classAsBytes, 0, classAsBytes.length);
+                }
+                byte[] deserializerClassBytes = ClassFiles.classAsBytes(ysoserial.Deserializer.class);
+                defineClass(ysoserial.Deserializer.class.getName(), deserializerClassBytes, 0, deserializerClassBytes.length);
+
+            }
+        };
+
+        Class<?> deserializerClass = isolatedClassLoader.loadClass(ysoserial.Deserializer.class.getName());
+        Callable<Object> deserializer = (Callable<Object>) deserializerClass.getConstructors()[ 0 ].newInstance(serialized);
+        final Object obj = deserializer.call();
+        return obj;
+    }
 }

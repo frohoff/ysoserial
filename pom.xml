@@ -28,7 +28,7 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-				    <finalName>${project.artifactId}-${project.version}-all</finalName>
+					<finalName>${project.artifactId}-${project.version}-all</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
 					<archive>
 						<manifest>
@@ -102,15 +102,15 @@
 			<version>3.1</version>
 		</dependency>
 		<dependency>
- 			<groupId>org.beanshell</groupId>
- 			<artifactId>bsh</artifactId>
- 			<version>2.0b5</version>
- 		</dependency>
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>1.9.2</version>
-        </dependency>
+			<groupId>org.beanshell</groupId>
+			<artifactId>bsh</artifactId>
+			<version>2.0b5</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.2</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
@@ -131,8 +131,13 @@
 			<artifactId>spring-beans</artifactId>
 			<version>4.1.4.RELEASE</version>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>4.3.11.Final</version>
+		</dependency>
 	</dependencies>
-	
+
 	<profiles>
 		<profile>
 			<id>xalan</id>
@@ -146,6 +151,22 @@
 					<groupId>xalan</groupId>
 					<artifactId>xalan</artifactId>
 					<version>2.7.2</version>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>hibernate5</id>
+			<activation>
+				<property>
+					<name>hibernate5</name>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-core</artifactId>
+					<version>5.0.7.Final</version>
 				</dependency>
 			</dependencies>
 		</profile>
