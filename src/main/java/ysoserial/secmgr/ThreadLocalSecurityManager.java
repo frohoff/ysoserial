@@ -3,8 +3,6 @@ package ysoserial.secmgr;
 import java.util.concurrent.Callable;
 
 public class ThreadLocalSecurityManager extends DelegateSecurityManager {
-	private static final ThreadLocalSecurityManager INSTANCE
-		= new ThreadLocalSecurityManager();
 
 	private final ThreadLocal<SecurityManager> threadDelegates
 		= new ThreadLocal<SecurityManager>();

