@@ -51,6 +51,14 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<repositories>
+		<repository>
+			<id>jenkins</id>
+			<layout>default</layout>
+			<url>http://repo.jenkins-ci.org/public/</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
 
@@ -104,6 +112,11 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.9</version>
+		</dependency>
+		<dependency>
+			<artifactId>remoting</artifactId>
+			<groupId>org.jenkins-ci.main</groupId>
+			<version>2.55</version>
 		</dependency>
 
 		<!-- gadget dependecies -->
@@ -179,25 +192,14 @@
 			<artifactId>myfaces-impl</artifactId>
 			<version>2.2.9</version>
 		</dependency>
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.2</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
-		<profile>
-			<id>xalan</id>
-			<activation>
-				<property>
-					<name>properXalan</name>
-				</property>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>xalan</groupId>
-					<artifactId>xalan</artifactId>
-					<version>2.7.2</version>
-				</dependency>
-			</dependencies>
-		</profile>
-
 		<profile>
 			<id>hibernate5</id>
 			<activation>
