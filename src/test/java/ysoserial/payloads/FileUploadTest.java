@@ -30,7 +30,7 @@ public class FileUploadTest implements CustomTest {
      */
     public FileUploadTest () {
         try {
-            source = File.createTempFile("fileupload-test", ".source");
+            source = File.createTempFile("fut", "-source");
             repo = Files.createTempDir();
         }
         catch ( IOException e ) {
@@ -43,9 +43,10 @@ public class FileUploadTest implements CustomTest {
       *
       * @see ysoserial.CustomTest#run(java.util.concurrent.Callable)
       */
-    public void run ( Callable<Object> payload ) throws Exception {
+    public synchronized void run ( Callable<Object> payload ) throws Exception {
         try {
             Files.write(FDATA, this.source);
+            Assert.assertTrue(this.source.exists());
             payload.call();
             
             File found = null;
@@ -62,8 +63,8 @@ public class FileUploadTest implements CustomTest {
                     f.delete();
                 }
                 this.repo.delete();
-                this.source.delete();
             }
+            this.source.delete();
         }
     }
 
