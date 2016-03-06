@@ -31,7 +31,6 @@ public class FileUploadTest implements CustomTest {
     public FileUploadTest () {
         try {
             source = File.createTempFile("fileupload-test", ".source");
-            source.deleteOnExit();
             repo = Files.createTempDir();
         }
         catch ( IOException e ) {
@@ -63,6 +62,7 @@ public class FileUploadTest implements CustomTest {
                     f.delete();
                 }
                 this.repo.delete();
+                this.source.delete();
             }
         }
     }
