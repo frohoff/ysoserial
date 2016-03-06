@@ -118,6 +118,42 @@
 			<groupId>org.jenkins-ci.main</groupId>
 			<version>2.55</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+			<version>3.3.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.remoting</groupId>
+			<artifactId>jboss-remoting</artifactId>
+			<version>4.0.19.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss</groupId>
+			<artifactId>jboss-common-core</artifactId>
+			<version>2.5.0.Final</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.logging</groupId>
+					<artifactId>jboss-logging-spi</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.xnio</groupId>
+			<artifactId>xnio-nio</artifactId>
+			<version>3.3.4.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.sasl</groupId>
+			<artifactId>jboss-sasl</artifactId>
+			<version>1.0.5.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.remotingjmx</groupId>
+			<artifactId>remoting-jmx</artifactId>
+			<version>2.0.1.Final</version>
+		</dependency>
 
 		<!-- gadget dependecies -->
 
@@ -255,5 +291,6 @@
 				</dependency>
 			</dependencies>
 		</profile>
+		
 	</profiles>
 </project>
