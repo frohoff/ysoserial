@@ -35,13 +35,6 @@ public class Myfaces2 implements ObjectPayload<Object>, DynamicDependencies {
     }
     
 
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see ysoserial.payloads.ObjectPayload#getObject(java.lang.String)
-     */
-
     public Object getObject ( String command ) throws Exception {
         int sep = command.lastIndexOf(':');
         if ( sep < 0 ) {

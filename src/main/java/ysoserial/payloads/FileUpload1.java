@@ -42,11 +42,6 @@ import ysoserial.payloads.util.Reflections;
 @PayloadTest(harness="ysoserial.payloads.FileUploadTest")
 public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see ysoserial.payloads.ObjectPayload#getObject(java.lang.String)
-     */
     public DiskFileItem getObject ( String command ) throws Exception {
 
         String[] parts = command.split(":");
@@ -71,12 +66,7 @@ public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
         }
     }
 
-    /**
-      * {@inheritDoc}
-     * @throws Exception 
-      *
-      * @see ysoserial.payloads.ReleaseableObjectPayload#release(java.lang.Object)
-      */
+
     public void release ( DiskFileItem obj ) throws Exception {
         // otherwise the finalizer deletes the file
         DeferredFileOutputStream dfos = new DeferredFileOutputStream(0, null);
@@ -100,15 +90,6 @@ public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
     }
 
 
-    /**
-     * @param thresh
-     * @param repoPath
-     * @param filePath
-     * @param data
-     * @return
-     * @throws IOException
-     * @throws Exception
-     */
     private static DiskFileItem makePayload ( int thresh, String repoPath, String filePath, byte[] data ) throws IOException, Exception {
         // if thresh < written length, delete outputFile after copying to repository temp file
         // otherwise write the contents to repository temp file

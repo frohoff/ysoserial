@@ -38,11 +38,7 @@ public class FileUploadTest implements CustomTest {
         }
     }
 
-    /**
-      * {@inheritDoc}
-      *
-      * @see ysoserial.CustomTest#run(java.util.concurrent.Callable)
-      */
+
     public synchronized void run ( Callable<Object> payload ) throws Exception {
         try {
             Files.write(FDATA, this.source);
@@ -68,11 +64,6 @@ public class FileUploadTest implements CustomTest {
         }
     }
 
-    /**
-      * {@inheritDoc}
-      *
-      * @see ysoserial.CustomTest#getPayloadArgs()
-      */
     public String getPayloadArgs () {
         return "copyAndDelete:" + this.source.getAbsolutePath() + ":" + this.repo.getAbsolutePath();
     }

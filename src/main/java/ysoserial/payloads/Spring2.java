@@ -61,12 +61,6 @@ public class Spring2 extends PayloadRunner implements ObjectPayload<Object> {
         return mitp;
     }
 
-
-    /**
-     * 
-     * @param args
-     * @throws Exception
-     */
     public static void main ( final String[] args ) throws Exception {
         PayloadRunner.run(Spring2.class, args);
     }

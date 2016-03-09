@@ -143,11 +143,7 @@ public class PayloadsTest {
     }
 
 
-    /**
-     * @param payloadClass
-     * @param command
-     * @return
-     */
+
     private static Callable<byte[]> makeSerializeCallable ( final Class<? extends ObjectPayload<?>> payloadClass, final String command ) {
         return new Callable<byte[]>() {
 
@@ -162,13 +158,6 @@ public class PayloadsTest {
     }
 
 
-    /**
-     * @param t
-     * @param addlClassesForClassLoader
-     * @param deps
-     * @param serialized
-     * @return
-     */
     private static Callable<Object> makeDeserializeCallable ( PayloadTest t, final Class<?>[] addlClassesForClassLoader, final String[] deps,
             final byte[] serialized, final Class<?> customDeserializer ) {
         return new Callable<Object>() {
@@ -187,15 +176,6 @@ public class PayloadsTest {
     }
 
 
-    /**
-     * @param payloadClass
-     * @return
-     * @throws SecurityException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
-     */
     private static String[] buildDeps ( final Class<? extends ObjectPayload<?>> payloadClass ) throws Exception {
         String[] baseDeps;
         if ( DynamicDependencies.class.isAssignableFrom(payloadClass) ) {

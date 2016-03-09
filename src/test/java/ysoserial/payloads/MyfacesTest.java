@@ -33,19 +33,13 @@ import ysoserial.Deserializer;
  */
 public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeserializer {
 
-    /**
-     * @param command
-     */
+
     public MyfacesTest ( String command ) {
         super(command);
     }
 
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see ysoserial.CustomDeserializer#getCustomDeserializer()
-     */
+
     public Class<?> getCustomDeserializer () {
         return MyfacesDeserializer.class;
     }
@@ -69,11 +63,6 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
             private Map<String, Object> attributes = new HashMap<String, Object>();
 
 
-            /**
-             * {@inheritDoc}
-             *
-             * @see org.mockito.stubbing.Answer#answer(org.mockito.invocation.InvocationOnMock)
-             */
             public Object answer ( InvocationOnMock invocation ) throws Throwable {
 
                 if ( "setAttribute".equals(invocation.getMethod().getName()) ) {
@@ -93,19 +82,12 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
             
             private ServletRequest request;
             
-            
-            /**
-             * 
-             */
+  
             public MockELResolver (ServletRequest req) {
                 this.request = req;
             }
 
-            /**
-              * {@inheritDoc}
-              *
-              * @see javax.el.ELResolver#getValue(javax.el.ELContext, java.lang.Object, java.lang.Object)
-              */
+
             @Override
             public Object getValue ( ELContext context, Object base, Object property ) {
                 if ( base == null && "request".equals(property)) {
@@ -116,11 +98,7 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
                 return null;
             }
 
-            /**
-              * {@inheritDoc}
-              *
-              * @see javax.el.ELResolver#getType(javax.el.ELContext, java.lang.Object, java.lang.Object)
-              */
+
             @Override
             public Class<?> getType ( ELContext context, Object base, Object property ) {
                 if ( base == null && "request".equals(property)) {
@@ -130,41 +108,25 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
                 return null;
             }
 
-            /**
-              * {@inheritDoc}
-              *
-              * @see javax.el.ELResolver#setValue(javax.el.ELContext, java.lang.Object, java.lang.Object, java.lang.Object)
-              */
+ 
             @Override
             public void setValue ( ELContext context, Object base, Object property, Object value ) {
         
             }
 
-            /**
-              * {@inheritDoc}
-              *
-              * @see javax.el.ELResolver#isReadOnly(javax.el.ELContext, java.lang.Object, java.lang.Object)
-              */
+
             @Override
             public boolean isReadOnly ( ELContext context, Object base, Object property ) {
                 return true;
             }
 
-            /**
-              * {@inheritDoc}
-              *
-              * @see javax.el.ELResolver#getFeatureDescriptors(javax.el.ELContext, java.lang.Object)
-              */
+
             @Override
             public Iterator<FeatureDescriptor> getFeatureDescriptors ( ELContext context, Object base ) {
                 return null;
             }
 
-            /**
-              * {@inheritDoc}
-              *
-              * @see javax.el.ELResolver#getCommonPropertyType(javax.el.ELContext, java.lang.Object)
-              */
+ 
             @Override
             public Class<?> getCommonPropertyType ( ELContext context, Object base ) {
                 return null;
@@ -172,9 +134,6 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
             
         }
         
-        /**
-         * @param bytes
-         */
         public MyfacesDeserializer ( byte[] bytes ) {
             super(bytes);
         }
@@ -198,10 +157,6 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
         }
 
 
-        /**
-         * @return
-         * @throws MalformedURLException
-         */
         private static FacesContext createMockFacesContext () throws MalformedURLException {
             FacesContext ctx = Mockito.mock(FacesContext.class);
             CompositeELResolver cer = new CompositeELResolver();

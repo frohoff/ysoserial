@@ -56,11 +56,6 @@ public interface ObjectPayload <T> {
         }
 
 
-        /**
-         * @param payloadType
-         * @param payloadArg
-         * @return an payload object
-         */
         public static Object makePayloadObject ( String payloadType, String payloadArg ) {
             final Class<? extends ObjectPayload> payloadClass = getPayloadClass(payloadType);
             if ( payloadClass == null || !ObjectPayload.class.isAssignableFrom(payloadClass) ) {
@@ -80,11 +75,6 @@ public interface ObjectPayload <T> {
         }
 
 
-        /**
-         * @param payload
-         * @param object
-         * @throws Exception
-         */
         @SuppressWarnings ( "unchecked" )
         public static void releasePayload ( ObjectPayload payload, Object object ) throws Exception {
             if ( payload instanceof ReleaseableObjectPayload ) {
@@ -93,10 +83,6 @@ public interface ObjectPayload <T> {
         }
 
 
-        /**
-         * @param payloadType
-         * @param payloadObject
-         */
         public static void releasePayload ( String payloadType, Object payloadObject ) {
             final Class<? extends ObjectPayload> payloadClass = getPayloadClass(payloadType);
             if ( payloadClass == null || !ObjectPayload.class.isAssignableFrom(payloadClass) ) {

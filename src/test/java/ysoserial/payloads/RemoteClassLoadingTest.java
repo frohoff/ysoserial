@@ -24,9 +24,6 @@ public class RemoteClassLoadingTest implements WrappedTest {
     private String command;
     private String className;
 
-    /**
-     * 
-     */
     public RemoteClassLoadingTest ( String command ) {
         this.command = command;
         this.port = new Random().nextInt(65535-1024)+1024;
@@ -34,21 +31,11 @@ public class RemoteClassLoadingTest implements WrappedTest {
     }
 
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see ysoserial.WrappedTest#getPayloadArgs()
-     */
     public String getPayloadArgs () {
         return String.format("http://localhost:%d/", this.port) + ":" + this.className;
     }
 
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see ysoserial.WrappedTest#createCallable(java.util.concurrent.Callable)
-     */
     public Callable<Object> createCallable ( Callable<Object> innerCallable ) {
         return new RemoteClassLoadingTestCallable(this.port, makePayloadClass(), innerCallable);
     }
@@ -75,9 +62,6 @@ public class RemoteClassLoadingTest implements WrappedTest {
         private byte[] data;
 
 
-        /**
-         * @param innerCallable
-         */
         public RemoteClassLoadingTestCallable ( int port, byte[] data, Callable<Object> innerCallable ) {
             super(port);
             this.data = data;
@@ -86,11 +70,6 @@ public class RemoteClassLoadingTest implements WrappedTest {
         }
 
 
-        /**
-         * {@inheritDoc}
-         *
-         * @see java.util.concurrent.Callable#call()
-         */
         public Object call () throws Exception {
             try {
                 setup();
@@ -102,29 +81,16 @@ public class RemoteClassLoadingTest implements WrappedTest {
 
         }
 
-
-        /**
-         * @throws IOException
-         * 
-         */
         private void setup () throws IOException {
             start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         }
 
 
-        /**
-         * 
-         */
         private void cleanup () {
             stop();
         }
 
 
-        /**
-         * {@inheritDoc}
-         *
-         * @see fi.iki.elonen.NanoHTTPD#serve(fi.iki.elonen.NanoHTTPD.IHTTPSession)
-         */
         @Override
         public Response serve ( IHTTPSession sess ) {
             return newFixedLengthResponse(Status.OK, "application/octet-stream", new ByteArrayInputStream(data), data.length);

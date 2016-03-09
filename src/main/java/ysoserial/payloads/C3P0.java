@@ -62,10 +62,7 @@ public class C3P0 implements ObjectPayload<Object> {
         
         private String className;
         private String url;
-        /**
-         * @param className
-         * @param url
-         */
+ 
         public PoolSource ( String className, String url ) {
             this.className = className;
             this.url = url;

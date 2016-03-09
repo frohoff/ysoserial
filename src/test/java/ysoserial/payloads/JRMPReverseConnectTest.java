@@ -1,7 +1,6 @@
 package ysoserial.payloads;
 
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import javax.management.BadAttributeValueExpException;
@@ -30,14 +29,6 @@ public class JRMPReverseConnectTest implements CustomTest {
     }
 
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @throws IOException
-     * @throws NumberFormatException
-     *
-     * @see java.lang.Runnable#run()
-     */
     public void run ( Callable<Object> payload ) throws Exception {
         JRMPListener l = new JRMPListener(port, new BadAttributeValueExpException("foo"));
         Thread t = new Thread(l, "JRMP listener");
@@ -59,11 +50,6 @@ public class JRMPReverseConnectTest implements CustomTest {
     }
 
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see ysoserial.CustomTest#getPayloadArgs()
-     */
     public String getPayloadArgs () {
         return "localhost:" + port;
     }

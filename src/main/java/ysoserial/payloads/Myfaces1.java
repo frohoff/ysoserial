@@ -42,12 +42,6 @@ import ysoserial.payloads.util.Reflections;
 @PayloadTest(skip="Requires running MyFaces, no direct execution")
 public class Myfaces1 implements ObjectPayload<Object>, DynamicDependencies {
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see ysoserial.payloads.ObjectPayload#getObject(java.lang.String)
-     */
-
     public Object getObject ( String command ) throws Exception {
         return makeExpressionPayload(command);
     }
