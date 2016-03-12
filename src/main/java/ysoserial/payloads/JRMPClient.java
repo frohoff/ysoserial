@@ -48,7 +48,7 @@ import ysoserial.payloads.util.PayloadRunner;
 @SuppressWarnings ( {
     "restriction"
 } )
-@PayloadTest( harness = "ysoserial.payloads.JRMPReverseConnectTest")
+@PayloadTest( harness = "ysoserial.payloads.JRMPReverseConnectSMTest")
 public class JRMPClient extends PayloadRunner implements ObjectPayload<Registry> {
 
     public Registry getObject ( final String command ) throws Exception {

@@ -36,7 +36,9 @@ public class Gadgets {
     static {
         // special case for using TemplatesImpl gadgets with a SecurityManager enabled
         System.setProperty(DESERIALIZE_TRANSLET, "true");
-
+        
+        // for RMI remote loading
+        System.setProperty("java.rmi.server.useCodebaseOnly", "false");
     }
 
     public static final String ANN_INV_HANDLER_CLASS = "sun.reflect.annotation.AnnotationInvocationHandler";

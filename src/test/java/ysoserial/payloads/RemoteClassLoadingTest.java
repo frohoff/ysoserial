@@ -3,6 +3,7 @@ package ysoserial.payloads;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Random;
 import java.util.concurrent.Callable;
 
@@ -35,11 +36,17 @@ public class RemoteClassLoadingTest implements WrappedTest {
         return String.format("http://localhost:%d/", this.port) + ":" + this.className;
     }
 
+    public int getHTTPPort () {
+        return this.port;
+    }
 
     public Callable<Object> createCallable ( Callable<Object> innerCallable ) {
         return new RemoteClassLoadingTestCallable(this.port, makePayloadClass(), innerCallable);
     }
 
+    public String getExploitClassName () {
+        return this.className;
+    }
 
     protected byte[] makePayloadClass () {
         try {
@@ -60,6 +67,7 @@ public class RemoteClassLoadingTest implements WrappedTest {
 
         private Callable<Object> innerCallable;
         private byte[] data;
+        private Object waitLock = new Object();
 
 
         public RemoteClassLoadingTestCallable ( int port, byte[] data, Callable<Object> innerCallable ) {
@@ -68,12 +76,22 @@ public class RemoteClassLoadingTest implements WrappedTest {
             this.innerCallable = innerCallable;
 
         }
+        
+        
+        public void waitFor() throws InterruptedException {
+            synchronized ( this.waitLock ) {
+                this.waitLock.wait(1000);
+            }
+        }
 
 
         public Object call () throws Exception {
             try {
                 setup();
-                return this.innerCallable.call();
+                Object res = this.innerCallable.call();
+                waitFor();
+                Thread.sleep(1000);
+                return res;
             }
             finally {
                 cleanup();
@@ -93,12 +111,21 @@ public class RemoteClassLoadingTest implements WrappedTest {
 
         @Override
         public Response serve ( IHTTPSession sess ) {
-            return newFixedLengthResponse(Status.OK, "application/octet-stream", new ByteArrayInputStream(data), data.length);
+            System.out.println("Serving " + sess.getUri());
+            Response response = newFixedLengthResponse(Status.OK, "application/octet-stream", new ByteArrayInputStream(data), data.length);
+            synchronized ( this.waitLock ) {
+                this.waitLock.notify();
+            }
+            return response;
         }
 
     }
 
-    public static class Exploit {
+    
+
+    public static class Exploit implements Serializable {
+
+        private static final long serialVersionUID = 1L;
 
     }
 }
