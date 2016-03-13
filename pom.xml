@@ -238,6 +238,11 @@
 			<artifactId>rome</artifactId>
 			<version>1.0</version>
 		</dependency>
+        <dependency>
+            <groupId>org.python</groupId>
+            <artifactId>jython-standalone</artifactId>
+            <version>2.5.2</version>
+        </dependency>
 	</dependencies>
 
 	<profiles>
