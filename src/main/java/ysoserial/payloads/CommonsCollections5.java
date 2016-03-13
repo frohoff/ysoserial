@@ -15,6 +15,7 @@ import org.apache.commons.collections.keyvalue.TiedMapEntry;
 import org.apache.commons.collections.map.LazyMap;
 
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
@@ -41,6 +42,7 @@ import ysoserial.payloads.util.Reflections;
 	Requires:
 		commons-collections
  */
+@PayloadTest(skip="need more robust way to detect Runtime.exec() without SecurityManager()")
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"commons-collections:commons-collections:3.1"})
 public class CommonsCollections5 extends PayloadRunner implements ObjectPayload<BadAttributeValueExpException> {
