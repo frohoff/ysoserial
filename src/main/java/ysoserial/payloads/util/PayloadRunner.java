@@ -7,6 +7,7 @@ import ysoserial.Serializer;
 import static ysoserial.Deserializer.deserialize;
 import static ysoserial.Serializer.serialize;
 import ysoserial.payloads.ObjectPayload;
+import ysoserial.payloads.ObjectPayload.Utils;
 import ysoserial.secmgr.ExecCheckingSecurityManager;
 
 /*
@@ -22,11 +23,13 @@ public class PayloadRunner {
 
 				System.out.println("generating payload object(s) for command: '" + command + "'");
 
-				final Object objBefore = clazz.newInstance().getObject(command);
+				ObjectPayload<?> payload = clazz.newInstance();
+                final Object objBefore = payload.getObject(command);
 
 				System.out.println("serializing payload");
-
-				return Serializer.serialize(objBefore);
+				byte[] ser = Serializer.serialize(objBefore);
+				Utils.releasePayload(payload, objBefore);
+                return ser;
 		}});
 
 		try {

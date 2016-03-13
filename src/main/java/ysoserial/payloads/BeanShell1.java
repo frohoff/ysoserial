@@ -3,8 +3,6 @@ package ysoserial.payloads;
 import bsh.Interpreter;
 import bsh.XThis;
 
-import java.io.*;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.Comparator;
@@ -17,7 +15,7 @@ import ysoserial.payloads.util.PayloadRunner;
  * Credits: Alvaro Munoz (@pwntester) and Christian Schneider (@cschneider4711)
  */
 
-@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({ "org.beanshell:bsh:2.0b5" })
 public class BeanShell1 extends PayloadRunner implements ObjectPayload<PriorityQueue> {
  

