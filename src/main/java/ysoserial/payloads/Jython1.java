@@ -9,14 +9,17 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.Comparator;
 import java.util.PriorityQueue;
+
 import ysoserial.payloads.util.Reflections;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 
 /**
  * Credits: Alvaro Munoz (@pwntester) and Christian Schneider (@cschneider4711)
  */
 
+@PayloadTest(skip="non RCE")
 @SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
 @Dependencies({ "org.python:jython-standalone:2.5.2" })
 public class Jython1 extends PayloadRunner implements ObjectPayload<PriorityQueue> {
