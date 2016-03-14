@@ -3,19 +3,27 @@ package ysoserial.payloads;
 
 import static com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.DESERIALIZE_TRANSLET;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.hamcrest.CoreMatchers;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ProvideSecurityManager;
@@ -52,15 +60,13 @@ TODO: figure out better way to test exception behavior than comparing messages
 @RunWith ( Parameterized.class )
 public class PayloadsTest {
 
-    private static final String ASSERT_MESSAGE = "should have thrown " + ExecException.class.getSimpleName();
-
 
     @Parameters ( name = "payloadClass: {0}" )
     public static Class<? extends ObjectPayload<?>>[] payloads () {
         Set<Class<? extends ObjectPayload>> payloadClasses = ObjectPayload.Utils.getPayloadClasses();
         payloadClasses.removeAll(Arrays.asList(ExecMockPayload.class, NoopMockPayload.class));
         return payloadClasses.toArray(new Class[0]);
-    }
+   }
 
     private final Class<? extends ObjectPayload<?>> payloadClass;
 
@@ -76,9 +82,11 @@ public class PayloadsTest {
     }
 
 
-    public static void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader )
+    public static synchronized void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader )
             throws Exception {
-        String command = "hostname";
+        //TODO check for windows and change commands
+        String path = createTempPath(payloadClass.getSimpleName());
+        String command = "touch " + path;
         String[] deps = buildDeps(payloadClass);
 
         PayloadTest t = payloadClass.getAnnotation(PayloadTest.class);
@@ -113,35 +121,48 @@ public class PayloadsTest {
             }
         }
 
-        ExecCheckingSecurityManager sm = new ExecCheckingSecurityManager();
-        final byte[] serialized = sm.wrap(makeSerializeCallable(payloadClass, payloadCommand));
+        final byte[] serialized = makeSerializeCallable(payloadClass, payloadCommand).call();
+        
         Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized, customDeserializer);
         if ( wrapper instanceof WrappedTest ) {
             callable = ( (WrappedTest) wrapper ).createCallable(callable);
         }
 
-        if ( wrapper instanceof CustomTest ) {
-            ( (CustomTest) wrapper ).run(callable);
-            return;
-        }
-        try {
-
-            Object deserialized = sm.wrap(callable);
-            Assert.fail(ASSERT_MESSAGE); // should never get here
-        }
-        catch ( Throwable e ) {
-            // hopefully everything will reliably nest our ExecException
-            Throwable innerEx = Throwables.getInnermostCause(e);
-            if ( ! ( innerEx instanceof ExecException ) ) {
-                innerEx.printStackTrace();
+        try{
+        
+            if ( wrapper instanceof CustomTest ) {
+                ( (CustomTest) wrapper ).run(callable);
+                return;
             }
-            Assert.assertEquals(ExecException.class, innerEx.getClass());
-            Assert.assertEquals(command, ( (ExecException) innerEx ).getCmd());
-        }
 
-        Assert.assertEquals(Arrays.asList(command), sm.getCmds());
+            callable.call();
+        }catch(Exception e){
+            //ignore exceptions that occur during deserialization
+            e.printStackTrace();
+        }
+        File touchedFile = new File(path);
+        Assert.assertTrue(touchedFile.exists());
     }
 
+
+    public static String createTempPath(String pFilename){
+    
+        String property = "java.io.tmpdir";
+        String tempDir = System.getProperty(property);
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append(tempDir);
+        sb.append(System.getProperty("file.separator"));
+        sb.append(pFilename);
+    
+        String path = sb.toString();
+        File temp = new File(path);
+        
+        if(temp.exists()){
+            temp.delete();
+        }
+        return path;
+    }
 
 
     private static Callable<byte[]> makeSerializeCallable ( final Class<? extends ObjectPayload<?>> payloadClass, final String command ) {
