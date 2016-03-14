@@ -38,8 +38,6 @@ import ysoserial.Deserializer;
 import ysoserial.Serializer;
 import ysoserial.Throwables;
 import ysoserial.WrappedTest;
-import ysoserial.payloads.TestHarnessTest.ExecMockPayload;
-import ysoserial.payloads.TestHarnessTest.NoopMockPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.ClassFiles;
@@ -47,13 +45,6 @@ import ysoserial.secmgr.ExecCheckingSecurityManager;
 import ysoserial.secmgr.ExecCheckingSecurityManager.ExecException;
 
 
-/*
- * tests each of the parameterize Payload classes by using a mock SecurityManager that throws
- * a special exception when an exec() attempt is made for more reliable detection; self-tests
- * the harness for trivial pass and failure cases
-
-TODO: figure out better way to test exception behavior than comparing messages
- */
 @SuppressWarnings ( {
     "rawtypes", "unused", "unchecked"
 } )
@@ -64,12 +55,23 @@ public class PayloadsTest {
     @Parameters ( name = "payloadClass: {0}" )
     public static Class<? extends ObjectPayload<?>>[] payloads () {
         Set<Class<? extends ObjectPayload>> payloadClasses = ObjectPayload.Utils.getPayloadClasses();
-        payloadClasses.removeAll(Arrays.asList(ExecMockPayload.class, NoopMockPayload.class));
         return payloadClasses.toArray(new Class[0]);
    }
 
     private final Class<? extends ObjectPayload<?>> payloadClass;
 
+    private static String OS = null;
+    
+    private  static String getOsName()
+    {
+       if(OS == null) { OS = System.getProperty("os.name"); }
+       return OS;
+    }
+    
+    private static boolean isWindows()
+    {
+       return getOsName().startsWith("Windows");
+    }
 
     public PayloadsTest ( Class<? extends ObjectPayload<?>> payloadClass ) {
         this.payloadClass = payloadClass;
@@ -78,15 +80,19 @@ public class PayloadsTest {
 
     @Test
     public void testPayload () throws Exception {
-        testPayload(payloadClass, new Class[0]);
+        if(isWindows())
+            testPayload(payloadClass, new Class[0], "copy NUL ");
+            
+        else
+            testPayload(payloadClass, new Class[0], "touch ");
     }
 
 
-    public static synchronized void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader )
+    public static void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader, String command )
             throws Exception {
         //TODO check for windows and change commands
         String path = createTempPath(payloadClass.getSimpleName());
-        String command = "touch " + path;
+        String commandToRun = command + path;
         String[] deps = buildDeps(payloadClass);
 
         PayloadTest t = payloadClass.getAnnotation(PayloadTest.class);
@@ -101,13 +107,13 @@ public class PayloadsTest {
             }
         }
 
-        String payloadCommand = command;
+        String payloadCommand = commandToRun;
         Class<?> customDeserializer = null;
         Object wrapper = null;
         if ( t != null && !t.harness().isEmpty() ) {
             Class<?> wrapperClass = Class.forName(t.harness());
             try {
-                wrapper = wrapperClass.getConstructor(String.class).newInstance(command);
+                wrapper = wrapperClass.getConstructor(String.class).newInstance(commandToRun);
             } catch ( NoSuchMethodException e ) {
                 wrapper = wrapperClass.newInstance();
             }
