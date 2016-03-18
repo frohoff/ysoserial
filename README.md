@@ -1,6 +1,8 @@
 
 # ysoserial 
 
+[![Join the chat at https://gitter.im/frohoff/ysoserial](https://badges.gitter.im/frohoff/ysoserial.svg)](https://gitter.im/frohoff/ysoserial?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A proof-of-concept tool for generating payloads that exploit unsafe Java object deserialization.
 
 ![](https://github.com/frohoff/ysoserial/blob/master/ysoserial.png)
