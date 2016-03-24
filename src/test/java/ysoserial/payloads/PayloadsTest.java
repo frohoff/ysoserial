@@ -80,19 +80,21 @@ public class PayloadsTest {
 
     @Test
     public void testPayload () throws Exception {
-        if(isWindows())
-            testPayload(payloadClass, new Class[0], "copy NUL ");
-            
+    	 String path = createTempPath(payloadClass.getSimpleName());
+    	if(isWindows()){
+    		String[] cmd = {"cmd.exe", "/C", "copy NUL " + path};
+    		testPayload(payloadClass, new Class[0], cmd);
+    	}
         else
-            testPayload(payloadClass, new Class[0], "touch ");
+            testPayload(payloadClass, new Class[0], new String[] {"touch " + path});
+        File touchedFile = new File(path);
+        Assert.assertTrue(touchedFile.exists());
     }
 
 
-    public static void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader, String command )
+    public static void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader, String[] cmd )
             throws Exception {
-        //TODO check for windows and change commands
-        String path = createTempPath(payloadClass.getSimpleName());
-        String commandToRun = command + path;
+       
         String[] deps = buildDeps(payloadClass);
 
         PayloadTest t = payloadClass.getAnnotation(PayloadTest.class);
@@ -106,14 +108,13 @@ public class PayloadsTest {
                 Assume.assumeTrue("Precondition", checkPrecondition(payloadClass, t.precondition()));
             }
         }
-
-        String payloadCommand = commandToRun;
+        String[] payloadCommand = cmd;
         Class<?> customDeserializer = null;
         Object wrapper = null;
         if ( t != null && !t.harness().isEmpty() ) {
             Class<?> wrapperClass = Class.forName(t.harness());
             try {
-                wrapper = wrapperClass.getConstructor(String.class).newInstance(commandToRun);
+                wrapper = wrapperClass.getConstructor(String[].class).newInstance(payloadCommand);
             } catch ( NoSuchMethodException e ) {
                 wrapper = wrapperClass.newInstance();
             }
@@ -127,7 +128,7 @@ public class PayloadsTest {
             }
         }
 
-        final byte[] serialized = makeSerializeCallable(payloadClass, payloadCommand).call();
+        final byte[] serialized = makeSerializeCallable(payloadClass, cmd).call();
         
         Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized, customDeserializer);
         if ( wrapper instanceof WrappedTest ) {
@@ -146,8 +147,6 @@ public class PayloadsTest {
             //ignore exceptions that occur during deserialization
             e.printStackTrace();
         }
-        File touchedFile = new File(path);
-        Assert.assertTrue(touchedFile.exists());
     }
 
 
@@ -171,12 +170,12 @@ public class PayloadsTest {
     }
 
 
-    private static Callable<byte[]> makeSerializeCallable ( final Class<? extends ObjectPayload<?>> payloadClass, final String command ) {
+    private static Callable<byte[]> makeSerializeCallable ( final Class<? extends ObjectPayload<?>> payloadClass, final String[] cmd ) {
         return new Callable<byte[]>() {
 
             public byte[] call () throws Exception {
                 ObjectPayload<?> payload = payloadClass.newInstance();
-                final Object f = payload.getObject(command);
+                final Object f = payload.getObject(cmd);
                 byte[] serialized =  Serializer.serialize(f);
                 ObjectPayload.Utils.releasePayload(payload, f);
                 return serialized;

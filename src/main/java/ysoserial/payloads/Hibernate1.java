@@ -94,7 +94,7 @@ public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
     }
 
 
-    public Object getObject ( String command ) throws Exception {
+    public Object getObject ( String[] command ) throws Exception {
         Object tpl = Gadgets.createTemplatesImpl(command);
         Object getters = makeGetter(tpl.getClass(), "getOutputProperties");
         return makeCaller(tpl, getters);

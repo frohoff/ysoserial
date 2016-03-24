@@ -34,7 +34,7 @@ import ysoserial.Deserializer;
 public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeserializer {
 
 
-    public MyfacesTest ( String command ) {
+    public MyfacesTest ( String[] command ) {
         super(command);
     }
 

