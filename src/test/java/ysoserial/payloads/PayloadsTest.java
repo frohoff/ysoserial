@@ -3,19 +3,27 @@ package ysoserial.payloads;
 
 import static com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.DESERIALIZE_TRANSLET;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.hamcrest.CoreMatchers;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ProvideSecurityManager;
@@ -30,8 +38,6 @@ import ysoserial.Deserializer;
 import ysoserial.Serializer;
 import ysoserial.Throwables;
 import ysoserial.WrappedTest;
-import ysoserial.payloads.TestHarnessTest.ExecMockPayload;
-import ysoserial.payloads.TestHarnessTest.NoopMockPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.ClassFiles;
@@ -39,31 +45,33 @@ import ysoserial.secmgr.ExecCheckingSecurityManager;
 import ysoserial.secmgr.ExecCheckingSecurityManager.ExecException;
 
 
-/*
- * tests each of the parameterize Payload classes by using a mock SecurityManager that throws
- * a special exception when an exec() attempt is made for more reliable detection; self-tests
- * the harness for trivial pass and failure cases
-
-TODO: figure out better way to test exception behavior than comparing messages
- */
 @SuppressWarnings ( {
     "rawtypes", "unused", "unchecked"
 } )
 @RunWith ( Parameterized.class )
 public class PayloadsTest {
 
-    private static final String ASSERT_MESSAGE = "should have thrown " + ExecException.class.getSimpleName();
-
 
     @Parameters ( name = "payloadClass: {0}" )
     public static Class<? extends ObjectPayload<?>>[] payloads () {
         Set<Class<? extends ObjectPayload>> payloadClasses = ObjectPayload.Utils.getPayloadClasses();
-        payloadClasses.removeAll(Arrays.asList(ExecMockPayload.class, NoopMockPayload.class));
         return payloadClasses.toArray(new Class[0]);
-    }
+   }
 
     private final Class<? extends ObjectPayload<?>> payloadClass;
 
+    private static String OS = null;
+    
+    private  static String getOsName()
+    {
+       if(OS == null) { OS = System.getProperty("os.name"); }
+       return OS;
+    }
+    
+    private static boolean isWindows()
+    {
+       return getOsName().startsWith("Windows");
+    }
 
     public PayloadsTest ( Class<? extends ObjectPayload<?>> payloadClass ) {
         this.payloadClass = payloadClass;
@@ -72,13 +80,20 @@ public class PayloadsTest {
 
     @Test
     public void testPayload () throws Exception {
-        testPayload(payloadClass, new Class[0]);
+    	 String path = createTempPath(payloadClass.getSimpleName());
+    	if(isWindows()){
+    		String[] cmd = {"cmd.exe", "/C", "copy NUL " + path};
+    		testPayload(payloadClass, new Class[0], cmd);
+    	}
+        else
+            testPayload(payloadClass, new Class[0], new String[] {"touch " + path});
+        File touchedFile = new File(path);
+        Assert.assertTrue(touchedFile.exists());
     }
 
 
-    public static void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader )
+    public static void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader, String[] command )
             throws Exception {
-        String command = "hostname";
         String[] deps = buildDeps(payloadClass);
 
         PayloadTest t = payloadClass.getAnnotation(PayloadTest.class);
@@ -93,13 +108,14 @@ public class PayloadsTest {
             }
         }
 
-        String payloadCommand = command;
+        String[] payloadCommand = command;
         Class<?> customDeserializer = null;
         Object wrapper = null;
         if ( t != null && !t.harness().isEmpty() ) {
             Class<?> wrapperClass = Class.forName(t.harness());
             try {
-                wrapper = wrapperClass.getConstructor(String.class).newInstance(command);
+
+                wrapper = wrapperClass.getConstructor(String[].class).newInstance(command);
             } catch ( NoSuchMethodException e ) {
                 wrapper = wrapperClass.newInstance();
             }
@@ -113,43 +129,55 @@ public class PayloadsTest {
             }
         }
 
-        ExecCheckingSecurityManager sm = new ExecCheckingSecurityManager();
-        final byte[] serialized = sm.wrap(makeSerializeCallable(payloadClass, payloadCommand));
+
+        final byte[] serialized = makeSerializeCallable(payloadClass, payloadCommand).call();
+        
         Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized, customDeserializer);
         if ( wrapper instanceof WrappedTest ) {
             callable = ( (WrappedTest) wrapper ).createCallable(callable);
         }
 
-        if ( wrapper instanceof CustomTest ) {
-            ( (CustomTest) wrapper ).run(callable);
-            return;
-        }
-        try {
-
-            Object deserialized = sm.wrap(callable);
-            Assert.fail(ASSERT_MESSAGE); // should never get here
-        }
-        catch ( Throwable e ) {
-            // hopefully everything will reliably nest our ExecException
-            Throwable innerEx = Throwables.getInnermostCause(e);
-            if ( ! ( innerEx instanceof ExecException ) ) {
-                innerEx.printStackTrace();
+        try{
+        
+            if ( wrapper instanceof CustomTest ) {
+                ( (CustomTest) wrapper ).run(callable);
+                return;
             }
-            Assert.assertEquals(ExecException.class, innerEx.getClass());
-            Assert.assertEquals(command, ( (ExecException) innerEx ).getCmd());
-        }
 
-        Assert.assertEquals(Arrays.asList(command), sm.getCmds());
+            callable.call();
+        }catch(Exception e){
+            //ignore exceptions that occur during deserialization
+            e.printStackTrace();
+        }
     }
 
 
+    public static String createTempPath(String pFilename){
+    
+        String property = "java.io.tmpdir";
+        String tempDir = System.getProperty(property);
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append(tempDir);
+        sb.append(System.getProperty("file.separator"));
+        sb.append(pFilename);
+    
+        String path = sb.toString();
+        File temp = new File(path);
+        
+        if(temp.exists()){
+            temp.delete();
+        }
+        return path;
+    }
 
-    private static Callable<byte[]> makeSerializeCallable ( final Class<? extends ObjectPayload<?>> payloadClass, final String command ) {
+
+    private static Callable<byte[]> makeSerializeCallable ( final Class<? extends ObjectPayload<?>> payloadClass, final String[] cmd ) {
         return new Callable<byte[]>() {
 
             public byte[] call () throws Exception {
                 ObjectPayload<?> payload = payloadClass.newInstance();
-                final Object f = payload.getObject(command);
+                final Object f = payload.getObject(cmd);
                 byte[] serialized =  Serializer.serialize(f);
                 ObjectPayload.Utils.releasePayload(payload, f);
                 return serialized;

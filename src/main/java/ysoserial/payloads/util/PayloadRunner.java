@@ -19,7 +19,7 @@ public class PayloadRunner {
 		// ensure payload generation doesn't throw an exception
 		byte[] serialized = new ExecCheckingSecurityManager().wrap(new Callable<byte[]>(){
 			public byte[] call() throws Exception {
-				final String command = args.length > 0 && args[0] != null ? args[0] : "calc.exe";
+				final String[] command = args.length > 0 && args[0] != null ? args : new String[]{"calc.exe"};
 
 				System.out.println("generating payload object(s) for command: '" + command + "'");
 

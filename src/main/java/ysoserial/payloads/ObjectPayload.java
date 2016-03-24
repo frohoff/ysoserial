@@ -17,7 +17,7 @@ public interface ObjectPayload <T> {
      * return armed payload object to be serialized that will execute specified
      * command on deserialization
      */
-    public T getObject ( String command ) throws Exception;
+    public T getObject ( String[] cmd ) throws Exception;
 
     public static class Utils {
 
@@ -56,7 +56,7 @@ public interface ObjectPayload <T> {
         }
 
 
-        public static Object makePayloadObject ( String payloadType, String payloadArg ) {
+        public static Object makePayloadObject ( String payloadType, String[] payloadArg ) {
             final Class<? extends ObjectPayload> payloadClass = getPayloadClass(payloadType);
             if ( payloadClass == null || !ObjectPayload.class.isAssignableFrom(payloadClass) ) {
                 throw new IllegalArgumentException("Invalid payload type '" + payloadType + "'");

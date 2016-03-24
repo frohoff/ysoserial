@@ -10,6 +10,7 @@ import java.util.List;
 import ysoserial.payloads.ObjectPayload;
 import ysoserial.payloads.ObjectPayload.Utils;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.util.Gadgets;
 
 @SuppressWarnings("rawtypes")
 public class GeneratePayload {
@@ -23,7 +24,7 @@ public class GeneratePayload {
 			System.exit(USAGE_CODE);
 		}
 		final String payloadType = args[0];
-		final String command = args[1];
+		String[] command = Gadgets.removeFirst(1, args);
 
 		final Class<? extends ObjectPayload> payloadClass = Utils.getPayloadClass(payloadType);
 		if (payloadClass == null) {

