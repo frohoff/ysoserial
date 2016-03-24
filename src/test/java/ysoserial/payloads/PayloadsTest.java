@@ -92,9 +92,8 @@ public class PayloadsTest {
     }
 
 
-    public static void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader, String[] cmd )
+    public static void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader, String[] command )
             throws Exception {
-       
         String[] deps = buildDeps(payloadClass);
 
         PayloadTest t = payloadClass.getAnnotation(PayloadTest.class);
@@ -108,13 +107,15 @@ public class PayloadsTest {
                 Assume.assumeTrue("Precondition", checkPrecondition(payloadClass, t.precondition()));
             }
         }
-        String[] payloadCommand = cmd;
+
+        String[] payloadCommand = command;
         Class<?> customDeserializer = null;
         Object wrapper = null;
         if ( t != null && !t.harness().isEmpty() ) {
             Class<?> wrapperClass = Class.forName(t.harness());
             try {
-                wrapper = wrapperClass.getConstructor(String[].class).newInstance(payloadCommand);
+
+                wrapper = wrapperClass.getConstructor(String[].class).newInstance(command);
             } catch ( NoSuchMethodException e ) {
                 wrapper = wrapperClass.newInstance();
             }
@@ -128,7 +129,8 @@ public class PayloadsTest {
             }
         }
 
-        final byte[] serialized = makeSerializeCallable(payloadClass, cmd).call();
+
+        final byte[] serialized = makeSerializeCallable(payloadClass, payloadCommand).call();
         
         Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized, customDeserializer);
         if ( wrapper instanceof WrappedTest ) {
