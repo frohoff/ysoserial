@@ -65,7 +65,7 @@ public class FileUploadTest implements CustomTest {
     }
 
     public String getPayloadArgs () {
-        return "copyAndDelete:" + this.source.getAbsolutePath() + ":" + this.repo.getAbsolutePath();
+        return "copyAndDelete," + this.source.getAbsolutePath() + "," + this.repo.getAbsolutePath();
     }
 
 }
