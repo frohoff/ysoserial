@@ -29,6 +29,8 @@ public class Utils {
 	
 	public static void wire( Object payload, String[] arguments ) throws Exception {
 		
+		System.err.println( "Argument length : " + arguments.length );
+		
 		Map<String, String> params = new HashMap<String, String>();
 		if ( arguments.length == 1 ) {
 			params.put( "command", arguments[0] );
@@ -253,7 +255,7 @@ public class Utils {
 
 	// get payload classes by classpath scanning
     public static Set<Class<? extends ObjectPayload>> getPayloadClasses () {
-        final Reflections reflections = new Reflections(ObjectPayload.class.getPackage().getName());
+        final Reflections reflections = new Reflections(CommonsCollections1.class.getPackage().getName());
         final Set<Class<? extends ObjectPayload>> payloadTypes = reflections.getSubTypesOf(ObjectPayload.class);
         for ( Iterator<Class<? extends ObjectPayload>> iterator = payloadTypes.iterator(); iterator.hasNext(); ) {
             Class<? extends ObjectPayload> pc = iterator.next();

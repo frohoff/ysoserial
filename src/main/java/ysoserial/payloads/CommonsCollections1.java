@@ -43,10 +43,17 @@ import ysoserial.payloads.util.Reflections;
 @Dependencies({"commons-collections:commons-collections:3.1"})
 public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
 	
-	@Bind private String command;
-	@Bind( defaultValue = "false" ) private boolean useShell;
-	@Bind( defaultValue = "/bin/bash" ) private String shell;
-	@Bind( defaultValue = "-c" ) private String shellParam;
+	@Bind( helpText = "The command to execute" )
+	private String command;
+
+	@Bind( defaultValue = "false", helpText = "if true, the command will be executed in a shell (e.g. bash -c [command])" ) 
+	private boolean useShell;
+	
+	@Bind( defaultValue = "/bin/bash", helpText = "shell to use (default /bin/bash)" ) 
+	private String shell;
+	
+	@Bind( defaultValue = "-c", helpText = "shell 'execute' parameter (default -c)" ) 
+	private String shellParam;
 
 	
 	/**
