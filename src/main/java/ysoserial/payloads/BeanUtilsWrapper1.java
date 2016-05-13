@@ -19,7 +19,8 @@ import java.util.PriorityQueue;
 @Dependencies({ "commons-beanutils:commons-beanutils:1.0"} )
 public class BeanUtilsWrapper1 implements ObjectPayload<Object> {
 	
-	@Bind private ObjectPayload<?> inner;
+	@Bind
+	private ObjectPayload<?> inner;
 
 	public Object getObject(String command) throws Exception {
 		return getObject();

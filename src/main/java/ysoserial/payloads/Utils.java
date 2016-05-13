@@ -1,10 +1,13 @@
 package ysoserial.payloads;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,13 +19,15 @@ import org.reflections.Reflections;
 
 import ysoserial.GeneratePayload;
 import ysoserial.annotation.Bind;
+import ysoserial.annotation.PayloadTypes;
+import ysoserial.annotation.PayloadTypes.Type;
 import ysoserial.interfaces.ObjectPayload;
 import ysoserial.interfaces.ReleaseableObjectPayload;
 
 @SuppressWarnings ( "rawtypes" )
 public class Utils {
 	
-	public static void wire( ObjectPayload payload, String[] arguments ) throws Exception {
+	public static void wire( Object payload, String[] arguments ) throws Exception {
 		
 		Map<String, String> params = new HashMap<String, String>();
 		if ( arguments.length == 1 ) {
@@ -50,7 +55,7 @@ public class Utils {
 		resolve(payload, params);
 	}
 
-	private static void resolve(ObjectPayload payload, Map<String, String> params) throws Exception {
+	private static void resolve(Object payload, Map<String, String> params) throws Exception {
 		Map<String, Field> bindableFields = getBindableFields( payload );
 		
 		// Copy to avoid concurrent modification exception
@@ -86,6 +91,31 @@ public class Utils {
 				Field thisField = bindableFields.remove( field );
 				String thisValue = params.get(thisKey);
 				
+				String[] allowed = thisField.getAnnotation( Bind.class ).allowed();
+				if ( allowed.length > 0 ) {
+					boolean found = false;
+					for( int a = 0; a < allowed.length; a++ ) {
+						if ( thisValue.equals( allowed ) ) {
+							found = true;
+							break;
+						}
+					}
+					
+					if ( !found ) {
+						// TODO: Print an actual list of the valid values
+						throw new IllegalArgumentException( "Value '" + thisValue + "' is not one of the permitted values for '" + thisField.getName() + "'" );
+					}
+				}
+				
+				String[] forbidden = thisField.getAnnotation( Bind.class ).forbidden();
+				if ( forbidden.length > 0 ) {
+					for( int f = 0; f < forbidden.length; f++ ) {
+						if ( thisValue.equals( forbidden ) ) {
+							throw new IllegalArgumentException( "Value '" + thisValue + "' is forbidden for field '" + thisField.getName() + "'" );
+						}
+					}
+				}
+				
 				Class<?> type = thisField.getType();				
 				if ( type.equals( String.class ) ) {
 					thisField.set( payload, thisValue );
@@ -97,6 +127,10 @@ public class Utils {
 					thisField.setLong( payload, Integer.parseInt( thisValue ) );
 				} else if ( type.equals( Boolean.TYPE ) ) {
 					thisField.setBoolean( payload, isFlagSet( thisValue ) );
+				} else if ( type.equals( File.class ) ) { 
+					thisField.set( payload, new File( thisValue ) );
+				} else if ( type.equals( FileInputStream.class ) ) {
+					thisField.set( payload, new FileInputStream( new File( thisValue ) ) );
 				} else if ( type.equals( ObjectPayload.class ) || ObjectPayload.class.isAssignableFrom( type ) ) {
 					int len = (thisKey + ".").length();
 					// Sub-payload!
@@ -112,8 +146,11 @@ public class Utils {
 					for( String rm : toRemove ) {
 						params.remove( rm );
 					}
+					Class<? extends ObjectPayload> payloadClass = getPayloadClass( thisValue );
 					
-					ObjectPayload<?> newPayload = getPayloadClass( thisValue ).newInstance();
+					checkBindableTypes(thisField, thisValue, payloadClass);
+					
+					ObjectPayload<?> newPayload = payloadClass.newInstance();
 					resolve( newPayload, subArgs );
 					
 					thisField.set( payload, newPayload );
@@ -148,6 +185,34 @@ public class Utils {
 			}
 		}
 	}
+
+	private static void checkBindableTypes(Field thisField, String thisValue,
+			Class<? extends ObjectPayload> payloadClass) {
+		Type[] types = new Type[] { Type.Remote_Code_Execution };
+		// Filter types if necessary
+		if ( payloadClass.getAnnotation( PayloadTypes.class ) != null ) { 
+			types = payloadClass.getAnnotation( PayloadTypes.class ).value();
+		}
+
+		List<Type> allowedTypes = Arrays.asList( thisField.getAnnotation(Bind.class).allowedTypes() );
+		List<Type> forbiddenTypes = Arrays.asList( thisField.getAnnotation(Bind.class).forbiddenTypes() );
+		
+		boolean isAllowed = ( allowedTypes.size() == 0);
+		boolean isDenied = (forbiddenTypes.size() > 0);
+		for( int t = 0; t < types.length; t++ ) {
+			if ( allowedTypes.size() > 0 && allowedTypes.contains( types[t] ) ) {
+				isAllowed = true;
+			}
+			
+			if ( forbiddenTypes.size() > 0 && forbiddenTypes.contains( types[t] ) ) {
+				isDenied = true;
+			}
+		}
+		
+		if ( !isAllowed || isDenied ) {
+			throw new IllegalArgumentException( "Payload type '" + thisValue + "' is not allowed here" );
+		}
+	}
 	
     private static boolean isFlagSet(String thisValue) {
     	if ( thisValue == null || thisValue.isEmpty() ) {
@@ -168,7 +233,7 @@ public class Utils {
 		return false;
 	}
 
-	private static Map<String, Field> getBindableFields(ObjectPayload payload) {
+	private static Map<String, Field> getBindableFields(Object payload) {
     	Map<String, Field> fields = new HashMap<String, Field>();
     	
     	Class<?> payloadCls = payload.getClass();
@@ -222,15 +287,19 @@ public class Utils {
 
 
     public static Object makePayloadObject ( String payloadType, String payloadArg ) {
+    	return makePayloadObject( payloadType, new String[] { "command", payloadArg } );
+    }
+    
+    public static Object makePayloadObject( String payloadType, String[] payloadArgs ) { 
         final Class<? extends ObjectPayload> payloadClass = getPayloadClass(payloadType);
         if ( payloadClass == null || !ObjectPayload.class.isAssignableFrom(payloadClass) ) {
             throw new IllegalArgumentException("Invalid payload type '" + payloadType + "'");
-
         }
 
         final Object payloadObject;
         try {
             final ObjectPayload payload = payloadClass.newInstance();
+            wire( payload, payloadArgs );
             payloadObject = payload.getObject();
         }
         catch ( Exception e ) {
@@ -264,4 +333,18 @@ public class Utils {
         }
 
     }
+
+	public static String[] trimArgs(String[] args, int i) {
+		if ( args.length - i < 0 ) { 
+			throw new IllegalArgumentException( "Can't trim more than the number of elements off an array" );
+		}
+		String[] newArgs = new String[ args.length - i ];
+		
+		// Zero is technically a valid number of arguments, so we'll allow it
+		if ( newArgs.length > 0 ) { 
+			System.arraycopy( args, i, newArgs, 0, newArgs.length );
+		}
+		
+		return newArgs;
+	}
 }
