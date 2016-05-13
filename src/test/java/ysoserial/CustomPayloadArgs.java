@@ -8,6 +8,6 @@ package ysoserial;
 public interface CustomPayloadArgs {
 
     
-    String getPayloadArgs ();
+    String[] getPayloadArgs ();
     
 }

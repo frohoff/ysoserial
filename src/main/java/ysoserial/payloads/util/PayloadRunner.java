@@ -6,8 +6,8 @@ import ysoserial.Deserializer;
 import ysoserial.Serializer;
 import static ysoserial.Deserializer.deserialize;
 import static ysoserial.Serializer.serialize;
-import ysoserial.payloads.ObjectPayload;
-import ysoserial.payloads.ObjectPayload.Utils;
+import ysoserial.interfaces.ObjectPayload;
+import ysoserial.payloads.Utils;
 import ysoserial.secmgr.ExecCheckingSecurityManager;
 
 /*
@@ -19,12 +19,11 @@ public class PayloadRunner {
 		// ensure payload generation doesn't throw an exception
 		byte[] serialized = new ExecCheckingSecurityManager().wrap(new Callable<byte[]>(){
 			public byte[] call() throws Exception {
-				final String command = args.length > 0 && args[0] != null ? args[0] : "calc.exe";
-
-				System.out.println("generating payload object(s) for command: '" + command + "'");
-
 				ObjectPayload<?> payload = clazz.newInstance();
-                final Object objBefore = payload.getObject(command);
+				
+				Utils.wire( payload, args );
+				
+                final Object objBefore = payload.getObject();
 
 				System.out.println("serializing payload");
 				byte[] ser = Serializer.serialize(objBefore);

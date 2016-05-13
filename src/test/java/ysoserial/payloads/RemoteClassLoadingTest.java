@@ -32,8 +32,8 @@ public class RemoteClassLoadingTest implements WrappedTest {
     }
 
 
-    public String getPayloadArgs () {
-        return String.format("http://localhost:%d/", this.port) + ":" + this.className;
+    public String[] getPayloadArgs () {
+        return new String[] { "-url", String.format("http://localhost:%d/", this.port), "-classname", this.className };
     }
 
     public int getHTTPPort () {

