@@ -41,6 +41,7 @@ import ysoserial.payloads.util.Reflections;
 	
 	Requires:
 		commons-collections
+		no security manager
  */
 @PayloadTest(skip="need more robust way to detect Runtime.exec() without SecurityManager()")
 @SuppressWarnings({"rawtypes"})
