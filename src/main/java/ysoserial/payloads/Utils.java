@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,9 +26,7 @@ import ysoserial.interfaces.ReleaseableObjectPayload;
 public class Utils {
 	
 	public static void wire( Object payload, String[] arguments ) throws Exception {
-		
-		System.err.println( "Argument length : " + arguments.length );
-		
+				
 		Map<String, String> params = new HashMap<String, String>();
 		if ( arguments.length == 1 ) {
 			params.put( "command", arguments[0] );

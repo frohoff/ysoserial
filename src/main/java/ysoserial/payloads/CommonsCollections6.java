@@ -105,6 +105,6 @@ public class CommonsCollections6 extends PayloadRunner implements ObjectPayload<
 	}
 
 	public static void main(final String[] args) throws Exception {
-		PayloadRunner.run(CommonsCollections6.class, new String[] { "print 'Hello';" });
+		PayloadRunner.run(CommonsCollections6.class, args );
 	}
 }
