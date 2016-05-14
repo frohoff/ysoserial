@@ -11,7 +11,9 @@ import javax.xml.transform.Templates;
 import org.springframework.beans.factory.ObjectFactory;
 
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
+import ysoserial.payloads.util.JavaVersion;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
@@ -46,6 +48,7 @@ import ysoserial.payloads.util.Reflections;
 
 @SuppressWarnings({"rawtypes"})
 @Dependencies({"org.springframework:spring-core:4.1.4.RELEASE","org.springframework:spring-beans:4.1.4.RELEASE"})
+@PayloadTest ( precondition = "isApplicableJavaVersion")
 public class Spring1 extends PayloadRunner implements ObjectPayload<Object> {
 	
 	public Object getObject(final String command) throws Exception {
@@ -73,4 +76,7 @@ public class Spring1 extends PayloadRunner implements ObjectPayload<Object> {
 		PayloadRunner.run(Spring1.class, args);
 	}
 
+	public static boolean isApplicableJavaVersion() {
+	    return JavaVersion.isAnnInvHUniversalMethodImpl();
+    }
 }

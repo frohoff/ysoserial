@@ -49,6 +49,15 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-surefire-plugin</artifactId>
+		        <configuration>
+			        <systemPropertyVariables>
+			        	<java.rmi.server.useCodebaseOnly>false</java.rmi.server.useCodebaseOnly>
+			        </systemPropertyVariables>
+		        </configuration>
+		    </plugin>
 		</plugins>
 	</build>
 	
