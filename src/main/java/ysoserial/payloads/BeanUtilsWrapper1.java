@@ -5,6 +5,7 @@ import org.apache.commons.beanutils.BeanComparator;
 import ysoserial.annotation.Bind;
 import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Reflections;
 import ysoserial.payloads.util.Serializables;
 
@@ -16,7 +17,8 @@ import java.util.PriorityQueue;
 
 // From Alvaro's stuff here: 
 // https://github.com/pwntester/SerialKillerBypassGadgetCollection/blob/master/src/main/java/serialkiller/bypass/Beanutils1.java
-@Dependencies({ "commons-beanutils:commons-beanutils:1.0"} )
+@Dependencies({ "commons-beanutils:commons-beanutils:1.9.2", "commons-collections:commons-collections:3.2.1", "commons-logging:commons-logging:1.1.1" } )
+@PayloadTest( params = { "-inner", "CommonsCollections1", "-inner.command", "hostname" } )
 public class BeanUtilsWrapper1 implements ObjectPayload<Object> {
 	
 	@Bind
