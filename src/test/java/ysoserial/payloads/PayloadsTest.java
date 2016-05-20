@@ -30,6 +30,7 @@ import ysoserial.Deserializer;
 import ysoserial.Serializer;
 import ysoserial.Throwables;
 import ysoserial.WrappedTest;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.TestHarnessTest.ExecMockPayload;
 import ysoserial.payloads.TestHarnessTest.NoopMockPayload;
 import ysoserial.payloads.annotation.Dependencies;
@@ -57,7 +58,7 @@ public class PayloadsTest {
 
     @Parameters ( name = "payloadClass: {0}" )
     public static Class<? extends ObjectPayload<?>>[] payloads () {
-        Set<Class<? extends ObjectPayload>> payloadClasses = ObjectPayload.Utils.getPayloadClasses();
+        Set<Class<? extends ObjectPayload>> payloadClasses = Utils.getPayloadClasses();
         payloadClasses.removeAll(Arrays.asList(ExecMockPayload.class, NoopMockPayload.class));
         return payloadClasses.toArray(new Class[0]);
     }
@@ -93,7 +94,12 @@ public class PayloadsTest {
             }
         }
 
-        String payloadCommand = command;
+        String[] payloadCommand = new String[] { command };
+        
+        if ( t != null && t.params().length > 0 ) {
+        	payloadCommand = t.params();
+        }
+        
         Class<?> customDeserializer = null;
         Object wrapper = null;
         if ( t != null && !t.harness().isEmpty() ) {
@@ -144,14 +150,16 @@ public class PayloadsTest {
 
 
 
-    private static Callable<byte[]> makeSerializeCallable ( final Class<? extends ObjectPayload<?>> payloadClass, final String command ) {
+    private static Callable<byte[]> makeSerializeCallable ( final Class<? extends ObjectPayload<?>> payloadClass, final String[] params ) {
         return new Callable<byte[]>() {
 
             public byte[] call () throws Exception {
                 ObjectPayload<?> payload = payloadClass.newInstance();
-                final Object f = payload.getObject(command);
+                Utils.wire(payload, params);
+                
+                final Object f = payload.getObject();
                 byte[] serialized =  Serializer.serialize(f);
-                ObjectPayload.Utils.releasePayload(payload, f);
+                Utils.releasePayload(payload, f);
                 return serialized;
             }
         };

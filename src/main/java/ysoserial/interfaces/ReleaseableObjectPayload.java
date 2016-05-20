@@ -1,4 +1,5 @@
-package ysoserial.payloads;
+package ysoserial.interfaces;
+
 
 
 /**

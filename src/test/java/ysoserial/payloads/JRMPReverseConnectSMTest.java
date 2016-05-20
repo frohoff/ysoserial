@@ -54,8 +54,8 @@ public class JRMPReverseConnectSMTest extends RemoteClassLoadingTest implements 
     }
 
     @Override
-    public String getPayloadArgs () {
-        return "localhost:" + jrmpPort;
+    public String[] getPayloadArgs () {
+        return new String[] { "-host", "localhost", "-port", String.valueOf( jrmpPort) };
     }
 
    
