@@ -189,7 +189,7 @@ public class Utils {
     		return true;
     	} else if ( thisValue.equalsIgnoreCase( "t" ) ) {
     		return true;
-    	} else if ( thisValue.equals( "1" ) ) {
+    	} else if ( "1".equals(thisValue) ) {
     		return true;
     	}
 		return false;
