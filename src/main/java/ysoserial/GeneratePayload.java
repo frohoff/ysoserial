@@ -17,7 +17,9 @@ import ysoserial.Serializer.Format;
 import ysoserial.annotation.Bind;
 import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.Utils;
-import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.util.Arguments;
+import ysoserial.util.DependencyUtil;
+import ysoserial.util.Messages;
 
 @SuppressWarnings("rawtypes")
 public class GeneratePayload {
@@ -55,6 +57,11 @@ public class GeneratePayload {
 		}
 
 		final String payloadType = args[genArgs++];
+		
+		String[] newArgs = new String[ args.length - genArgs ];
+		System.arraycopy( args, genArgs, newArgs, 0, newArgs.length );
+		
+		Arguments.push( newArgs );
 
 		final Class<? extends ObjectPayload> payloadClass = Utils.getPayloadClass(payloadType);
 		if (payloadClass == null) {
@@ -64,17 +71,14 @@ public class GeneratePayload {
 			return; // make null analysis happy
 		}
 		
-		
-		String[] newArgs = new String[ args.length - genArgs ];
-		System.arraycopy( args, genArgs, newArgs, 0, newArgs.length );
-
 		try {
 			try {
 				final ObjectPayload payload = payloadClass.newInstance();
 				Utils.wire( payload, newArgs );
-				
+				Messages.println( "Retrieving payload object" );
 				final Object object = payload.getObject();
 				PrintStream out = System.out;
+				Messages.println( "Serializing payload object in format " + format.toString() );
 				Serializer.serialize(object, out, format);
 				Utils.releasePayload(payload, object);
 			} catch( IllegalArgumentException e ) {
@@ -123,7 +127,7 @@ public class GeneratePayload {
 			new ArrayList<Class<? extends ObjectPayload>>(Utils.getPayloadClasses());
 		Collections.sort(payloadClasses, new ToStringComparator()); // alphabetize
 		for (Class<? extends ObjectPayload> payloadClass : payloadClasses) {
-			System.err.println("\t\t" + payloadClass.getSimpleName() + " " + Arrays.asList(Dependencies.Utils.getDependencies(payloadClass)));
+			System.err.println("\t\t" + payloadClass.getSimpleName() + " " + Arrays.asList(DependencyUtil.getDependencies(payloadClass)));
 		}
 	}
 

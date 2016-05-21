@@ -6,7 +6,10 @@ import java.net.URL;
 
 import ysoserial.annotation.Bind;
 import ysoserial.interfaces.ObjectPayload;
+import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
+import ysoserial.payloads.annotation.DynamicDependencies;
+import ysoserial.payloads.annotation.DynamicDependencies.Condition;
 import ysoserial.payloads.util.PayloadRunner;
 
 
@@ -31,15 +34,39 @@ import ysoserial.payloads.util.PayloadRunner;
  * 
  * @author mbechler
  */
-@PayloadTest ( harness = "ysoserial.payloads.MyfacesTest" )
-public class Myfaces2 implements ObjectPayload<Object>, DynamicDependencies {
+@DynamicDependencies( { 
+	@Condition(
+			condition = "System.getProperty('el') == null || 'apache'.equals(System.getProperty('el'))",
+			deps = @Dependencies({
+            	"commons-collections:commons-collections:3.2",
+            	"commons-beanutils:commons-beanutils:1.8.3",
+                "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9", 
+                "org.mortbay.jasper:apache-el:8.0.27",
+                "javax.servlet:javax.servlet-api:3.1.0",
+
+                // deps for mocking the FacesContext
+                "org.mockito:mockito-core:1.10.19", "org.hamcrest:hamcrest-core:1.1", "org.objenesis:objenesis:2.1"
+            })
+	),
+	@Condition(
+			condition = "'juel'.equals(System.getProperty('el'))",
+			deps = @Dependencies( {
+            	"commons-collections:commons-collections:3.2",
+            	"commons-beanutils:commons-beanutils:1.8.3",
+                "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9", 
+                "de.odysseus.juel:juel-impl:2.2.7", "de.odysseus.juel:juel-api:2.2.7",
+                "javax.servlet:javax.servlet-api:3.1.0",
+
+                // deps for mocking the FacesContext
+                "org.mockito:mockito-core:1.10.19", "org.hamcrest:hamcrest-core:1.1", "org.objenesis:objenesis:2.1"
+            })
+	)
+})
+@PayloadTest ( skip="broken in dynamic classloader", harness = "ysoserial.payloads.MyfacesTest" )
+public class Myfaces2 implements ObjectPayload<Object> {
 	
 	@Bind private URL url;
 	@Bind private String className;
-    
-    public static String[] getDependencies () {
-        return Myfaces1.getDependencies();
-    }
     
 
     /**

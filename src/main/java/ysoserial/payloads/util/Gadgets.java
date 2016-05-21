@@ -78,11 +78,19 @@ public class Gadgets {
         if ( ifaces.length > 0 ) {
             System.arraycopy(ifaces, 0, allIfaces, 1, ifaces.length);
         }
-        return iface.cast(Proxy.newProxyInstance(Gadgets.class.getClassLoader(), allIfaces, ih));
+        return iface.cast(Proxy.newProxyInstance(getClassLoader(), allIfaces, ih));
     }
 
 
-    public static Map<String, Object> createMap ( final String key, final Object val ) {
+    private static ClassLoader getClassLoader() {
+    	if ( Thread.currentThread().getContextClassLoader() != null ) {
+    		return Thread.currentThread().getContextClassLoader();
+    	}
+		return Gadgets.class.getClassLoader();
+	}
+
+
+	public static Map<String, Object> createMap ( final String key, final Object val ) {
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put(key, val);
         return map;

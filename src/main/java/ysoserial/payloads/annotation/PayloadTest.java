@@ -17,5 +17,4 @@ public @interface PayloadTest {
     String harness() default "";
     
     String[] params() default {};
-
 }

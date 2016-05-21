@@ -2,16 +2,23 @@ package ysoserial.payloads;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.JarURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.security.CodeSource;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.reflections.Reflections;
 
@@ -21,34 +28,15 @@ import ysoserial.annotation.PayloadTypes;
 import ysoserial.annotation.PayloadTypes.Type;
 import ysoserial.interfaces.ObjectPayload;
 import ysoserial.interfaces.ReleaseableObjectPayload;
+import ysoserial.util.Arguments;
+import ysoserial.util.IsolatingGroovyClassLoader;
+import ysoserial.util.Messages;
 
 @SuppressWarnings ( "rawtypes" )
 public class Utils {
 	
-	public static void wire( Object payload, String[] arguments ) throws Exception {
-				
-		Map<String, String> params = new HashMap<String, String>();
-		if ( arguments.length == 1 ) {
-			params.put( "command", arguments[0] );
-		} else {
-			for( int i = 0; i < arguments.length; i += 2 ) {
-				String argName = arguments[i];
-				String argVal = arguments[i + 1];
-				
-				if ( argName.startsWith( "-" ) ) {
-					argName = argName.substring( 1 );
-				}
-				
-				if ( argVal.startsWith( "-" ) ) {
-					// This is a boolean "presence" argument
-					i--;
-					params.put( argName, "true" );
-				} else {
-					// This is a regular argument
-					params.put( argName, argVal );
-				}
-			}
-		}
+	public static void wire( Object payload, String[] arguments ) throws Exception {		
+		Map<String, String> params = Arguments.parseArguments(arguments);
 		
 		resolve(payload, params);
 	}
@@ -140,20 +128,24 @@ public class Utils {
 							toRemove.add( param );
 						}
 					}
-					
-					for( String rm : toRemove ) {
-						params.remove( rm );
+					try { 
+						Arguments.push( subArgs );
+						
+						for( String rm : toRemove ) {
+							params.remove( rm );
+						}
+						Class<? extends ObjectPayload> payloadClass = getPayloadClass( thisValue );
+						
+						checkBindableTypes(thisField, thisValue, payloadClass);
+						
+						ObjectPayload<?> newPayload = payloadClass.newInstance();
+						resolve( newPayload, subArgs );
+						
+						thisField.set( payload, newPayload );
+					} finally {
+						Arguments.pop();
 					}
-					Class<? extends ObjectPayload> payloadClass = getPayloadClass( thisValue );
-					
-					checkBindableTypes(thisField, thisValue, payloadClass);
-					
-					ObjectPayload<?> newPayload = payloadClass.newInstance();
-					resolve( newPayload, subArgs );
-					
-					thisField.set( payload, newPayload );
-				}
-				
+				}				
 			} finally {
 				params.remove( thisKey );
 			}
@@ -248,38 +240,146 @@ public class Utils {
     	
 		return fields;
 	}
+	
+	public static Map<String, InputStream> getPayloadStreams(boolean includeInnerClasses) throws Exception { 
+		Map<String, InputStream> results = new HashMap<String, InputStream>();
+		
+		CodeSource cs = Utils.class.getProtectionDomain().getCodeSource();
+		URL url = cs.getLocation();
+		URLConnection connection = url.openConnection();
+				
+		JarFile jar = null;
+		if ( connection instanceof JarURLConnection ) {
+			jar = ((JarURLConnection)connection).getJarFile();
+		} else if ( url.getProtocol().equals( "file" ) ) {
+			File theFile = new File( url.getPath() );
+			if ( theFile.isDirectory() ) { 
+				File payloadsDir = new File( theFile, "/ysoserial/payloads" );
+				if ( payloadsDir.exists() ) { 
+					for( String filename : payloadsDir.list() ) {
+						if ( filename.endsWith( ".class" ) ) { 
+							String resourceName = "ysoserial/payloads/" + filename;
+				            String name = resourceName.substring(0, resourceName.length() - 6).replace('/', '.');
+
+				            if (name.startsWith("ysoserial.payloads.") && name.indexOf( ".", "ysoserial.payloads.".length() ) < 0 && (includeInnerClasses || !name.contains( "$" )) && !name.endsWith( ".Utils") ) {
+				            	results.put( name, Utils.class.getResourceAsStream( "/" + resourceName ) );
+				            }
+						}
+					}
+				}
+			} else {
+				jar = new JarFile( url.getPath() );
+			}
+		}
+		
+		if ( jar != null ) { 
+		    Enumeration<JarEntry> entries = jar.entries();
+		    String name;
+
+		    for (JarEntry jarEntry = null; entries.hasMoreElements() && ((jarEntry = entries.nextElement()) != null);) {
+		        name = jarEntry.getName();
+
+		        if (name.endsWith(".class")) {
+		            name = name.substring(0, name.length() - 6).replace('/', '.');
+
+		            if (name.startsWith("ysoserial.payloads.") && name.indexOf( ".", "ysoserial.payloads.".length() ) < 0 && (includeInnerClasses || !name.contains( "$" )) && !name.endsWith( ".Utils") ) {
+		            	results.put( name, Utils.class.getResourceAsStream( "/" + jarEntry.getName() ) );
+		            }
+		        }
+		    }
+		}
+		
+		return results;
+	}
 
 	// get payload classes by classpath scanning
     public static Set<Class<? extends ObjectPayload>> getPayloadClasses () {
-        final Reflections reflections = new Reflections(CommonsCollections1.class.getPackage().getName());
-        final Set<Class<? extends ObjectPayload>> payloadTypes = reflections.getSubTypesOf(ObjectPayload.class);
-        for ( Iterator<Class<? extends ObjectPayload>> iterator = payloadTypes.iterator(); iterator.hasNext(); ) {
-            Class<? extends ObjectPayload> pc = iterator.next();
-            if ( pc.isInterface() || Modifier.isAbstract(pc.getModifiers()) ) {
-                iterator.remove();
-            }
-        }
-        return payloadTypes;
+    	try { 
+    		Map<String, InputStream> is = getPayloadStreams(false);
+    		
+    		Set<Class<? extends ObjectPayload>> classes = new HashSet<Class<? extends ObjectPayload>>();
+    		
+    		for( String name : is.keySet() ) { 
+    			Class<? extends ObjectPayload> payload = getPayloadClass( name );
+    			if ( payload != null ) { 
+    				classes.add( payload );
+    			} else {
+    				throw new IllegalStateException( "Payload class for " + name + " is null!" );
+    			}
+    		}
+    		
+    		return classes;
+    	} catch( Exception e ) { 
+    		e.printStackTrace();
+    		
+	        final Reflections reflections = new Reflections(CommonsCollections1.class.getPackage().getName());
+	        final Set<Class<? extends ObjectPayload>> payloadTypes = reflections.getSubTypesOf(ObjectPayload.class);
+	        for ( Iterator<Class<? extends ObjectPayload>> iterator = payloadTypes.iterator(); iterator.hasNext(); ) {
+	            Class<? extends ObjectPayload> pc = iterator.next();
+	            if ( pc.isInterface() || Modifier.isAbstract(pc.getModifiers()) ) {
+	                iterator.remove();
+	            }
+	        }
+	        return payloadTypes;
+    	}    	
     }
 
+    private static Map<String, Class<? extends ObjectPayload>> payloadCache; 
 
     @SuppressWarnings ( "unchecked" )
     public static Class<? extends ObjectPayload> getPayloadClass ( final String className ) {
+    	
+    	if ( payloadCache == null ) {
+    		payloadCache = new HashMap<String, Class<? extends ObjectPayload>>();
+    	}
+    	
         Class<? extends ObjectPayload> clazz = null;
-        try {
-            clazz = (Class<? extends ObjectPayload>) Class.forName(className);
+
+        if ( payloadCache.containsKey( className ) ) {
+        	return payloadCache.get( className );
         }
-        catch ( Exception e1 ) {}
-        if ( clazz == null ) {
-            try {
-                return clazz = (Class<? extends ObjectPayload>) Class
-                        .forName(GeneratePayload.class.getPackage().getName() + ".payloads." + className);
-            }
-            catch ( Exception e2 ) {}
+
+        try { 
+	        IsolatingGroovyClassLoader classLoader = new IsolatingGroovyClassLoader( Utils.class.getClassLoader() );
+	        Map<String, InputStream> streams = getPayloadStreams( true );
+	        
+	        for( String key : streams.keySet() ) { 
+        		classLoader.addClass( key, streams.get( key ) );
+	        	streams.get(key).close();
+	        }
+	                
+	        try {
+	            clazz = (Class<? extends ObjectPayload>) Class.forName(className, false, classLoader);
+	        }
+	        catch ( Exception e1 ) {
+	        	//e1.printStackTrace();
+	        }
+	        if ( clazz == null ) {
+	            try {
+	                clazz = (Class<? extends ObjectPayload>) Class
+	                        .forName(GeneratePayload.class.getPackage().getName() + ".payloads." + className, false, classLoader );
+	            }
+	            catch ( Exception e2 ) {
+	            	//e2.printStackTrace();
+	            }
+	        }
+	        if ( clazz != null && !ObjectPayload.class.isAssignableFrom(clazz) ) {
+	            clazz = null;
+	        }
+        } catch( Exception e3 ) {
+        	e3.printStackTrace();
         }
-        if ( clazz != null && !ObjectPayload.class.isAssignableFrom(clazz) ) {
-            clazz = null;
+        
+        if ( clazz != null ) {
+        	Messages.println( "Loaded payload class {0}", clazz.getName() );
+            
+            // Handle all the cases, so that we get the proper cached version
+        	payloadCache.put( className, clazz );
+        	payloadCache.put( className.replace( GeneratePayload.class.getPackage().getName() + ".payloads.",  "" ), clazz );
+        	payloadCache.put( GeneratePayload.class.getPackage().getName() + ".payloads." + className, clazz );
         }
+        
+        
         return clazz;
     }
 
@@ -319,7 +419,6 @@ public class Utils {
         final Class<? extends ObjectPayload> payloadClass = getPayloadClass(payloadType);
         if ( payloadClass == null || !ObjectPayload.class.isAssignableFrom(payloadClass) ) {
             throw new IllegalArgumentException("Invalid payload type '" + payloadType + "'");
-
         }
 
         try {
@@ -344,5 +443,25 @@ public class Utils {
 		}
 		
 		return newArgs;
+	}
+	
+	public static void main( String args[] ) throws Exception { 
+		// Test utilities
+		Class<?> payload = Utils.getPayloadClass( "CommonsCollections1" );
+		
+		System.out.println( payload.getName() + " " + payload.getClassLoader() );
+
+		Class<?> accTest = Class.forName( "org.apache.commons.collections.Transformer", false, payload.getClassLoader() );
+		
+		System.out.println( accTest.getName() + " " + accTest.getClassLoader() );
+		
+		Class<?> payload2 = Utils.getPayloadClass( "FileUpload1" );
+		
+		System.out.println( payload2.getName() + " " + payload2.getClassLoader() );
+		
+		Class<?> accTest2 = Class.forName( "org.springframework.beans.factory.ObjectFactory", false, payload2.getClassLoader() );
+
+		System.out.println( accTest2.getName() + " " + accTest2.getClassLoader() );
+		
 	}
 }

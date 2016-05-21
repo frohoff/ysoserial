@@ -27,9 +27,13 @@ public class Reflections {
 		final Field field = getField(obj.getClass(), fieldName);		
 		return field.get(obj);
 	}
-
+	
 	public static Constructor<?> getFirstCtor(final String name) throws Exception {
-		final Constructor<?> ctor = Class.forName(name).getDeclaredConstructors()[0];
+		return getFirstCtor(name, Reflections.class.getClassLoader());
+	}
+
+	public static Constructor<?> getFirstCtor(final String name, final ClassLoader loader) throws Exception {
+		final Constructor<?> ctor = Class.forName(name, false, loader).getDeclaredConstructors()[0];
 	    ctor.setAccessible(true);
 	    return ctor;
 	}

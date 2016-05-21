@@ -18,7 +18,7 @@ import java.util.PriorityQueue;
 // From Alvaro's stuff here: 
 // https://github.com/pwntester/SerialKillerBypassGadgetCollection/blob/master/src/main/java/serialkiller/bypass/Beanutils1.java
 @Dependencies({ "commons-beanutils:commons-beanutils:1.9.2", "commons-collections:commons-collections:3.2.1", "commons-logging:commons-logging:1.1.1" } )
-@PayloadTest( params = { "-inner", "CommonsCollections1", "-inner.command", "hostname" } )
+@PayloadTest( params = { "-inner", "CommonsCollections6", "-inner.command", "hostname" } )
 public class BeanUtilsWrapper1 implements ObjectPayload<Object> {
 	
 	@Bind

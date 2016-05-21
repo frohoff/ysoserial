@@ -9,6 +9,7 @@ import static ysoserial.Serializer.serialize;
 import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.Utils;
 import ysoserial.secmgr.ExecCheckingSecurityManager;
+import ysoserial.util.Messages;
 
 /*
  * utility class for running exploits locally from command line
@@ -25,14 +26,14 @@ public class PayloadRunner {
 				
                 final Object objBefore = payload.getObject();
 
-				System.out.println("serializing payload");
+                Messages.println( "serializing payload");
 				byte[] ser = Serializer.serialize(objBefore);
 				Utils.releasePayload(payload, objBefore);
                 return ser;
 		}});
 
 		try {
-			System.out.println("deserializing payload");
+			Messages.println( "deserializing payload");
 			final Object objAfter = Deserializer.deserialize(serialized);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -3,7 +3,10 @@ package ysoserial.payloads;
 
 import ysoserial.annotation.Bind;
 import ysoserial.interfaces.ObjectPayload;
+import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.DynamicDependencies;
 import ysoserial.payloads.annotation.PayloadTest;
+import ysoserial.payloads.annotation.DynamicDependencies.Condition;
 import ysoserial.payloads.util.PayloadRunner;
 
 import com.sun.rowset.JdbcRowSetImpl;
@@ -42,14 +45,27 @@ import com.sun.rowset.JdbcRowSetImpl;
 @SuppressWarnings ( {
     "restriction"
 } )
-@PayloadTest( harness = "ysoserial.payloads.JRMPReverseConnectTest")
-public class Hibernate2 implements ObjectPayload<Object>, DynamicDependencies {
+@DynamicDependencies( { 
+	@Condition(
+			condition = "System.getProperty('hibernate5') != null",
+			deps = @Dependencies( {
+	           		"org.javassist:javassist:3.18.1-GA",
+	                "org.hibernate:hibernate-core:5.0.7.Final", "aopalliance:aopalliance:1.0", "org.jboss.logging:jboss-logging:3.3.0.Final",
+	                "javax.transaction:javax.transaction-api:1.2"
+			})
+	),
+	@Condition(
+			deps = @Dependencies( {
+        	"org.javassist:javassist:3.18.1-GA",
+            "org.hibernate:hibernate-core:4.3.11.Final", "aopalliance:aopalliance:1.0", "org.jboss.logging:jboss-logging:3.3.0.Final",
+            "javax.transaction:javax.transaction-api:1.2", "dom4j:dom4j:1.6.1"
+        })
+	)
+})
+@PayloadTest( skip = "broken in dynamic classloader", harness = "ysoserial.payloads.JRMPReverseConnectTest")
+public class Hibernate2 implements ObjectPayload<Object> {
 	
 	@Bind private String host;
-
-    public static String[] getDependencies () {
-        return Hibernate1.getDependencies();
-    }
    
     /**
 	 * @deprecated Use {@link #getObject()} instead

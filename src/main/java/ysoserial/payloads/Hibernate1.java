@@ -15,6 +15,9 @@ import org.hibernate.type.Type;
 
 import ysoserial.annotation.Bind;
 import ysoserial.interfaces.ObjectPayload;
+import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.DynamicDependencies;
+import ysoserial.payloads.annotation.DynamicDependencies.Condition;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
@@ -37,25 +40,26 @@ import ysoserial.payloads.util.Reflections;
  * 
  * @author mbechler
  */
-public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
-	
-	@Bind private String command;
-
-    public static String[] getDependencies () {
-        if ( System.getProperty("hibernate5") != null ) {
-            return new String[] {
-                "org.hibernate:hibernate-core:5.0.7.Final", "aopalliance:aopalliance:1.0", "org.jboss.logging:jboss-logging:3.3.0.Final",
-                "javax.transaction:javax.transaction-api:1.2"
-            };
-        }
-
-        return new String[] {
+@DynamicDependencies( { 
+	@Condition(
+			condition = "(System.getProperty('hibernate5') != null) || arg['hibernate5']",
+			deps = @Dependencies( {
+	           		"org.javassist:javassist:3.18.1-GA",
+	                "org.hibernate:hibernate-core:5.0.7.Final", "aopalliance:aopalliance:1.0", "org.jboss.logging:jboss-logging:3.3.0.Final",
+	                "javax.transaction:javax.transaction-api:1.2"
+			})
+	),
+	@Condition(
+			deps = @Dependencies( {
+        	"org.javassist:javassist:3.18.1-GA",
             "org.hibernate:hibernate-core:4.3.11.Final", "aopalliance:aopalliance:1.0", "org.jboss.logging:jboss-logging:3.3.0.Final",
             "javax.transaction:javax.transaction-api:1.2", "dom4j:dom4j:1.6.1"
-        };
-
-    }
-
+        })
+	)
+})
+public class Hibernate1 implements ObjectPayload<Object> {
+	
+	@Bind private String command;
 
     public static Object makeGetter ( Class<?> tplClass, String method ) throws NoSuchMethodException, SecurityException, InstantiationException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {

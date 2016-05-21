@@ -7,6 +7,13 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Dependencies {
-	String[] value() default {};
+public @interface DynamicDependencies {
+	
+	public static @interface Condition { 
+		String condition() default "";
+		Dependencies deps();		
+	}
+	
+	Condition[] value() default {};
+
 }

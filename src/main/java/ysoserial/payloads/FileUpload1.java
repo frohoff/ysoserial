@@ -38,8 +38,8 @@ import ysoserial.payloads.util.Reflections;
  * @author mbechler
  */
 @Dependencies ( {
-    "commons-fileupload:commons-fileupload:1.3.1",
-    "commons-io:commons-io:2.4"
+    "commons-io:commons-io:2.4",
+    "commons-fileupload:commons-fileupload:1.3.1"
 } )
 @PayloadTest(harness="ysoserial.payloads.FileUploadTest")
 public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
