@@ -1,22 +1,23 @@
 package ysoserial.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import groovy.grape.Grape;
-import groovy.lang.GroovyClassLoader;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
-public class IsolatingGroovyClassLoader extends GroovyClassLoader {
+public class IsolatingClassLoader extends URLClassLoader {
 	
 	private Map<String, byte[]> classes;
 	private ClassLoader utilLoader;
 
-	public IsolatingGroovyClassLoader( ClassLoader utilLoader ) {
-		super(String.class.getClassLoader());
+	public IsolatingClassLoader( ClassLoader utilLoader ) {
+		super(new URL[0], String.class.getClassLoader());
 		this.classes = new HashMap<String, byte[]>();
 		this.utilLoader = utilLoader;
 	}
@@ -34,7 +35,7 @@ public class IsolatingGroovyClassLoader extends GroovyClassLoader {
 		
 		// Statically defined payload classes (for inclusion)
 		if ( classes.containsKey( name ) ) { 
-			super.defineClass( name, classes.get(name) );
+			super.defineClass( name, classes.get(name), 0, classes.get(name).length );
 		} else if ( name.startsWith( "javax." ) || name.startsWith( "java." ) ) {
 			cls = utilLoader.loadClass( name );
 		}
@@ -57,32 +58,14 @@ public class IsolatingGroovyClassLoader extends GroovyClassLoader {
 		String[] deps = DependencyUtil.getDependencies(cls);
 		
 		if ( deps.length > 0 ) {
-			List<Map<String, String>> dependencies = new ArrayList<Map<String, String>>();
-			Map<String, Object> args = new HashMap<String, Object>();
-			args.put( "classLoader", this );
-			for( String dep : deps ) { 
-				Messages.println( "Including dependency {0}", dep );
-				String[] depPieces = dep.split( ":" );
-				if ( depPieces.length > 1 ) { 
-					Map<String, String> dependency = new HashMap<String, String>();
-
-					dependency.put( "group", depPieces[0] );
-					dependency.put( "module", depPieces[1] );
-					
-					if ( depPieces.length == 3 ) { 
-						dependency.put( "version", depPieces[2] );
-					} else if ( depPieces.length == 5 ) { 
-						dependency.put( "version", depPieces[4] );
-						dependency.put( "classifier", depPieces[3] );
-						dependency.put( "type", depPieces[2] );
-					}
-					dependencies.add( dependency );
-				}
-			}
-
-
-			Grape.setEnableAutoDownload(true);
-			Grape.grab( args, dependencies.toArray( new Map[0] ) );
+	        File[] jars = deps.length > 0 ? Maven.resolver().resolve(deps).withoutTransitivity().asFile() : new File[0];
+	        for ( int i = 0; i < jars.length; i++ ) {
+	        	try { 
+	        		super.addURL( jars[ i ].toURI().toURL() );
+	        	} catch( MalformedURLException e ) {
+	        		e.printStackTrace();
+	        	}
+	        }
 		}
 				
 		if ( resolve ) { 

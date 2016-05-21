@@ -41,7 +41,7 @@ import ysoserial.secmgr.ExecCheckingSecurityManager;
 import ysoserial.secmgr.ExecCheckingSecurityManager.ExecException;
 import ysoserial.util.Arguments;
 import ysoserial.util.DependencyUtil;
-import ysoserial.util.IsolatingGroovyClassLoader;
+import ysoserial.util.IsolatingClassLoader;
 
 
 /*

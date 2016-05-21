@@ -124,6 +124,8 @@ public class GeneratePayload {
 		System.err.println("Usage: java -jar ysoserial-[version]-all.jar [format] payload_type [params...]");
 		System.err.println( "Available formats: -raw, -hex, -base64" );
 		System.err.println("\tAvailable payload types:");
+		System.setProperty( "ysoserial.suppress.messages", "true" );
+		
 		final List<Class<? extends ObjectPayload>> payloadClasses =
 			new ArrayList<Class<? extends ObjectPayload>>(Utils.getPayloadClasses());
 		Collections.sort(payloadClasses, new ToStringComparator()); // alphabetize

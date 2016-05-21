@@ -31,7 +31,7 @@ import ysoserial.annotation.PayloadTypes.Type;
 import ysoserial.interfaces.ObjectPayload;
 import ysoserial.interfaces.ReleaseableObjectPayload;
 import ysoserial.util.Arguments;
-import ysoserial.util.IsolatingGroovyClassLoader;
+import ysoserial.util.IsolatingClassLoader;
 import ysoserial.util.Messages;
 
 @SuppressWarnings ( "rawtypes" )
@@ -169,7 +169,7 @@ public class Utils {
         }
 
         try { 
-	        IsolatingGroovyClassLoader classLoader = new IsolatingGroovyClassLoader( Utils.class.getClassLoader() );
+	        IsolatingClassLoader classLoader = new IsolatingClassLoader( Utils.class.getClassLoader() );
 	        Map<String, InputStream> streams = getPayloadStreams( true );
 	        
 	        for( String key : streams.keySet() ) { 
