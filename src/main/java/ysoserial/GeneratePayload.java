@@ -24,13 +24,14 @@ import ysoserial.util.Messages;
 @SuppressWarnings("rawtypes")
 public class GeneratePayload {
 
-	public static class ToStringComparator implements Comparator<Object> {
-		public int compare(Object o1, Object o2) { return o1.toString().compareTo(o2.toString()); }
-	}
 	private static final int INTERNAL_ERROR_CODE = 70;
 	
 	private static final int USAGE_CODE = 64;
 
+	public static class ToStringComparator implements Comparator<Object> {
+		public int compare(Object o1, Object o2) { return o1.toString().compareTo(o2.toString()); }
+	}
+	
 	public static void main(final String[] args) {
 		if (args.length < 1) {
 			printUsage();

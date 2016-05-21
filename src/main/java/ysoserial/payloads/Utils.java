@@ -2,10 +2,12 @@ package ysoserial.payloads;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.JarURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.CodeSource;
@@ -37,6 +39,49 @@ public class Utils {
 	
 	private static Map<String, Class<? extends ObjectPayload>> payloadCache;
 
+	private static void bindField(Object payload, Map<String, String> params, String thisKey, Field thisField,
+			String thisValue, Class<?> type) throws IllegalAccessException, MalformedURLException,
+					FileNotFoundException, InstantiationException, Exception {
+		if ( type.equals( String.class ) ) {
+			thisField.set( payload, thisValue );
+		} else if ( type.equals( URL.class ) ) {
+			thisField.set( payload, new URL(thisValue) );
+		} else if ( type.equals( Integer.TYPE ) ) {
+			thisField.setInt( payload, Integer.parseInt( thisValue ) );
+		} else if ( type.equals( Long.TYPE ) ) {
+			thisField.setLong( payload, Integer.parseInt( thisValue ) );
+		} else if ( type.equals( Boolean.TYPE ) ) {
+			thisField.setBoolean( payload, isFlagSet( thisValue ) );
+		} else if ( type.equals( File.class ) ) { 
+			thisField.set( payload, new File( thisValue ) );
+		} else if ( type.equals( FileInputStream.class ) ) {
+			thisField.set( payload, new FileInputStream( new File( thisValue ) ) );
+		} else if ( type.equals( ObjectPayload.class ) || ObjectPayload.class.isAssignableFrom( type ) ) {
+			int len = (thisKey + ".").length();
+			// Sub-payload!
+			Set<String> toRemove = new HashSet<String>();
+			Map<String, String> subArgs = new HashMap<String, String>();
+			for( String param : params.keySet() ) {
+				if ( param.startsWith( thisKey + "." ) ) { 
+					subArgs.put( param.substring( len ), params.get(param) );
+					toRemove.add( param );
+				}
+			}
+			
+			for( String rm : toRemove ) {
+				params.remove( rm );
+			}
+			Class<? extends ObjectPayload> payloadClass = getPayloadClass( thisValue );
+			
+			checkBindableTypes(thisField, thisValue, payloadClass);
+			
+			ObjectPayload<?> newPayload = payloadClass.newInstance();
+			resolve( newPayload, subArgs );
+			
+			thisField.set( payload, newPayload );
+		}
+	}
+
 	private static void checkBindableTypes(Field thisField, String thisValue,
 			Class<? extends ObjectPayload> payloadClass) {
 		Type[] types = new Type[] { Type.Remote_Code_Execution };
@@ -62,6 +107,33 @@ public class Utils {
 		
 		if ( !isAllowed || isDenied ) {
 			throw new IllegalArgumentException( "Payload type '" + thisValue + "' is not allowed here" );
+		}
+	}
+
+	private static void doDefaults(Object payload, Map<String, String> params, Map<String, Field> bindableFields)
+			throws IllegalAccessException, MalformedURLException {
+		if ( !bindableFields.isEmpty() && params.isEmpty() ) {
+			for( String name: bindableFields.keySet() ) {
+				Field f = bindableFields.get( name );
+				Class<?> type = f.getType();
+				if ( !"".equals( f.getAnnotation(Bind.class).defaultValue() ) ) {
+					if ( type.equals( String.class ) ) {
+						f.set( payload, f.getAnnotation(Bind.class).defaultValue() );
+					} else if ( type.equals( URL.class ) ) {
+						f.set( payload, new URL(f.getAnnotation(Bind.class).defaultValue()) );
+					} else if ( type.equals( Integer.TYPE ) ) {
+						f.setInt( payload, Integer.parseInt( f.getAnnotation(Bind.class).defaultValue() ) );
+					} else if ( type.equals( Long.TYPE ) ) {
+						f.setLong( payload, Integer.parseInt( f.getAnnotation(Bind.class).defaultValue() ) );
+					} else if ( type.equals( Boolean.TYPE ) ) {
+						f.setBoolean( payload, isFlagSet( f.getAnnotation(Bind.class).defaultValue() ) );
+					} else {
+						throw new IllegalStateException( "Configuration error: default bindings cannot be used for " + type );
+					}
+				} else {
+					throw new IllegalArgumentException( "Missing value for field: " + name );
+				}
+			}
 		}
 	}
 
@@ -265,8 +337,7 @@ public class Utils {
     public static Object makePayloadObject ( String payloadType, String payloadArg ) {
     	return makePayloadObject( payloadType, new String[] { "command", payloadArg } );
     }
-
-
+    
     public static Object makePayloadObject( String payloadType, String[] payloadArgs ) { 
         final Class<? extends ObjectPayload> payloadClass = getPayloadClass(payloadType);
         if ( payloadClass == null || !ObjectPayload.class.isAssignableFrom(payloadClass) ) {
@@ -284,7 +355,8 @@ public class Utils {
         }
         return payloadObject;
     }
-    
+
+
     @SuppressWarnings ( "unchecked" )
     public static void releasePayload ( ObjectPayload payload, Object object ) throws Exception {
         if ( payload instanceof ReleaseableObjectPayload ) {
@@ -297,6 +369,7 @@ public class Utils {
         final Class<? extends ObjectPayload> payloadClass = getPayloadClass(payloadType);
         if ( payloadClass == null || !ObjectPayload.class.isAssignableFrom(payloadClass) ) {
             throw new IllegalArgumentException("Invalid payload type '" + payloadType + "'");
+
         }
 
         try {
@@ -372,80 +445,18 @@ public class Utils {
 				}
 				
 				Class<?> type = thisField.getType();				
-				if ( type.equals( String.class ) ) {
-					thisField.set( payload, thisValue );
-				} else if ( type.equals( URL.class ) ) {
-					thisField.set( payload, new URL(thisValue) );
-				} else if ( type.equals( Integer.TYPE ) ) {
-					thisField.setInt( payload, Integer.parseInt( thisValue ) );
-				} else if ( type.equals( Long.TYPE ) ) {
-					thisField.setLong( payload, Integer.parseInt( thisValue ) );
-				} else if ( type.equals( Boolean.TYPE ) ) {
-					thisField.setBoolean( payload, isFlagSet( thisValue ) );
-				} else if ( type.equals( File.class ) ) { 
-					thisField.set( payload, new File( thisValue ) );
-				} else if ( type.equals( FileInputStream.class ) ) {
-					thisField.set( payload, new FileInputStream( new File( thisValue ) ) );
-				} else if ( type.equals( ObjectPayload.class ) || ObjectPayload.class.isAssignableFrom( type ) ) {
-					int len = (thisKey + ".").length();
-					// Sub-payload!
-					Set<String> toRemove = new HashSet<String>();
-					Map<String, String> subArgs = new HashMap<String, String>();
-					for( String param : params.keySet() ) {
-						if ( param.startsWith( thisKey + "." ) ) { 
-							subArgs.put( param.substring( len ), params.get(param) );
-							toRemove.add( param );
-						}
-					}
-					try { 
-						Arguments.push( subArgs );
-						
-						for( String rm : toRemove ) {
-							params.remove( rm );
-						}
-						Class<? extends ObjectPayload> payloadClass = getPayloadClass( thisValue );
-						
-						checkBindableTypes(thisField, thisValue, payloadClass);
-						
-						ObjectPayload<?> newPayload = payloadClass.newInstance();
-						resolve( newPayload, subArgs );
-						
-						thisField.set( payload, newPayload );
-					} finally {
-						Arguments.pop();
-					}
-				}				
+				bindField(payload, params, thisKey, thisField, thisValue, type);
+				
 			} finally {
 				params.remove( thisKey );
 			}
 		}
 		
-		if ( !bindableFields.isEmpty() && params.isEmpty() ) {
-			for( String name: bindableFields.keySet() ) {
-				Field f = bindableFields.get( name );
-				Class<?> type = f.getType();
-				if ( !"".equals( f.getAnnotation(Bind.class).defaultValue() ) ) {
-					if ( type.equals( String.class ) ) {
-						f.set( payload, f.getAnnotation(Bind.class).defaultValue() );
-					} else if ( type.equals( URL.class ) ) {
-						f.set( payload, new URL(f.getAnnotation(Bind.class).defaultValue()) );
-					} else if ( type.equals( Integer.TYPE ) ) {
-						f.setInt( payload, Integer.parseInt( f.getAnnotation(Bind.class).defaultValue() ) );
-					} else if ( type.equals( Long.TYPE ) ) {
-						f.setLong( payload, Integer.parseInt( f.getAnnotation(Bind.class).defaultValue() ) );
-					} else if ( type.equals( Boolean.TYPE ) ) {
-						f.setBoolean( payload, isFlagSet( f.getAnnotation(Bind.class).defaultValue() ) );
-					} else {
-						throw new IllegalStateException( "Configuration error: default bindings cannot be used for " + type );
-					}
-				} else {
-					throw new IllegalArgumentException( "Missing value for field: " + name );
-				}
-			}
-		}
+		doDefaults(payload, params, bindableFields);
 	}
 
-	public static String[] trimArgs(String[] args, int i) {
+
+    public static String[] trimArgs(String[] args, int i) {
 		if ( args.length - i < 0 ) { 
 			throw new IllegalArgumentException( "Can't trim more than the number of elements off an array" );
 		}
