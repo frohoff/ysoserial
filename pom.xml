@@ -92,6 +92,16 @@
 
 		<!-- non-gadget dependencies -->
 		<dependency>
+        	<groupId>org.apache.ivy</groupId>
+        	<artifactId>ivy</artifactId>
+        	<version>2.4.0</version>
+        </dependency>
+        <dependency>
+        	<groupId>commons-io</groupId>
+        	<artifactId>commons-io</artifactId>
+        	<version>2.4</version>
+        </dependency>
+		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy</artifactId>
 			<version>2.3.9</version>
@@ -256,18 +266,6 @@
             <groupId>org.python</groupId>
             <artifactId>jython-standalone</artifactId>
             <version>2.5.2</version>
-			<scope>provided</scope>
-        </dependency>
-        <dependency>
-        	<groupId>org.apache.ivy</groupId>
-        	<artifactId>ivy</artifactId>
-        	<version>2.4.0</version>
-			<scope>provided</scope>
-        </dependency>
-        <dependency>
-        	<groupId>commons-io</groupId>
-        	<artifactId>commons-io</artifactId>
-        	<version>2.4</version>
 			<scope>provided</scope>
         </dependency>
 	</dependencies>
