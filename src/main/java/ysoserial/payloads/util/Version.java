@@ -29,7 +29,7 @@ public class Version {
 	
 	public static boolean allowsDefaultAIH() { 
 		Version version = Version.getVersion();
-		return ( version.javaVersion < 7 ) || ( version.javaVersion == 7 && version.build < 72 ) || ( version.javaVersion == 8 && version.build < 71 );
+		return ( version.javaVersion < 7 ) || ( version.javaVersion == 7 && version.build < 95 ) || ( version.javaVersion == 8 && version.build < 71 );
 	}
 
 }
