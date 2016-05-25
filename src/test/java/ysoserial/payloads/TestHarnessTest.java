@@ -8,6 +8,9 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 
+import ysoserial.annotation.Bind;
+import ysoserial.interfaces.ObjectPayload;
+
 public class TestHarnessTest {
 	// make sure test harness fails properly
 	@Test
@@ -39,13 +42,29 @@ public class TestHarnessTest {
 	}
 
 	public static class ExecMockPayload implements ObjectPayload<ExecMockSerializable> {
+		@Bind private String command;
+		
+		/**
+		 * @deprecated Use {@link #getObject()} instead
+		 */
 		public ExecMockSerializable getObject(String command) throws Exception {
+			return getObject();
+		}
+
+		public ExecMockSerializable getObject() throws Exception {
 			return new ExecMockSerializable(command);
 		}
 	}
 
 	public static class NoopMockPayload implements ObjectPayload<Integer> {
+		/**
+		 * @deprecated Use {@link #getObject()} instead
+		 */
 		public Integer getObject(String command) throws Exception {
+			return getObject();
+		}
+
+		public Integer getObject() throws Exception {
 			return 1;
 		}
 	}
