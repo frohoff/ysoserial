@@ -12,7 +12,9 @@ import org.springframework.aop.framework.AdvisedSupport;
 import org.springframework.aop.target.SingletonTargetSource;
 
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
+import ysoserial.payloads.util.JavaVersion;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
@@ -38,6 +40,7 @@ import ysoserial.payloads.util.Reflections;
     // test deps
     "aopalliance:aopalliance:1.0", "commons-logging:commons-logging:1.2"
 } )
+@PayloadTest ( precondition = "isApplicableJavaVersion")
 public class Spring2 extends PayloadRunner implements ObjectPayload<Object> {
 
     public Object getObject ( final String command ) throws Exception {
@@ -63,6 +66,10 @@ public class Spring2 extends PayloadRunner implements ObjectPayload<Object> {
 
     public static void main ( final String[] args ) throws Exception {
         PayloadRunner.run(Spring2.class, args);
+    }
+    
+    public static boolean isApplicableJavaVersion() {
+        return JavaVersion.isAnnInvHUniversalMethodImpl();
     }
 
 }

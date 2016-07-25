@@ -9,6 +9,7 @@ import javax.xml.transform.Templates;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
+import ysoserial.payloads.util.JavaVersion;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
@@ -81,18 +82,8 @@ public class Jdk7u21 implements ObjectPayload<Object> {
 	}
 	
 	public static boolean isApplicableJavaVersion() {
-	    String property = System.getProperties().getProperty("java.version");
-	    if ( property == null ) {
-	        return false;
-	    }
-	    String parts[] = property.split("\\.|_|-");;
-	    int major   = Integer.parseInt(parts[1]);
-	    int minor   = Integer.parseInt(parts[2]);
-	    int update  = Integer.parseInt(parts[3]);
-	    if ( major < 7 || (major == 7 && update <= 21) ) {
-	        return true;
-	    }
-	    return false;
+	    JavaVersion v = JavaVersion.getLocalVersion();
+	    return v != null && (v.major < 7 || (v.major == 7 && v.update <= 21));
 	}
 
 	public static void main(final String[] args) throws Exception {

@@ -51,7 +51,7 @@ public class JRMPReverseConnectTest implements CustomTest {
 
 
     public String getPayloadArgs () {
-        return "localhost:" + port;
+        return "rmi:localhost:" + port;
     }
 
 }
