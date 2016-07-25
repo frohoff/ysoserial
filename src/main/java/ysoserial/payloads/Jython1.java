@@ -1,10 +1,10 @@
 package ysoserial.payloads;
 
+import org.apache.commons.io.FileUtils;
 import org.python.core.*;
 
 import java.math.BigInteger;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.File;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -51,7 +51,7 @@ public class Jython1 extends PayloadRunner implements ObjectPayload<PriorityQueu
         }
 
         // Set payload parameters
-        String python_code = new String(Files.readAllBytes(Paths.get(paths[0])));
+        String python_code = FileUtils.readFileToString(new File(paths[0]), "UTF-8");
 
         // Python bytecode to write a file on disk and execute it
         String code =
