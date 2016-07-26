@@ -257,6 +257,16 @@
 			<artifactId>js</artifactId>
 			<version>1.7R2</version>
 		</dependency>
+		<dependency>
+		<groupId>javassist</groupId>
+		<artifactId>javassist</artifactId>
+		<version>3.12.0.GA</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-core</artifactId>
+			<version>1.1.33.Final</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
