@@ -36,7 +36,7 @@ import ysoserial.payloads.util.Reflections;
  * - writeOldB64;destFile;base64-data
  * 
  * Example:
- * FileUpload2 "write;/tmp;blue lobster"
+ * Wicket1 "write;/tmp;blue lobster"
  * 
  * Result:
  * $ ls -l /tmp/
@@ -45,7 +45,7 @@ import ysoserial.payloads.util.Reflections;
  * blue lobster
  */
 @Dependencies({"wicket-util:wicket-util:6.23"})
-public class FileUpload2 implements ReleaseableObjectPayload<DiskFileItem> {
+public class Wicket1 implements ReleaseableObjectPayload<DiskFileItem> {
 
     public DiskFileItem getObject(String command) throws Exception {
 
