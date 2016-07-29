@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"rhino:js:1.7R2"})
-public class Rhino implements ObjectPayload<Object> {
+public class MozillaRhino1 implements ObjectPayload<Object> {
 
     public Object getObject(final String command) throws Exception {
 
@@ -61,6 +61,6 @@ public class Rhino implements ObjectPayload<Object> {
     }
 
     public static void main(final String[] args) throws Exception {
-        PayloadRunner.run(Rhino.class, args);
+        PayloadRunner.run(MozillaRhino1.class, args);
     }
 }

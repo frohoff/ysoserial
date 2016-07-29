@@ -26,7 +26,7 @@ import java.util.*;
 */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"javassist:javassist:3.12.1.GA", "org.jboss.interceptor:jboss-interceptor-core:2.0.0.Final", "javax.enterprise:cdi-api:1.0-SP1", "javax.interceptor:javax.interceptor-api:3.1", "org.jboss.interceptor:jboss-interceptor-spi:2.0.0.Final", "org.slf4j:slf4j-api:1.7.21"})
-public class JBossInterceptors implements ObjectPayload<Object> {
+public class JBossInterceptors1 implements ObjectPayload<Object> {
 
     public Object getObject(final String command) throws Exception {
 
@@ -74,6 +74,6 @@ public class JBossInterceptors implements ObjectPayload<Object> {
 
 
     public static void main(final String[] args) throws Exception {
-        PayloadRunner.run(JBossInterceptors.class, args);
+        PayloadRunner.run(JBossInterceptors1.class, args);
     }
 }
