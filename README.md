@@ -1,7 +1,7 @@
 
 # ysoserial 
 
-[![Join the chat at https://gitter.im/frohoff/ysoserial](https://badges.gitter.im/frohoff/ysoserial.svg)](https://gitter.im/frohoff/ysoserial?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/frohoff/ysoserial](https://badges.gitter.im/frohoff/ysoserial.svg)](https://gitter.im/frohoff/ysoserial?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Download Latest Snapshot](https://img.shields.io/badge/download-master--SNAPSHOT-green.svg)](https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar)
 
 A proof-of-concept tool for generating payloads that exploit unsafe Java object deserialization.
 
@@ -66,7 +66,15 @@ $ java -cp ysoserial-0.0.4-all.jar ysoserial.exploit.RMIRegistryExploit myhost 1
 
 ## Installation
 
-1. Download the latest jar from the "releases" section.
+1. Download the latest jar from [JitPack](https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar) [![Download Latest Snapshot](https://img.shields.io/badge/download-master--SNAPSHOT-green.svg)](https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar) .
+
+Note that GitHub-hosted releases were removed in compliance with the [GitHub Community Guidelines](https://help.github.com/articles/github-community-guidelines/#what-is-not-allowed)
+
+## Building
+
+Requires Java 1.7+ and Maven 3.x+
+
+```mvn clean package -DskipTests```
 
 ## Code Status
 
