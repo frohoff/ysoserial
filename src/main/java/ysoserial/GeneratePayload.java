@@ -49,7 +49,8 @@ public class GeneratePayload {
 
 	private static void printUsage() {
 		System.err.println("Y SO SERIAL?");
-		System.err.println("Usage: java -jar ysoserial-[version]-all.jar [payload type] '[command to execute]'");
+		System.err.println("Generate Payload: java -jar ysoserial-[version]-all.jar [payload type] '[command to execute]'");
+		System.err.println("RMI Exploit: java -jar ysoserial-[version]-all.jar ysoserial.exploit.RMIRegistryExploit [targetIP] 1099 [payload type] '[command to execute]'");
 		System.err.println("\tAvailable payload types:");
 		final List<Class<? extends ObjectPayload>> payloadClasses =
 			new ArrayList<Class<? extends ObjectPayload>>(ObjectPayload.Utils.getPayloadClasses());
