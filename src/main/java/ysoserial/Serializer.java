@@ -27,4 +27,12 @@ public class Serializer implements Callable<byte[]> {
 		objOut.writeObject(obj);
 	}
 
+	public static void serializeWithPrefix(final Object obj, final OutputStream out,
+										   int prefixNum, String prefix) throws IOException {
+		final ObjectOutputStream objOut = new ObjectOutputStream(out);
+		for(int i = 0; i < prefixNum; i++) {
+			objOut.writeUTF(prefix);
+		}
+		objOut.writeObject(obj);
+	}
 }
