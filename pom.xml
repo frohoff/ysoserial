@@ -297,6 +297,11 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.21</version>
 		</dependency>
+		<dependency>
+			<groupId>org.clojure</groupId>
+			<artifactId>clojure</artifactId>
+			<version>1.8.0</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
