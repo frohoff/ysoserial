@@ -31,19 +31,39 @@ are not responsible or liable for misuse of the software. Use responsibly.
 ## Usage
 
 ```shell
-$ java -jar target/ysoserial-0.0.4-all.jar
+$  java -jar ysoserial-master-v0.0.4-g35bce8f-67.jar
 Y SO SERIAL?
 Usage: java -jar ysoserial-[version]-all.jar [payload type] '[command to execute]'
         Available payload types:
                 BeanShell1 [org.beanshell:bsh:2.0b5]
-                CommonsBeanutilsCollectionsLogging1 [commons-beanutils:commons-beanutils:1.9.2, commons-collections:commons-collections:3.1, commons-logging:commons-logging:1.2]
+                C3P0 [com.mchange:c3p0:0.9.5.2, com.mchange:mchange-commons-java:0.2.11]
+                Clojure [org.clojure:clojure:1.8.0]
+                CommonsBeanutils1 [commons-beanutils:commons-beanutils:1.9.2, commons-collections:commons-collections:3.1, commons-logging:commons-logging:1.2]
                 CommonsCollections1 [commons-collections:commons-collections:3.1]
                 CommonsCollections2 [org.apache.commons:commons-collections4:4.0]
                 CommonsCollections3 [commons-collections:commons-collections:3.1]
                 CommonsCollections4 [org.apache.commons:commons-collections4:4.0]
+                CommonsCollections5 [commons-collections:commons-collections:3.1]
+                CommonsCollections6 [commons-collections:commons-collections:3.1]
+                FileUpload1 [commons-fileupload:commons-fileupload:1.3.1, commons-io:commons-io:2.4]
                 Groovy1 [org.codehaus.groovy:groovy:2.3.9]
+                Hibernate1 []
+                Hibernate2 []
+                JBossInterceptors1 [javassist:javassist:3.12.1.GA, org.jboss.interceptor:jboss-interceptor-core:2.0.0.Final, javax.enterprise:cdi-api:1.0-SP1, javax.interceptor:javax.interceptor-api:3.1, org.jboss.interceptor:jboss-interceptor-spi:2.0.0.Final, org.slf4j:slf4j-api:1.7.21]
+                JRMPClient []
+                JRMPListener []
+                JSON1 [net.sf.json-lib:json-lib:jar:jdk15:2.4, org.springframework:spring-aop:4.1.4.RELEASE, aopalliance:aopalliance:1.0, commons-logging:commons-logging:1.2, commons-lang:commons-lang:2.6, net.sf.ezmorph:ezmorph:1.0.6, commons-beanutils:commons-beanutils:1.9.2, org.springframework:spring-core:4.1.4.RELEASE, commons-collections:commons-collections:3.1]
+                JavassistWeld1 [javassist:javassist:3.12.1.GA, org.jboss.weld:weld-core:1.1.33.Final, javax.enterprise:cdi-api:1.0-SP1, javax.interceptor:javax.interceptor-api:3.1, org.jboss.interceptor:jboss-interceptor-spi:2.0.0.Final, org.slf4j:slf4j-api:1.7.21]
                 Jdk7u21 []
+                Jython1 [org.python:jython-standalone:2.5.2]
+                MozillaRhino1 [rhino:js:1.7R2]
+                Myfaces1 []
+                Myfaces2 []
+                ROME [rome:rome:1.0]
                 Spring1 [org.springframework:spring-core:4.1.4.RELEASE, org.springframework:spring-beans:4.1.4.RELEASE]
+                Spring2 [org.springframework:spring-core:4.1.4.RELEASE, org.springframework:spring-aop:4.1.4.RELEASE, aopalliance:aopalliance:1.0, commons-logging:commons-logging:1.2]
+                URLDNS []
+                Wicket1 [wicket-util:wicket-util:6.23]
 ```
 
 ## Examples
