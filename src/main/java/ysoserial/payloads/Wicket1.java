@@ -13,6 +13,7 @@ import org.apache.wicket.util.io.ThresholdingOutputStream;
 
 import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
@@ -45,7 +46,8 @@ import ysoserial.payloads.util.Reflections;
  * $ cat /tmp/upload_3805815b_2d50_4e00_9dae_a854d5a0e614_479431761.tmp
  * blue lobster
  */
-@Dependencies({"wicket-util:wicket-util:6.23"})
+@PayloadTest(harness = "ysoserial.payloads.FileUploadTest")
+@Dependencies({"org.apache.wicket:wicket-util:6.23.0", "org.slf4j:slf4j-api:1.6.4"})
 @Authors({ Authors.JACOBAINES })
 public class Wicket1 implements ReleaseableObjectPayload<DiskFileItem> {
 

@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
 */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"rhino:js:1.7R2"})
-@Authors({ Authors.MBECHLER })
+@Authors({ Authors.MATTHIASKAISER })
 public class MozillaRhino1 implements ObjectPayload<Object> {
 
     public Object getObject(final String command) throws Exception {

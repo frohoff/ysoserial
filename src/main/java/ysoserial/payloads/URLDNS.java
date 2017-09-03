@@ -9,6 +9,7 @@ import java.net.URL;
 
 import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
@@ -40,6 +41,7 @@ import ysoserial.payloads.util.Reflections;
  *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
+@PayloadTest(skip = "true")
 @Dependencies()
 @Authors({ Authors.GEBL })
 public class URLDNS implements ObjectPayload<Object> {

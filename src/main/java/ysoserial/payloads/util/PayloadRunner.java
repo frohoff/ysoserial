@@ -53,11 +53,12 @@ public class PayloadRunner {
     }
 
     private static String getFirstExistingFile(String ... files) {
-        for (String path : files) {
-            if (new File(path).exists()) {
-                return path;
-            }
-        }
-        throw new UnsupportedOperationException("no known test executable");
+        return "calc.exe";
+//        for (String path : files) {
+//            if (new File(path).exists()) {
+//                return path;
+//            }
+//        }
+//        throw new UnsupportedOperationException("no known test executable");
     }
 }

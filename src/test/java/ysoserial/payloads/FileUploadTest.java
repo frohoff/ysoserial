@@ -18,15 +18,15 @@ import ysoserial.CustomTest;
 public class FileUploadTest implements CustomTest {
 
     /**
-     * 
+     *
      */
     private static final byte[] FDATA = new byte[] {(byte) 0xAA, (byte) 0xBB, (byte) 0xCC, (byte) 0xDD, (byte) 0xEE, (byte) 0xFF };
     private File source;
     private File repo;
-    
-    
+
+
     /**
-     * 
+     *
      */
     public FileUploadTest () {
         try {
@@ -44,14 +44,17 @@ public class FileUploadTest implements CustomTest {
             Files.write(FDATA, this.source);
             Assert.assertTrue(this.source.exists());
             payload.call();
-            
+
             File found = null;
             for ( File f : this.repo.listFiles()) {
                 found = f;
                 break;
             }
             Assert.assertNotNull("File not copied", found);
-            Assert.assertFalse("Source not deleted", this.source.exists());
+            if (!System.getProperty("os.name", "unknown").contains("Windows")) {
+                // windows' file locking seems to cause this to fail
+                Assert.assertFalse("Source not deleted", this.source.exists());
+            }
             Assert.assertTrue("Contents not copied", Arrays.equals(FDATA, Files.toByteArray(found)));
         } finally {
             if ( this.repo.exists()) {

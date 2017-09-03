@@ -7,7 +7,6 @@ target/
 # eclipse
 .classpath
 .project
-.idea
 .settings/
 
 # idea
@@ -16,4 +15,3 @@ target/
 
 # tests
 pwntest
-*.iml

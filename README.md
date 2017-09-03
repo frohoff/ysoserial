@@ -66,7 +66,7 @@ Usage: java -jar ysoserial-[version]-all.jar [payload] '[command]'
      JavassistWeld1      @matthias_kaiser            javassist:3.12.1.GA, weld-core:1.1.33.Final, cdi-api:1.0-SP1, javax.interceptor-api:3.1, jboss-interceptor-spi:2.0.0.Final, slf4j-api:1.7.21
      Jdk7u21             @frohoff
      Jython1             @pwntester, @cschneider4711 jython-standalone:2.5.2
-     MozillaRhino1       @mbechler                   js:1.7R2
+     MozillaRhino1       @matthias_kaiser            js:1.7R2
      Myfaces1            @mbechler
      Myfaces2            @mbechler
      ROME                @mbechler                   rome:1.0
