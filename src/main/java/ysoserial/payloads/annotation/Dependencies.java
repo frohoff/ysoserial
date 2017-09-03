@@ -20,5 +20,14 @@ public @interface Dependencies {
 				return new String[0];
 			}
 		}
+
+		public static String[] getDependenciesSimple(AnnotatedElement annotated) {
+		    String[] deps = getDependencies(annotated);
+		    String[] simple = new String[deps.length];
+		    for (int i = 0; i < simple.length; i++) {
+                simple[i] = deps[i].split(":", 2)[1];
+            }
+            return simple;
+        }
 	}
 }

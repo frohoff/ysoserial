@@ -7,6 +7,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 import sun.rmi.server.ActivationGroupImpl;
 import sun.rmi.server.UnicastServerRef;
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
@@ -23,10 +24,10 @@ import ysoserial.payloads.util.Reflections;
  * TCPEndpoint.exportObject(Target) line: 411
  * TCPTransport.exportObject(Target) line: 249
  * TCPTransport.listen() line: 319
- * 
+ *
  * Requires:
  * - JavaSE
- * 
+ *
  * Argument:
  * - Port number to open listener to
  */
@@ -34,6 +35,7 @@ import ysoserial.payloads.util.Reflections;
     "restriction"
 } )
 @PayloadTest( skip = "This test would make you potentially vulnerable")
+@Authors({ Authors.MBECHLER })
 public class JRMPListener extends PayloadRunner implements ObjectPayload<UnicastRemoteObject> {
 
     public UnicastRemoteObject getObject ( final String command ) throws Exception {

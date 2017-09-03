@@ -7,6 +7,7 @@ import java.net.URLStreamHandler;
 import java.util.HashMap;
 import java.net.URL;
 
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
@@ -16,18 +17,18 @@ import ysoserial.payloads.util.Reflections;
  * A blog post with more details about this gadget chain is at the url below:
  *   https://blog.paranoidsoftware.com/triggering-a-dns-lookup-using-java-deserialization/
  *
- *   This was inspired by  Philippe Arteau @h3xstream, who wrote a blog 
- *   posting describing how he modified the Java Commons Collections gadget 
- *   in ysoserial to open a URL. This takes the same idea, but eliminates 
- *   the dependency on Commons Collections and does a DNS lookup with just 
+ *   This was inspired by  Philippe Arteau @h3xstream, who wrote a blog
+ *   posting describing how he modified the Java Commons Collections gadget
+ *   in ysoserial to open a URL. This takes the same idea, but eliminates
+ *   the dependency on Commons Collections and does a DNS lookup with just
  *   standard JDK classes.
  *
- *   The Java URL class has an interesting property on its equals and 
- *   hashCode methods. The URL class will, as a side effect, do a DNS lookup 
+ *   The Java URL class has an interesting property on its equals and
+ *   hashCode methods. The URL class will, as a side effect, do a DNS lookup
  *   during a comparison (either equals or hashCode).
- *   
+ *
  *   As part of deserialization, HashMap calls hashCode on each key that it
- *   deserializes, so using a Java URL object as a serialized key allows 
+ *   deserializes, so using a Java URL object as a serialized key allows
  *   it to trigger a DNS lookup.
  *
  *   Gadget Chain:
@@ -35,11 +36,12 @@ import ysoserial.payloads.util.Reflections;
  *       HashMap.putVal()
  *         HashMap.hash()
  *           URL.hashCode()
- *       
+ *
  *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies()
+@Authors({ Authors.GEBL })
 public class URLDNS implements ObjectPayload<Object> {
 
         public Object getObject(final String url) throws Exception {

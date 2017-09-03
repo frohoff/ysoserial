@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 
 import javax.xml.transform.Templates;
 
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
@@ -53,8 +54,9 @@ LinkedHashSet.readObject()
  */
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-@Dependencies()
 @PayloadTest ( precondition = "isApplicableJavaVersion")
+@Dependencies()
+@Authors({ Authors.FROHOFF })
 public class Jdk7u21 implements ObjectPayload<Object> {
 
 	public Object getObject(final String command) throws Exception {
@@ -80,7 +82,7 @@ public class Jdk7u21 implements ObjectPayload<Object> {
 
 		return set;
 	}
-	
+
 	public static boolean isApplicableJavaVersion() {
 	    JavaVersion v = JavaVersion.getLocalVersion();
 	    return v != null && (v.major < 7 || (v.major == 7 && v.update <= 21));

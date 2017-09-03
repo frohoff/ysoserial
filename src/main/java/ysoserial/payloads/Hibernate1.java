@@ -13,13 +13,14 @@ import org.hibernate.type.AbstractType;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
 
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
 
 /**
- * 
+ *
  * org.hibernate.property.access.spi.GetterMethodImpl.get()
  * org.hibernate.tuple.component.AbstractComponentTuplizer.getPropertyValue()
  * org.hibernate.type.ComponentType.getPropertyValue(C)
@@ -28,13 +29,14 @@ import ysoserial.payloads.util.Reflections;
  * org.hibernate.engine.spi.TypedValue$1.initialize()
  * org.hibernate.internal.util.ValueHolder.getValue()
  * org.hibernate.engine.spi.TypedValue.hashCode()
- * 
- * 
+ *
+ *
  * Requires:
  * - Hibernate (>= 5 gives arbitrary method invocation, <5 getXYZ only)
- * 
+ *
  * @author mbechler
  */
+@Authors({ Authors.MBECHLER })
 public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
 
     public static String[] getDependencies () {

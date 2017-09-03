@@ -6,6 +6,7 @@ import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.commons.collections.keyvalue.TiedMapEntry;
 import org.apache.commons.collections.map.LazyMap;
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.PayloadRunner;
 
@@ -33,6 +34,7 @@ import java.util.Map;
 */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"commons-collections:commons-collections:3.1"})
+@Authors({ Authors.MATTHIASKAISER })
 public class CommonsCollections6 extends PayloadRunner implements ObjectPayload<Serializable> {
 
     public Serializable getObject(final String command) throws Exception {

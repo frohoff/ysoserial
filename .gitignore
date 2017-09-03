@@ -1,5 +1,17 @@
-/target
+# java
+*.class
+
+# mvn
+target/
+
+# eclipse
 .classpath
 .project
 .settings/
+
+# idea
+.idea/
+*.iml
+
+# tests
 pwntest

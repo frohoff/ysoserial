@@ -2,6 +2,7 @@ package ysoserial.payloads;
 
 import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 import org.mozilla.javascript.*;
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -16,6 +17,7 @@ import java.lang.reflect.Method;
 */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"rhino:js:1.7R2"})
+@Authors({ Authors.MBECHLER })
 public class MozillaRhino1 implements ObjectPayload<Object> {
 
     public Object getObject(final String command) throws Exception {

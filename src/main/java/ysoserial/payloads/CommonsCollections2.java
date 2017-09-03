@@ -6,6 +6,7 @@ import java.util.Queue;
 import org.apache.commons.collections4.comparators.TransformingComparator;
 import org.apache.commons.collections4.functors.InvokerTransformer;
 
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -24,7 +25,8 @@ import ysoserial.payloads.util.Reflections;
  */
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-@Dependencies({"org.apache.commons:commons-collections4:4.0"})
+@Dependencies({ "org.apache.commons:commons-collections4:4.0" })
+@Authors({ Authors.FROHOFF })
 public class CommonsCollections2 implements ObjectPayload<Queue<Object>> {
 
 	public Queue<Object> getObject(final String command) throws Exception {

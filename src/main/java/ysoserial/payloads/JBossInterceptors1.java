@@ -14,6 +14,7 @@ import org.jboss.interceptor.spi.metadata.InterceptorReference;
 import org.jboss.interceptor.spi.metadata.MethodMetadata;
 import org.jboss.interceptor.spi.model.InterceptionModel;
 import org.jboss.interceptor.spi.model.InterceptionType;
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -25,7 +26,10 @@ import java.util.*;
     by @matthias_kaiser
 */
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Dependencies({"javassist:javassist:3.12.1.GA", "org.jboss.interceptor:jboss-interceptor-core:2.0.0.Final", "javax.enterprise:cdi-api:1.0-SP1", "javax.interceptor:javax.interceptor-api:3.1", "org.jboss.interceptor:jboss-interceptor-spi:2.0.0.Final", "org.slf4j:slf4j-api:1.7.21"})
+@Dependencies({ "javassist:javassist:3.12.1.GA", "org.jboss.interceptor:jboss-interceptor-core:2.0.0.Final",
+    "javax.enterprise:cdi-api:1.0-SP1", "javax.interceptor:javax.interceptor-api:3.1",
+    "org.jboss.interceptor:jboss-interceptor-spi:2.0.0.Final", "org.slf4j:slf4j-api:1.7.21" })
+@Authors({ Authors.MATTHIASKAISER })
 public class JBossInterceptors1 implements ObjectPayload<Object> {
 
     public Object getObject(final String command) throws Exception {

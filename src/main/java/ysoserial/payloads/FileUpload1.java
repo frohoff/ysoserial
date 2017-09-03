@@ -11,6 +11,7 @@ import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.output.DeferredFileOutputStream;
 import org.apache.commons.io.output.ThresholdingOutputStream;
 
+import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
@@ -20,19 +21,19 @@ import ysoserial.payloads.util.Reflections;
 /**
  * Gadget chain:
  * DiskFileItem.readObject()
- * 
+ *
  * Arguments:
  * - copyAndDelete;sourceFile;destDir
  * - write;destDir;ascii-data
  * - writeB64;destDir;base64-data
  * - writeOld;destFile;ascii-data
  * - writeOldB64;destFile;base64-data
- * 
+ *
  * Yields:
  * - copy an arbitraty file to an arbitrary directory (source file is deleted if possible)
  * - pre 1.3.1 (+ old JRE): write data to an arbitrary file
  * - 1.3.1+: write data to a more or less random file in an arbitrary directory
- * 
+ *
  * @author mbechler
  */
 @Dependencies ( {
@@ -40,6 +41,7 @@ import ysoserial.payloads.util.Reflections;
     "commons-io:commons-io:2.4"
 } )
 @PayloadTest(harness="ysoserial.payloads.FileUploadTest")
+@Authors({ Authors.MBECHLER })
 public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
 
     public DiskFileItem getObject ( String command ) throws Exception {
