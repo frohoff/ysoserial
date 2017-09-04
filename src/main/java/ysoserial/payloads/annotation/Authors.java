@@ -17,6 +17,7 @@ public @interface Authors {
     String MATTHIASKAISER = "matthias_kaiser";
     String GEBL = "gebl" ;
     String JACOBAINES = "jacob-baines";
+    String JASINNER = "jasinner";
 
     String[] value() default {};
 

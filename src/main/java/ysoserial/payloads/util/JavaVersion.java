@@ -7,13 +7,13 @@ package ysoserial.payloads.util;
  */
 public class JavaVersion {
 
-    
+
     public int major;
     public int minor;
     public int update;
-    
-  
-    
+
+
+
     public static JavaVersion getLocalVersion() {
         String property = System.getProperties().getProperty("java.version");
         if ( property == null ) {
@@ -26,11 +26,16 @@ public class JavaVersion {
         v.update  = Integer.parseInt(parts[3]);
         return v;
     }
-    
-    
+
+
     public static boolean isAnnInvHUniversalMethodImpl() {
         JavaVersion v = JavaVersion.getLocalVersion();
         return v != null && (v.major < 8 || (v.major == 8 && v.update <= 71));
+    }
+
+    public static boolean isBadAttrValExcReadObj() {
+        JavaVersion v = JavaVersion.getLocalVersion();
+        return v != null && (v.major > 8 && v.update >= 76);
     }
 }
 

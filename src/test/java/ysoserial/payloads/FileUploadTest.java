@@ -10,6 +10,7 @@ import org.junit.Assert;
 import com.google.common.io.Files;
 
 import ysoserial.CustomTest;
+import ysoserial.util.OS;
 
 /**
  * @author mbechler
@@ -51,7 +52,7 @@ public class FileUploadTest implements CustomTest {
                 break;
             }
             Assert.assertNotNull("File not copied", found);
-            if (!System.getProperty("os.name", "unknown").contains("Windows")) {
+            if (OS.get() != OS.WINDOWS) {
                 // windows' file locking seems to cause this to fail
                 Assert.assertFalse("Source not deleted", this.source.exists());
             }
@@ -59,11 +60,11 @@ public class FileUploadTest implements CustomTest {
         } finally {
             if ( this.repo.exists()) {
                 for ( File f : this.repo.listFiles()) {
-                    f.delete();
+                    f.deleteOnExit();
                 }
-                this.repo.delete();
+                this.repo.deleteOnExit();
             }
-            this.source.delete();
+            this.source.deleteOnExit();
         }
     }
 

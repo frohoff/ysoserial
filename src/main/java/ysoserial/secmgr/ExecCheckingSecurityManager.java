@@ -56,8 +56,8 @@ public class ExecCheckingSecurityManager extends SecurityManager {
 		}
 	}
 
-	public void wrap(final Runnable runnable) throws Exception {
-		wrap(new Callable<Void>(){
+	public void callWrapped(final Runnable runnable) throws Exception {
+		callWrapped(new Callable<Void>(){
 			public Void call() throws Exception {
 				runnable.run();
 				return null;
@@ -65,7 +65,7 @@ public class ExecCheckingSecurityManager extends SecurityManager {
 		});
 	}
 
-	public <T> T wrap(final Callable<T> callable) throws Exception {
+	public <T> T callWrapped(final Callable<T> callable) throws Exception {
 		SecurityManager sm = System.getSecurityManager(); // save sm
 		System.setSecurityManager(this);
 		try {

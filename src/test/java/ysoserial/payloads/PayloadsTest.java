@@ -1,8 +1,6 @@
 package ysoserial.payloads;
 
 
-import static com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.DESERIALIZE_TRANSLET;
-
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,13 +10,10 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.hamcrest.CoreMatchers;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Assert;
 import org.junit.Assume;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.ProvideSecurityManager;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -28,7 +23,7 @@ import ysoserial.CustomPayloadArgs;
 import ysoserial.CustomTest;
 import ysoserial.Deserializer;
 import ysoserial.Serializer;
-import ysoserial.Throwables;
+import ysoserial.util.Throwables;
 import ysoserial.WrappedTest;
 import ysoserial.payloads.TestHarnessTest.ExecMockPayload;
 import ysoserial.payloads.TestHarnessTest.NoopMockPayload;
@@ -51,9 +46,6 @@ TODO: figure out better way to test exception behavior than comparing messages
 } )
 @RunWith ( Parameterized.class )
 public class PayloadsTest {
-
-    private static final String ASSERT_MESSAGE = "should have thrown " + ExecException.class.getSimpleName();
-
 
     @Parameters ( name = "payloadClass: {0}" )
     public static Class<? extends ObjectPayload<?>>[] payloads () {
@@ -89,57 +81,43 @@ public class PayloadsTest {
             }
 
             if ( !t.precondition().isEmpty() ) {
-                Assume.assumeTrue("Precondition", checkPrecondition(payloadClass, t.precondition()));
+                Assume.assumeTrue("Precondition: " + t.precondition(), checkPrecondition(payloadClass, t.precondition()));
             }
         }
 
         String payloadCommand = command;
         Class<?> customDeserializer = null;
-        Object wrapper = null;
+        Object testHarness = null;
         if ( t != null && !t.harness().isEmpty() ) {
-            Class<?> wrapperClass = Class.forName(t.harness());
+            Class<?> testHarnessClass = Class.forName(t.harness());
             try {
-                wrapper = wrapperClass.getConstructor(String.class).newInstance(command);
+                testHarness = testHarnessClass.getConstructor(String.class).newInstance(command);
             } catch ( NoSuchMethodException e ) {
-                wrapper = wrapperClass.newInstance();
+                testHarness = testHarnessClass.newInstance();
             }
+        } else {
+            testHarness = new CommandExecTest(); // default
+        }
 
-            if ( wrapper instanceof CustomPayloadArgs ) {
-                payloadCommand = ( (CustomPayloadArgs) wrapper ).getPayloadArgs();
-            }
+        if ( testHarness instanceof CustomPayloadArgs ) {
+            payloadCommand = ( (CustomPayloadArgs) testHarness ).getPayloadArgs();
+        }
 
-            if ( wrapper instanceof CustomDeserializer ) {
-                customDeserializer = ((CustomDeserializer)wrapper).getCustomDeserializer();
-            }
+        if ( testHarness instanceof CustomDeserializer ) {
+            customDeserializer = ((CustomDeserializer)testHarness).getCustomDeserializer();
         }
 
         ExecCheckingSecurityManager sm = new ExecCheckingSecurityManager();
-        final byte[] serialized = sm.wrap(makeSerializeCallable(payloadClass, payloadCommand));
+        final byte[] serialized = sm.callWrapped(makeSerializeCallable(payloadClass, payloadCommand));
         Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized, customDeserializer);
-        if ( wrapper instanceof WrappedTest ) {
-            callable = ( (WrappedTest) wrapper ).createCallable(callable);
+        if ( testHarness instanceof WrappedTest ) {
+            callable = ( (WrappedTest) testHarness ).createCallable(callable);
         }
 
-        if ( wrapper instanceof CustomTest ) {
-            ( (CustomTest) wrapper ).run(callable);
+        if ( testHarness instanceof CustomTest ) {
+            ( (CustomTest) testHarness ).run(callable);
             return;
         }
-        try {
-
-            Object deserialized = sm.wrap(callable);
-            //Assert.fail(ASSERT_MESSAGE); // should never get here
-        }
-        catch ( Throwable e ) {
-            // hopefully everything will reliably nest our ExecException
-            Throwable innerEx = Throwables.getInnermostCause(e);
-            if ( ! ( innerEx instanceof ExecException ) ) {
-                innerEx.printStackTrace();
-            }
-            //Assert.assertEquals(ExecException.class, innerEx.getClass());
-            //Assert.assertEquals(command, ( (ExecException) innerEx ).getCmd());
-        }
-
-        Assert.assertEquals(Arrays.asList(command), sm.getCmds());
     }
 
 
