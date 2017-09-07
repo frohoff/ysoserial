@@ -26,6 +26,8 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 
 /*
  * utility generator functions for common jdk-only gadgets
@@ -117,7 +119,7 @@ public class Gadgets {
         // TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
         final List<String> escapedParams = new LinkedList<String>();
         for (String param : command) {
-               escapedParams.add("\"" + param.replaceAll("\\\\","\\\\\\\\").replaceAll("\"", "\\\"") + "\"");
+               escapedParams.add("\"" + StringEscapeUtils.escapeJava(param) + "\"");
         }
         String cmd = "java.lang.Runtime.getRuntime().exec(new String[] {" + String.join(", ", escapedParams) + "});";
 
