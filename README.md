@@ -41,7 +41,7 @@ are not responsible or liable for misuse of the software. Use responsibly.
 ```shell
 $  java -jar ysoserial-master-v0.0.4-g35bce8f-67.jar
 Y SO SERIAL?
-Usage: java -jar ysoserial-[version]-all.jar payload command [arguments ...]'
+Usage: java -jar ysoserial-[version]-all.jar payload command [arguments ...]
   Available payload types:
      Payload             Authors                     Dependencies
      -------             -------                     ------------
