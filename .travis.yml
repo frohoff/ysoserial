@@ -9,3 +9,6 @@ jdk:
   - openjdk8
   - openjdk7
   #- openjdk6 #https://github.com/travis-ci/travis-ci/issues/8199
+cache:
+  directories:
+  - $HOME/.m2
