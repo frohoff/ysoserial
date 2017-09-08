@@ -22,7 +22,7 @@ public class CommandExecTest implements CustomTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Files.waitForFile(testFile, 1000);
+        Files.waitForFile(testFile, 5000);
         Assert.assertTrue("test file should exist", testFile.exists());
         testFile.deleteOnExit();
     }
