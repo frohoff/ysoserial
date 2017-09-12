@@ -1,7 +1,5 @@
 package ysoserial;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -20,6 +18,10 @@ public class Strings {
         }
         return sb.toString();
     }
+
+	public static String join(Iterable<String> strings, String sep) {
+		return Strings.join(strings, sep, null, null);
+	}
 
     public static String repeat(String str, int num) {
         final String[] strs = new String[num];

