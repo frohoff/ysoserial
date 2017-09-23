@@ -21,9 +21,9 @@ import java.lang.reflect.Method;
 @PayloadTest( precondition = "isApplicableJavaVersion")
 @Dependencies({"rhino:js:1.7R2"})
 @Authors({ Authors.MATTHIASKAISER })
-public class MozillaRhino1 implements ObjectPayload<Object> {
+public class MozillaRhino1 extends ExtendedObjectPayload<Object> {
 
-    public Object getObject(final String command) throws Exception {
+    public Object getObject(final String[] command) throws Exception {
 
         Class nativeErrorClass = Class.forName("org.mozilla.javascript.NativeError");
         Constructor nativeErrorConstructor = nativeErrorClass.getDeclaredConstructor();

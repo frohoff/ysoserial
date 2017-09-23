@@ -3,6 +3,7 @@ package ysoserial;
 import java.io.PrintStream;
 import java.util.*;
 
+import ysoserial.payloads.ExtendedObjectPayload;
 import ysoserial.payloads.ObjectPayload;
 import ysoserial.payloads.ObjectPayload.Utils;
 import ysoserial.payloads.annotation.Authors;
@@ -14,12 +15,12 @@ public class GeneratePayload {
 	private static final int USAGE_CODE = 64;
 
 	public static void main(final String[] args) {
-		if (args.length != 2) {
+		if (args.length < 2) {
 			printUsage();
 			System.exit(USAGE_CODE);
 		}
 		final String payloadType = args[0];
-		final String command = args[1];
+		final String[] command = Arrays.copyOfRange(args, 1, args.length);
 
 		final Class<? extends ObjectPayload> payloadClass = Utils.getPayloadClass(payloadType);
 		if (payloadClass == null) {
@@ -31,7 +32,18 @@ public class GeneratePayload {
 
 		try {
 			final ObjectPayload payload = payloadClass.newInstance();
-			final Object object = payload.getObject(command);
+			final Object object;
+			if (payload instanceof ExtendedObjectPayload) {
+				ExtendedObjectPayload extended_payload = (ExtendedObjectPayload) payload;
+				object = extended_payload.getObject(command);
+			}
+			else {
+				if (command.length > 1) {
+					System.err.println("The payload '" + payloadType + "' does not support arguments");
+				}
+				object = payload.getObject(command[0]);
+			}
+			
 			PrintStream out = System.out;
 			Serializer.serialize(object, out);
 			ObjectPayload.Utils.releasePayload(payload, object);
@@ -45,7 +57,7 @@ public class GeneratePayload {
 
 	private static void printUsage() {
 		System.err.println("Y SO SERIAL?");
-		System.err.println("Usage: java -jar ysoserial-[version]-all.jar [payload] '[command]'");
+		System.err.println("Usage: java -jar ysoserial-[version]-all.jar payload  [arguments ...]");
 		System.err.println("  Available payload types:");
 
 		final List<Class<? extends ObjectPayload>> payloadClasses =

