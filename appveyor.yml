@@ -1,0 +1,36 @@
+# based on https://github.com/GoogleCloudPlatform/google-cloud-java/blob/master/appveyor.yml
+
+# build version
+version: '{build}'
+
+# Do not build on tags
+skip_tags: true
+
+# enviroment settings
+environment:
+  matrix:
+    - JAVA_HOME: C:\Program Files\Java\jdk1.6.0
+    - JAVA_HOME: C:\Program Files\Java\jdk1.7.0
+    - JAVA_HOME: C:\Program Files\Java\jdk1.8.0
+
+matrix:
+  allow_failures:
+    - JAVA_HOME: C:\Program Files\Java\jdk1.6.0
+    - JAVA_HOME: C:\Program Files\Java\jdk1.7.0
+
+# install required tools (maven, secure-file, encrypted files)
+install:
+  - cmd: echo %JAVA_HOME%
+  - cmd: echo %M2_HOME%
+
+# build and install artifacts
+build_script:
+  - mvn clean install -DskipTests
+
+# verify artifacts
+test_script:
+  - mvn test
+
+# preserve dependencies between builds
+cache:
+  - C:\Users\appveyor\.m2

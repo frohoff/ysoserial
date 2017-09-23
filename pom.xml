@@ -19,11 +19,15 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.2</version>
+				<version>3.5.1</version>
 				<configuration>
+					<!-- maximize compatibility -->
 					<source>1.6</source>
-					<target>1.6</target><!-- maximize compatibility -->
-				</configuration>
+					<target>1.6</target>
+					<!-- ignore noisy internal api warnings -->
+                    <compilerArgument>-XDignore.symbol.file</compilerArgument>
+                    <fork>true</fork>
+                </configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -54,6 +58,7 @@
 		        <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.20</version>
 		        <configuration>
+			        <trimStackTrace>false</trimStackTrace>
 			        <systemPropertyVariables>
 			        	<java.rmi.server.useCodebaseOnly>false</java.rmi.server.useCodebaseOnly>
 			        </systemPropertyVariables>

