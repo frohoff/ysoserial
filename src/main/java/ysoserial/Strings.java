@@ -50,6 +50,19 @@ public class Strings {
         }
         return lines;
     }
+    
+    public static String escapeJavaString(String str) {
+        return str.replaceAll("\\\\","\\\\\\\\").replaceAll("\"", "\\\""); 
+    }
+    
+    public static String[] escapeJavaStrings(String[] strs) {
+        String[] res = new String[strs.length];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = escapeJavaString(strs[i]);
+        }
+        return res;     
+    }
+    
 
     public static class ToStringComparator implements Comparator<Object> {
         public int compare(Object o1, Object o2) { return o1.toString().compareTo(o2.toString()); }
