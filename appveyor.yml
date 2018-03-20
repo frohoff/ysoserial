@@ -1,4 +1,5 @@
 # based on https://github.com/GoogleCloudPlatform/google-cloud-java/blob/master/appveyor.yml
+#          and http://www.yegor256.com/2015/01/10/windows-appveyor-maven.html
 
 # build version
 version: '{build}'
@@ -12,16 +13,30 @@ environment:
     - JAVA_HOME: C:\Program Files\Java\jdk1.6.0
     - JAVA_HOME: C:\Program Files\Java\jdk1.7.0
     - JAVA_HOME: C:\Program Files\Java\jdk1.8.0
+    - JAVA_HOME: C:\Program Files\Java\jdk9
 
 matrix:
   allow_failures:
     - JAVA_HOME: C:\Program Files\Java\jdk1.6.0
     - JAVA_HOME: C:\Program Files\Java\jdk1.7.0
+    - JAVA_HOME: C:\Program Files\Java\jdk9    
 
-# install required tools (maven, secure-file, encrypted files)
+# install jdk6 compatible maven
 install:
+  - ps: |
+      Add-Type -AssemblyName System.IO.Compression.FileSystem
+      if (!(Test-Path -Path "C:\maven" )) {
+        (new-object System.Net.WebClient).DownloadFile(
+          'http://www.us.apache.org/dist/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.zip',
+          'C:\maven-bin.zip'
+        )
+        [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\maven-bin.zip", "C:\maven")
+      }
+  - cmd: SET PATH=C:\maven\apache-maven-3.2.5\bin;%JAVA_HOME%\bin;%PATH%
+  - cmd: echo %PATH%
   - cmd: echo %JAVA_HOME%
   - cmd: echo %M2_HOME%
+  - cmd: mvn -v
 
 # build and install artifacts
 build_script:
@@ -33,4 +48,5 @@ test_script:
 
 # preserve dependencies between builds
 cache:
+  - C:\maven
   - C:\Users\appveyor\.m2
