@@ -4,8 +4,8 @@
 [![Join the chat at https://gitter.im/frohoff/ysoserial](
     https://badges.gitter.im/frohoff/ysoserial.svg)](
     https://gitter.im/frohoff/ysoserial?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Download Latest Snapshot](https://img.shields.io/badge/download-master--SNAPSHOT-green.svg)](
-    https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar)
+[![Download Latest Snapshot](https://img.shields.io/badge/download-master-green.svg)](
+    https://jitpack.io/com/github/frohoff/ysoserial/master/ysoserial-master.jar)
 [![Travis Build Status](https://api.travis-ci.org/frohoff/ysoserial.svg?branch=master)](https://travis-ci.org/frohoff/ysoserial)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/a8tbk9blgr3yut4g/branch/master?svg=true)](https://ci.appveyor.com/project/frohoff/ysoserial/branch/master)
 
@@ -99,9 +99,9 @@ $ java -cp ysoserial.jar ysoserial.exploit.RMIRegistryExploit myhost 1099 Common
 ## Installation
 
 1. Download the latest jar from
-[JitPack](https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar)
-[![Download Latest Snapshot](https://img.shields.io/badge/download-master--SNAPSHOT-green.svg)](
-    https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar)
+[JitPack](https://jitpack.io/com/github/frohoff/ysoserial/master/ysoserial-master.jar)
+[![Download Latest Snapshot](https://img.shields.io/badge/download-master-green.svg)](
+    https://jitpack.io/com/github/frohoff/ysoserial/master/ysoserial-master.jar)
 
 Note that GitHub-hosted releases were removed in compliance with the
 [GitHub Community Guidelines](
