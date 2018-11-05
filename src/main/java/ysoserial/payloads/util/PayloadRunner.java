@@ -1,5 +1,6 @@
 package ysoserial.payloads.util;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
 import ysoserial.Deserializer;
@@ -52,12 +53,12 @@ public class PayloadRunner {
     }
 
     private static String getFirstExistingFile(String ... files) {
-        return "calc.exe";
-//        for (String path : files) {
-//            if (new File(path).exists()) {
-//                return path;
-//            }
-//        }
-//        throw new UnsupportedOperationException("no known test executable");
+//        return "calc.exe";
+        for (String path : files) {
+            if (new File(path).exists()) {
+                return path;
+            }
+        }
+        throw new UnsupportedOperationException("no known test executable");
     }
 }

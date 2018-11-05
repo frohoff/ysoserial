@@ -58,9 +58,10 @@
 		        <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.20</version>
 		        <configuration>
+                    <rerunFailingTestsCount>2</rerunFailingTestsCount> <!-- for flaky Wicket1 test -->
 			        <trimStackTrace>false</trimStackTrace>
 			        <systemPropertyVariables>
-			        	<java.rmi.server.useCodebaseOnly>false</java.rmi.server.useCodebaseOnly>
+			        	    <java.rmi.server.useCodebaseOnly>false</java.rmi.server.useCodebaseOnly>
 			        </systemPropertyVariables>
 		        </configuration>
 		    </plugin>

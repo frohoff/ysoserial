@@ -38,8 +38,8 @@ public class TestHarnessTest {
 		PayloadsTest.testPayload(ExecMockPayload.class, new Class[] { ExecMockSerializable.class });
 	}
 
-	public static class ExecMockPayload implements ObjectPayload<ExecMockSerializable> {
-		public ExecMockSerializable getObject(String command) throws Exception {
+	public static class ExecMockPayload extends ExtendedObjectPayload<ExecMockSerializable> {
+		public ExecMockSerializable getObject(String[] command) throws Exception {
 			return new ExecMockSerializable(command);
 		}
 	}
@@ -52,8 +52,8 @@ public class TestHarnessTest {
 
 	@SuppressWarnings("serial")
 	public static class ExecMockSerializable implements Serializable {
-		private final String cmd;
-		public ExecMockSerializable(String cmd) { this.cmd = cmd; }
+		private final String[] cmd;
+		public ExecMockSerializable(String[] cmd) { this.cmd = cmd; }
 
 		private void readObject(final ObjectInputStream ois) throws IOException, ClassNotFoundException {
 		    ois.defaultReadObject();
