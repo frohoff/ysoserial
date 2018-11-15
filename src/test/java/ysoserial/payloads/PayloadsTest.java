@@ -107,8 +107,8 @@ public class PayloadsTest {
             customDeserializer = ((CustomDeserializer)testHarness).getCustomDeserializer();
         }
 
-        ExecCheckingSecurityManager sm = new ExecCheckingSecurityManager();
-        final byte[] serialized = sm.callWrapped(makeSerializeCallable(payloadClass, payloadCommand));
+        // TODO per-thread secmgr to enforce no detonation during deserialization
+        final byte[] serialized = makeSerializeCallable(payloadClass, payloadCommand).call();
         Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized, customDeserializer);
         if ( testHarness instanceof WrappedTest ) {
             callable = ( (WrappedTest) testHarness ).createCallable(callable);

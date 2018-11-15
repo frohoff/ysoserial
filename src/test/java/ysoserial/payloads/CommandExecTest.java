@@ -16,7 +16,6 @@ public class CommandExecTest implements CustomTest {
     @Override
     public void run(Callable<Object> payload) throws Exception {
         Assert.assertFalse("test file should not exist", testFile.exists());
-        Exception err;
         try {
             payload.call();
         } catch (Exception e) {

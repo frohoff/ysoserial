@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+// TODO per-thread secmgr
 public class ExecCheckingSecurityManager extends SecurityManager {
 	public ExecCheckingSecurityManager() {
 		this(true);
@@ -40,7 +41,6 @@ public class ExecCheckingSecurityManager extends SecurityManager {
 			throw new ExecException(cmd);
 		}
 	};
-
 
 	@SuppressWarnings("serial")
 	public static class ExecException extends RuntimeException {
