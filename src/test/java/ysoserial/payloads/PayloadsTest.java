@@ -18,13 +18,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import ysoserial.CustomDeserializer;
-import ysoserial.CustomPayloadArgs;
-import ysoserial.CustomTest;
-import ysoserial.Deserializer;
-import ysoserial.Serializer;
+import ysoserial.*;
 import ysoserial.util.Throwables;
-import ysoserial.WrappedTest;
 import ysoserial.payloads.TestHarnessTest.ExecMockPayload;
 import ysoserial.payloads.TestHarnessTest.NoopMockPayload;
 import ysoserial.payloads.annotation.Dependencies;
@@ -74,6 +69,7 @@ public class PayloadsTest {
 
         PayloadTest t = payloadClass.getAnnotation(PayloadTest.class);
 
+        int tries = 1;
         if ( t != null ) {
             if ( !t.skip().isEmpty() ) {
                 Assume.assumeTrue(t.skip(), false);
@@ -81,6 +77,10 @@ public class PayloadsTest {
 
             if ( !t.precondition().isEmpty() ) {
                 Assume.assumeTrue("Precondition: " + t.precondition(), checkPrecondition(payloadClass, t.precondition()));
+            }
+
+            if (! t.flaky().isEmpty()) {
+                tries = 5;
             }
         }
 
@@ -114,10 +114,21 @@ public class PayloadsTest {
             callable = ( (WrappedTest) testHarness ).createCallable(callable);
         }
 
-        if ( testHarness instanceof CustomTest ) {
-            ( (CustomTest) testHarness ).run(callable);
-            return;
+        if (testHarness instanceof CustomTest) {
+            // if marked as flaky try up to 5 times
+            Exception ex = new Exception();
+            for (int i = 0; i < tries; i++) {
+                try {
+                    ((CustomTest) testHarness).run(callable);
+                    ex = null;
+                    break;
+                } catch (Exception e) {
+                    ex = e;
+                }
+            }
+            if (ex != null) throw ex;
         }
+
     }
 
 
