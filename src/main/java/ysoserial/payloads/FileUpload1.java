@@ -14,6 +14,7 @@ import org.apache.commons.io.output.ThresholdingOutputStream;
 import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
+import ysoserial.payloads.util.JavaVersion;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
@@ -40,9 +41,12 @@ import ysoserial.payloads.util.Reflections;
     "commons-fileupload:commons-fileupload:1.3.1",
     "commons-io:commons-io:2.4"
 } )
-@PayloadTest(harness="ysoserial.payloads.FileUploadTest")
+@PayloadTest(harness="ysoserial.payloads.FileUploadTest", precondition = "isApplicableJavaVersion")
 @Authors({ Authors.MBECHLER })
 public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
+    public static boolean isApplicableJavaVersion() {
+        return JavaVersion.isAtLeast(7);
+    }
 
     public DiskFileItem getObject ( String command ) throws Exception {
 

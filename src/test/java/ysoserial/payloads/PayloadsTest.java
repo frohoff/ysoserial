@@ -71,7 +71,6 @@ public class PayloadsTest {
     public static void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader )
             throws Exception {
         String command = "hostname";
-        String[] deps = buildDeps(payloadClass);
 
         PayloadTest t = payloadClass.getAnnotation(PayloadTest.class);
 
@@ -85,6 +84,7 @@ public class PayloadsTest {
             }
         }
 
+        String[] deps = buildDeps(payloadClass);
         String payloadCommand = command;
         Class<?> customDeserializer = null;
         Object testHarness = null;

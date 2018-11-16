@@ -27,7 +27,6 @@ public class JavaVersion {
         return v;
     }
 
-
     public static boolean isAnnInvHUniversalMethodImpl() {
         JavaVersion v = JavaVersion.getLocalVersion();
         return v != null && (v.major < 8 || (v.major == 8 && v.update <= 71));
@@ -36,6 +35,11 @@ public class JavaVersion {
     public static boolean isBadAttrValExcReadObj() {
         JavaVersion v = JavaVersion.getLocalVersion();
         return v != null && (v.major > 8 && v.update >= 76);
+    }
+
+    public static boolean isAtLeast(int major) {
+        JavaVersion v = JavaVersion.getLocalVersion();
+        return v != null && v.major >= major;
     }
 }
 
