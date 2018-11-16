@@ -5,15 +5,20 @@ cache:
   directories:
   - $HOME/.m2
 
+addons:
+  apt:
+    packages:
+      - openjdk-6-jdk
+
 # Travis CI provides OpenJDK 6, OpenJDK 7, Oracle JDK 7, and Oracle JDK 8.
 # Sun JDK 6 is not provided, because it is EOL as of November 2012.
 # OpenJDK 8 is available on our Trusty images, specify dist: trusty to make use of it.
 jdk:
-  - oraclejdk8    
+  - oraclejdk8
   #- oraclejdk7 #https://github.com/travis-ci/travis-ci/issues/7884
   - openjdk8
   - openjdk7
-  #- openjdk6 #https://github.com/travis-ci/travis-ci/issues/8199
+  - openjdk6
 
 matrix:
   allow_failures:
