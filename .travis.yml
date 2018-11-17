@@ -18,6 +18,7 @@ before_install:
       curl https://apache.osuosl.org/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.tar.gz |
       tar xz -C $MVN_325 --strip-components=1
   - if [ "$TRAVIS_JDK_VERSION" == "openjdk6" ]; then jdk_switcher use openjdk6; fi
+  - mvn -v
 
 after_script:
   - > # print more detailed info about test results
