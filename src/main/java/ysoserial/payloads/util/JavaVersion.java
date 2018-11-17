@@ -21,9 +21,10 @@ public class JavaVersion {
         }
         JavaVersion v = new JavaVersion();
         String parts[] = property.split("\\.|_|-");
-        v.major   = Integer.parseInt(parts[1]);
-        v.minor   = Integer.parseInt(parts[2]);
-        v.update  = Integer.parseInt(parts[3]);
+        int start = "1".equals(parts[0]) ? 1 : 0; // skip "1." prefix
+        v.major   = Integer.parseInt(parts[start + 0]);
+        v.minor   = Integer.parseInt(parts[start + 1]);
+        v.update  = Integer.parseInt(parts[start + 2]);
         return v;
     }
 
