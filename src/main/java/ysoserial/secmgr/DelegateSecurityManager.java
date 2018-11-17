@@ -17,7 +17,7 @@ public class DelegateSecurityManager extends SecurityManager {
 	}
 
     @SuppressWarnings({"deprecation"})
-    @Override
+    //@Override //fix for JDK10+
 	public boolean getInCheck() {
 		return getSecurityManager().getInCheck();
 	}
