@@ -24,7 +24,7 @@ public class Reflections {
 	}
 
 	public static Object getFieldValue(final Object obj, final String fieldName) throws Exception {
-		final Field field = getField(obj.getClass(), fieldName);		
+		final Field field = getField(obj.getClass(), fieldName);
 		return field.get(obj);
 	}
 
@@ -33,13 +33,16 @@ public class Reflections {
 	    ctor.setAccessible(true);
 	    return ctor;
 	}
-	
+
+	public static Object newInstance(String className, Object ... args) throws Exception {
+        return getFirstCtor(className).newInstance(args);
+    }
 
     public static <T> T createWithoutConstructor ( Class<T> classToInstantiate )
             throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         return createWithConstructor(classToInstantiate, Object.class, new Class[0], new Object[0]);
     }
-    
+
     @SuppressWarnings ( {"unchecked"} )
     public static <T> T createWithConstructor ( Class<T> classToInstantiate, Class<? super T> constructorClass, Class<?>[] consArgTypes, Object[] consArgs )
             throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
