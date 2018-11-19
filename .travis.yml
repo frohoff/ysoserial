@@ -6,6 +6,7 @@ cache:
   - $HOME/.m2
   - $HOME/.mvn/
 
+# jdk6 requires workarounds https://github.com/travis-ci/travis-ci/issues/9713
 addons:
   apt:
     packages:
@@ -13,10 +14,9 @@ addons:
 
 before_install:
   - > # install mvn 3.2.5 for use with java6
-      export MVN_325=$HOME/.mvn/3.2.5
-      which $MVN_325/bin/mvn || mkdir -p $MVN_325 &&
+      which $HOME/.mvn/3.2.5/bin/mvn || mkdir -p $HOME/.mvn/3.2.5 &&
       curl https://apache.osuosl.org/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.tar.gz |
-      tar xz -C $MVN_325 --strip-components=1
+      tar xz -C $HOME/.mvn/3.2.5 --strip-components=1
   - if [ "$TRAVIS_JDK_VERSION" == "openjdk6" ]; then jdk_switcher use openjdk6; fi
   - mvn -v
 
