@@ -4,17 +4,45 @@ language: java
 cache:
   directories:
   - $HOME/.m2
+  - $HOME/.mvn/
 
-# Travis CI provides OpenJDK 6, OpenJDK 7, Oracle JDK 7, and Oracle JDK 8.
-# Sun JDK 6 is not provided, because it is EOL as of November 2012.
-# OpenJDK 8 is available on our Trusty images, specify dist: trusty to make use of it.
-jdk:
-  - oraclejdk8    
-  #- oraclejdk7 #https://github.com/travis-ci/travis-ci/issues/7884
-  - openjdk8
-  - openjdk7
-  #- openjdk6 #https://github.com/travis-ci/travis-ci/issues/8199
+# jdk6 requires workarounds https://github.com/travis-ci/travis-ci/issues/9713
+addons:
+  apt:
+    packages:
+      - openjdk-6-jdk
+
+before_install:
+  - > # install mvn 3.2.5 for use with java6
+      which $HOME/.mvn/3.2.5/bin/mvn || mkdir -p $HOME/.mvn/3.2.5 &&
+      curl https://apache.osuosl.org/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.tar.gz |
+      tar xz -C $HOME/.mvn/3.2.5 --strip-components=1
+  - if [ "$TRAVIS_JDK_VERSION" == "openjdk6" ]; then jdk_switcher use openjdk6; fi
+  - mvn -v
+
+after_script:
+  - > # print more detailed info about test results
+      cat target/surefire-reports/TEST-ysoserial.payloads.PayloadsTest.xml |
+      grep testcase -A1 | grep -B1 -E 'failure|error|skipped' | grep -v -- --
 
 matrix:
   allow_failures:
-  - jdk: openjdk7
+    - jdk: oraclejdk11
+    - jdk: openjdk6
+    - jdk: openjdk7
+    - jdk: openjdk9
+    - jdk: openjdk10
+    - jdk: openjdk11
+  include:
+    #- jdk: oraclejdk7 #https://github.com/travis-ci/travis-ci/issues/7884
+    - jdk: oraclejdk8
+    - jdk: oraclejdk11
+    - jdk: openjdk6
+      env: PATH=$HOME/.mvn/3.2.5/bin:$PATH
+    - jdk: openjdk7
+    - jdk: openjdk8
+    - jdk: openjdk9
+    - jdk: openjdk10
+    - jdk: openjdk11
+
+

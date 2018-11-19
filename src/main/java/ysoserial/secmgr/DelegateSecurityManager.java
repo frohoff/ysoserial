@@ -16,11 +16,41 @@ public class DelegateSecurityManager extends SecurityManager {
 		this.securityManager = securityManager;
 	}
 
+    //BEGIN fixes for JDK10+ compatibility
+
     @SuppressWarnings({"deprecation"})
-    @Override
+    //@Override
 	public boolean getInCheck() {
-		return getSecurityManager().getInCheck();
+		//return getSecurityManager().getInCheck();
+        return false;
 	}
+
+    @SuppressWarnings({"deprecation"})
+    //@Override
+    public boolean checkTopLevelWindow(Object window) {
+	    //return getSecurityManager().checkTopLevelWindow(window);
+        return true;
+    }
+
+    @SuppressWarnings({"deprecation"})
+    //@Override
+    public void checkSystemClipboardAccess() {
+	    //getSecurityManager().checkSystemClipboardAccess();
+    }
+
+    @SuppressWarnings({"deprecation"})
+    //@Override
+    public void checkAwtEventQueueAccess() {
+        //getSecurityManager().checkAwtEventQueueAccess();
+    }
+
+    @SuppressWarnings({"deprecation"})
+    //@Override
+    public void checkMemberAccess(Class<?> clazz, int which) {
+        //getSecurityManager().checkMemberAccess(clazz, which);
+    }
+
+    //END fixes for JDK10+ compatibility
 
 	@Override
 	public Object getSecurityContext() {
@@ -138,27 +168,9 @@ public class DelegateSecurityManager extends SecurityManager {
 		getSecurityManager().checkPropertyAccess(key);
 	}
 
-    @SuppressWarnings({"deprecation"})
-    @Override
-	public boolean checkTopLevelWindow(Object window) {
-		return getSecurityManager().checkTopLevelWindow(window);
-	}
-
 	@Override
 	public void checkPrintJobAccess() {
 		getSecurityManager().checkPrintJobAccess();
-	}
-
-    @SuppressWarnings({"deprecation"})
-    @Override
-	public void checkSystemClipboardAccess() {
-		getSecurityManager().checkSystemClipboardAccess();
-	}
-
-    @SuppressWarnings({"deprecation"})
-    @Override
-	public void checkAwtEventQueueAccess() {
-		getSecurityManager().checkAwtEventQueueAccess();
 	}
 
 	@Override
@@ -175,12 +187,6 @@ public class DelegateSecurityManager extends SecurityManager {
 	@Override
 	public void checkSetFactory() {
 		getSecurityManager().checkSetFactory();
-	}
-
-	@SuppressWarnings({"deprecation"})
-	@Override
-	public void checkMemberAccess(Class<?> clazz, int which) {
-		getSecurityManager().checkMemberAccess(clazz, which);
 	}
 
 	@Override

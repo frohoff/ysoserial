@@ -3,6 +3,7 @@ package ysoserial.payloads;
 
 import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.PayloadTest;
+import ysoserial.payloads.util.JavaVersion;
 import ysoserial.payloads.util.PayloadRunner;
 
 import com.sun.rowset.JdbcRowSetImpl;
@@ -41,9 +42,12 @@ import com.sun.rowset.JdbcRowSetImpl;
 @SuppressWarnings ( {
     "restriction"
 } )
-@PayloadTest( harness = "ysoserial.payloads.JRMPReverseConnectTest")
+@PayloadTest(harness = "ysoserial.payloads.JRMPReverseConnectTest", precondition = "isApplicableJavaVersion")
 @Authors({ Authors.MBECHLER })
 public class Hibernate2 implements ObjectPayload<Object>, DynamicDependencies {
+    public static boolean isApplicableJavaVersion() {
+        return JavaVersion.isAtLeast(7);
+    }
 
     public static String[] getDependencies () {
         return Hibernate1.getDependencies();

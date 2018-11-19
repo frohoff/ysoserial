@@ -56,7 +56,7 @@
 			<plugin>
 		        <groupId>org.apache.maven.plugins</groupId>
 		        <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20</version>
+                <version>3.0.0-M1</version>
 		        <configuration>
 			        <trimStackTrace>false</trimStackTrace>
 			        <systemPropertyVariables>
@@ -311,6 +311,43 @@
 	</dependencies>
 
 	<profiles>
+        <profile>
+            <id>jdk6</id>
+            <activation>
+                <jdk>1.6</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.22.1</version>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>javax.el</groupId>
+                    <artifactId>javax.el-api</artifactId>
+                    <version>3.0.0</version>
+                </dependency>
+            </dependencies>
+            <!-- workaround for non-overlapping TLS versions in JDK6 and central repo
+             https://central.sonatype.org/articles/2018/May/04/discontinued-support-for-tlsv11-and-below/ -->
+            <repositories>
+                <repository>
+                    <id>repo1</id>
+                    <url>http://repo1.maven.org/maven2</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>repo1</id>
+                    <url>http://repo1.maven.org/maven2</url>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+
 		<profile>
 			<id>hibernate5</id>
 			<activation>
