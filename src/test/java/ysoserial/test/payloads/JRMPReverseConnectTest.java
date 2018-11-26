@@ -1,4 +1,4 @@
-package ysoserial.payloads;
+package ysoserial.test.payloads;
 
 
 import java.util.concurrent.Callable;
@@ -7,7 +7,7 @@ import javax.management.BadAttributeValueExpException;
 
 import org.junit.Assert;
 
-import ysoserial.CustomTest;
+import ysoserial.test.CustomTest;
 import ysoserial.exploit.JRMPListener;
 
 
@@ -21,7 +21,7 @@ public class JRMPReverseConnectTest implements CustomTest {
 
 
     /**
-     * 
+     *
      */
     public JRMPReverseConnectTest () {
         // some payloads cannot specify the port

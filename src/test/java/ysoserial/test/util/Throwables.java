@@ -1,4 +1,4 @@
-package ysoserial.util;
+package ysoserial.test.util;
 
 public class Throwables {
 	public static Throwable getInnermostCause(final Throwable t) {

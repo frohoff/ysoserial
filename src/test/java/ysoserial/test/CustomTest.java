@@ -1,4 +1,4 @@
-package ysoserial;
+package ysoserial.test;
 
 import java.util.concurrent.Callable;
 

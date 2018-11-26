@@ -1,10 +1,10 @@
-package ysoserial.payloads;
+package ysoserial.test.payloads;
 
 
 import java.net.URL;
 import java.util.concurrent.Callable;
 
-import ysoserial.WrappedTest;
+import ysoserial.test.WrappedTest;
 import ysoserial.exploit.JRMPListener;
 
 
@@ -22,15 +22,15 @@ public class JRMPReverseConnectSMTest extends RemoteClassLoadingTest implements 
         // some payloads cannot specify the port
         jrmpPort = 1099;
     }
-    
-    
+
+
 
 
 
     /**
       * {@inheritDoc}
       *
-      * @see ysoserial.payloads.RemoteClassLoadingTest#createCallable(java.util.concurrent.Callable)
+      * @see RemoteClassLoadingTest#createCallable(java.util.concurrent.Callable)
       */
     @Override
     public Callable<Object> createCallable ( final Callable<Object> innerCallable ) {
@@ -58,7 +58,7 @@ public class JRMPReverseConnectSMTest extends RemoteClassLoadingTest implements 
         return "localhost:" + jrmpPort;
     }
 
-   
-    
-    
+
+
+
 }
