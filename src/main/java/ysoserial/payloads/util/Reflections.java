@@ -9,12 +9,16 @@ import sun.reflect.ReflectionFactory;
 @SuppressWarnings ( "restriction" )
 public class Reflections {
 
-	public static Field getField(final Class<?> clazz, final String fieldName) throws Exception {
-		Field field = clazz.getDeclaredField(fieldName);
-		if (field != null)
-			field.setAccessible(true);
-		else if (clazz.getSuperclass() != null)
-			field = getField(clazz.getSuperclass(), fieldName);
+	public static Field getField(final Class<?> clazz, final String fieldName) {
+        Field field = null;
+	    try {
+	        field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+        }
+        catch (NoSuchFieldException ex) {
+            if (clazz.getSuperclass() != null)
+                field = getField(clazz.getSuperclass(), fieldName);
+        }
 		return field;
 	}
 
