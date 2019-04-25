@@ -65,7 +65,7 @@ public class MozillaRhino2 implements ObjectPayload<Object> {
 
         ScriptableObject initContextScriptableObject = new Environment();
         Method makeSlot = ScriptableObject.class.getDeclaredMethod("accessSlot", String.class, int.class, int.class);
-        makeSlot.setAccessible(true);
+        Reflections.setAccessible(makeSlot);
         Object slot = makeSlot.invoke(initContextScriptableObject, "foo", 0, 4);
         Reflections.setFieldValue(slot, "getter", initContextMemberBox);
 

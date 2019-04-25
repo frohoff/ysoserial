@@ -78,7 +78,7 @@ public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
         Class<?> getterIf = Class.forName("org.hibernate.property.Getter");
         Class<?> basicGetter = Class.forName("org.hibernate.property.BasicPropertyAccessor$BasicGetter");
         Constructor<?> bgCon = basicGetter.getDeclaredConstructor(Class.class, Method.class, String.class);
-        bgCon.setAccessible(true);
+        Reflections.setAccessible(bgCon);
 
         if ( !method.startsWith("get") ) {
             throw new IllegalArgumentException("Hibernate4 can only call getters");
