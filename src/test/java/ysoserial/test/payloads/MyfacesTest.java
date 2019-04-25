@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import ysoserial.payloads.util.Reflections;
 import ysoserial.test.CustomDeserializer;
 import ysoserial.Deserializer;
 
@@ -142,7 +143,7 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
         @Override
         public Object call () throws Exception {
             java.lang.reflect.Method setFC = FacesContext.class.getDeclaredMethod("setCurrentInstance", FacesContext.class);
-            setFC.setAccessible(true);
+            Reflections.setAccessible(setFC);
             ClassLoader oldTCCL = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
             FacesContext ctx = createMockFacesContext();
