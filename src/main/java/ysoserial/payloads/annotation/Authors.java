@@ -20,6 +20,9 @@ public @interface Authors {
     String JASINNER = "jasinner";
     String KULLRICH = "kai_ullrich";
     String TINT0 = "_tint0";
+    String SCRISTALLI = "scristalli";
+    String HANYRAX = "hanyrax";
+    String EDOARDOVIGNATI = "EdoardoVignati";
 
     String[] value() default {};
 
