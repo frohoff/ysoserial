@@ -42,7 +42,7 @@ import com.sun.rowset.JdbcRowSetImpl;
 @SuppressWarnings ( {
     "restriction"
 } )
-@PayloadTest(harness = "ysoserial.payloads.JRMPReverseConnectTest", precondition = "isApplicableJavaVersion")
+@PayloadTest(harness="ysoserial.test.payloads.JRMPReverseConnectTest", precondition = "isApplicableJavaVersion")
 @Authors({ Authors.MBECHLER })
 public class Hibernate2 implements ObjectPayload<Object>, DynamicDependencies {
     public static boolean isApplicableJavaVersion() {

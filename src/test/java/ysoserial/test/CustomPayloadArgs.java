@@ -1,4 +1,4 @@
-package ysoserial;
+package ysoserial.test;
 
 
 /**
@@ -7,7 +7,7 @@ package ysoserial;
  */
 public interface CustomPayloadArgs {
 
-    
+
     String getPayloadArgs ();
-    
+
 }

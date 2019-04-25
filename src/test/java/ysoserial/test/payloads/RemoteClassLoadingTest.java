@@ -1,4 +1,4 @@
-package ysoserial.payloads;
+package ysoserial.test.payloads;
 
 
 import java.io.ByteArrayInputStream;
@@ -12,7 +12,7 @@ import fi.iki.elonen.NanoHTTPD.Response.Status;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
-import ysoserial.WrappedTest;
+import ysoserial.test.WrappedTest;
 
 
 /**
@@ -76,8 +76,8 @@ public class RemoteClassLoadingTest implements WrappedTest {
             this.innerCallable = innerCallable;
 
         }
-        
-        
+
+
         public void waitFor() throws InterruptedException {
             synchronized ( this.waitLock ) {
                 this.waitLock.wait(1000);
@@ -121,7 +121,7 @@ public class RemoteClassLoadingTest implements WrappedTest {
 
     }
 
-    
+
 
     public static class Exploit implements Serializable {
 

@@ -1,4 +1,4 @@
-package ysoserial;
+package ysoserial.test;
 
 import java.util.concurrent.Callable;
 
@@ -9,5 +9,5 @@ import java.util.concurrent.Callable;
 public interface WrappedTest extends CustomPayloadArgs {
 
     Callable<Object> createCallable ( Callable<Object> innerCallable );
-   
+
 }

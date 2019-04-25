@@ -22,7 +22,7 @@ before_install:
 
 after_script:
   - > # print more detailed info about test results
-      cat target/surefire-reports/TEST-ysoserial.payloads.PayloadsTest.xml |
+      cat target/surefire-reports/TEST-ysoserial.test.payloads.PayloadsTest.xml |
       grep testcase -A1 | grep -B1 -E 'failure|error|skipped' | grep -v -- --
 
 matrix:
