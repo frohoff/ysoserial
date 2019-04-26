@@ -1,32 +1,44 @@
-package ysoserial.payloads;
+package ysoserial.test.payloads;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
+import org.junit.runner.Description;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import ysoserial.*;
-import ysoserial.util.Throwables;
-import ysoserial.payloads.TestHarnessTest.ExecMockPayload;
-import ysoserial.payloads.TestHarnessTest.NoopMockPayload;
+import ysoserial.payloads.DynamicDependencies;
+import ysoserial.payloads.ObjectPayload;
+import ysoserial.test.CustomTest;
+import ysoserial.test.CustomDeserializer;
+import ysoserial.test.CustomPayloadArgs;
+import ysoserial.test.WrappedTest;
+import ysoserial.test.payloads.TestHarnessTest.ExecMockPayload;
+import ysoserial.test.payloads.TestHarnessTest.NoopMockPayload;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.ClassFiles;
-import ysoserial.secmgr.ExecCheckingSecurityManager;
-import ysoserial.secmgr.ExecCheckingSecurityManager.ExecException;
 
 
 /*
@@ -65,18 +77,22 @@ public class PayloadsTest {
 
     public static void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader )
             throws Exception {
+        System.out.println("Testing payload: " + payloadClass.getName());
+
         String command = "hostname";
 
         PayloadTest t = payloadClass.getAnnotation(PayloadTest.class);
 
         int tries = 1;
         if ( t != null ) {
-            if ( !t.skip().isEmpty() ) {
-                Assume.assumeTrue(t.skip(), false);
-            }
+            if (System.getProperty("forceTests") == null) {
+                if ( !t.skip().isEmpty() ) {
+                    Assume.assumeTrue(t.skip(), false);
+                }
 
-            if ( !t.precondition().isEmpty() ) {
-                Assume.assumeTrue("Precondition: " + t.precondition(), checkPrecondition(payloadClass, t.precondition()));
+                if ( !t.precondition().isEmpty() ) {
+                    Assume.assumeTrue("Precondition: " + t.precondition(), checkPrecondition(payloadClass, t.precondition()));
+                }
             }
 
             if (! t.flaky().isEmpty()) {
@@ -99,18 +115,18 @@ public class PayloadsTest {
             testHarness = new CommandExecTest(); // default
         }
 
-        if ( testHarness instanceof CustomPayloadArgs ) {
+        if ( testHarness instanceof CustomPayloadArgs) {
             payloadCommand = ( (CustomPayloadArgs) testHarness ).getPayloadArgs();
         }
 
-        if ( testHarness instanceof CustomDeserializer ) {
+        if ( testHarness instanceof CustomDeserializer) {
             customDeserializer = ((CustomDeserializer)testHarness).getCustomDeserializer();
         }
 
         // TODO per-thread secmgr to enforce no detonation during deserialization
         final byte[] serialized = makeSerializeCallable(payloadClass, payloadCommand).call();
         Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized, customDeserializer);
-        if ( testHarness instanceof WrappedTest ) {
+        if ( testHarness instanceof WrappedTest) {
             callable = ( (WrappedTest) testHarness ).createCallable(callable);
         }
 
@@ -184,7 +200,12 @@ public class PayloadsTest {
 
     static Object deserializeWithDependencies ( byte[] serialized, final String[] dependencies, final Class<?>[] classDependencies, final Class<?> customDeserializer )
             throws Exception {
-        File[] jars = dependencies.length > 0 ? Maven.resolver().resolve(dependencies).withoutTransitivity().asFile() : new File[0];
+        File[] jars = dependencies.length > 0
+            ? Maven.configureResolver()
+                .withMavenCentralRepo(true)
+                .withRemoteRepo("jenkins", "http://repo.jenkins-ci.org/public/", "default")
+                .resolve(dependencies).withoutTransitivity().asFile()
+            : new File[0];
         URL[] urls = new URL[jars.length];
         for ( int i = 0; i < jars.length; i++ ) {
             urls[ i ] = jars[ i ].toURI().toURL();
@@ -228,6 +249,94 @@ public class PayloadsTest {
             return obj;
         } finally {
             Thread.currentThread().setContextClassLoader(ccl);
+        }
+    }
+
+    public static void main(String[] args) {
+
+        JUnitCore junit = new JUnitCore();
+        PayloadListener listener = new PayloadListener();
+        junit.addListener(listener);
+        Result result = junit.run(PayloadsTest.class);
+        System.exit(result.wasSuccessful() ? 0 : 1);
+    }
+
+    public static class StdIo {
+
+        private static final PrintStream realOut = System.out;
+        private static final PrintStream realErr = System.err;
+
+        public static void restoreStreams() {
+            setStreams(realOut, realErr);
+        }
+
+        public static void setStreams(PrintStream out, PrintStream err) {
+            System.setOut(out);
+            System.setErr(err);
+        }
+
+        public static void setStreams(OutputStream out, OutputStream err) {
+            setStreams(new PrintStream(out), new PrintStream(err));
+        }
+    }
+
+    public static class PayloadListener extends RunListener {
+        public enum Status {
+            SUCCESS,
+            FAILURE,
+            IGNORE,
+            ASSUMPTION_FAILURE
+        }
+
+        private Map<Description, ByteArrayOutputStream> outs = new HashMap<Description, ByteArrayOutputStream>();
+        private Map<Description, ByteArrayOutputStream> errs = new HashMap<Description, ByteArrayOutputStream>();
+
+        private Map<Description, Status> statuses = new HashMap<Description, Status>();
+
+        private Map<Description, Failure> failures = new HashMap<Description, Failure>();
+
+        @Override
+        public void testStarted(Description description) throws Exception {
+            System.out.println(getPayload(description.getDisplayName()) + ": STARTED");
+
+            statuses.put(description, Status.SUCCESS);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+//            ByteArrayOutputStream err = new ByteArrayOutputStream();
+
+            outs.put(description, out);
+//            errs.put(description, err);
+
+            StdIo.setStreams(out, out);
+        }
+
+        @Override
+        public void testFinished(Description description) throws Exception {
+            outs.get(description).close();
+            //errs.get(description).close();
+
+            StdIo.restoreStreams();
+
+            Status status = statuses.get(description);
+            System.out.println(getPayload(description.getDisplayName()) + ": " + status);
+            if (status == Status.FAILURE) System.err.println(outs.get(description).toString());
+        }
+
+        @Override
+        public void testFailure(Failure failure) throws Exception {
+            statuses.put(failure.getDescription(), Status.FAILURE);
+            failures.put(failure.getDescription(), failure);
+        }
+
+        @Override
+        public void testAssumptionFailure(Failure failure) {
+            statuses.put(failure.getDescription(), Status.ASSUMPTION_FAILURE);
+            failures.put(failure.getDescription(), failure);
+        }
+
+        // testPayload[payloadClass: class ysoserial.payloads.JavassistWeld1](ysoserial.test.payloads.PayloadsTest)
+        public static String getPayload(String displayName) {
+            return displayName.replaceAll(".*\\[\\S+: class (\\w+\\.)+(\\w+)\\].*", "$2");
         }
     }
 }

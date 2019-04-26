@@ -29,7 +29,7 @@ import ysoserial.payloads.util.PayloadRunner;
  *
  * @author mbechler
  */
-@PayloadTest(harness = "ysoserial.payloads.MyfacesTest", precondition = "isApplicableJavaVersion")
+@PayloadTest(harness="ysoserial.test.payloads.MyfacesTest", precondition = "isApplicableJavaVersion")
 @Authors({ Authors.MBECHLER })
 public class Myfaces2 implements ObjectPayload<Object>, DynamicDependencies {
     public static boolean isApplicableJavaVersion() {

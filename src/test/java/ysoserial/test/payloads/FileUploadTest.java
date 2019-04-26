@@ -1,4 +1,4 @@
-package ysoserial.payloads;
+package ysoserial.test.payloads;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,8 +9,8 @@ import org.junit.Assert;
 
 import com.google.common.io.Files;
 
-import ysoserial.CustomTest;
-import ysoserial.util.OS;
+import ysoserial.test.CustomTest;
+import ysoserial.test.util.OS;
 
 /**
  * @author mbechler

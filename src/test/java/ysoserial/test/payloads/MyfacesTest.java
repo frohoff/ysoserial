@@ -1,4 +1,4 @@
-package ysoserial.payloads;
+package ysoserial.test.payloads;
 
 
 import java.beans.FeatureDescriptor;
@@ -23,7 +23,8 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import ysoserial.CustomDeserializer;
+import ysoserial.payloads.util.Reflections;
+import ysoserial.test.CustomDeserializer;
 import ysoserial.Deserializer;
 
 
@@ -46,7 +47,7 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
 
     /**
      * need to use a custom deserializer so that the faces context gets set in the isolated class
-     * 
+     *
      * @author mbechler
      *
      */
@@ -79,10 +80,10 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
 
 
         private static class MockELResolver extends ELResolver {
-            
+
             private ServletRequest request;
-            
-  
+
+
             public MockELResolver (ServletRequest req) {
                 this.request = req;
             }
@@ -94,7 +95,7 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
                     context.setPropertyResolved(true);
                     return this.request;
                 }
-                
+
                 return null;
             }
 
@@ -108,10 +109,10 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
                 return null;
             }
 
- 
+
             @Override
             public void setValue ( ELContext context, Object base, Object property, Object value ) {
-        
+
             }
 
 
@@ -126,14 +127,14 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
                 return null;
             }
 
- 
+
             @Override
             public Class<?> getCommonPropertyType ( ELContext context, Object base ) {
                 return null;
             }
-            
+
         }
-        
+
         public MyfacesDeserializer ( byte[] bytes ) {
             super(bytes);
         }
@@ -142,7 +143,7 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
         @Override
         public Object call () throws Exception {
             java.lang.reflect.Method setFC = FacesContext.class.getDeclaredMethod("setCurrentInstance", FacesContext.class);
-            setFC.setAccessible(true);
+            Reflections.setAccessible(setFC);
             ClassLoader oldTCCL = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
             FacesContext ctx = createMockFacesContext();

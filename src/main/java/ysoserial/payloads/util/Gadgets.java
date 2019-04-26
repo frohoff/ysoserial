@@ -12,6 +12,7 @@ import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.nqzero.permit.Permit;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -148,7 +149,7 @@ public class Gadgets {
             nodeC = Class.forName("java.util.HashMap$Entry");
         }
         Constructor nodeCons = nodeC.getDeclaredConstructor(int.class, Object.class, Object.class, nodeC);
-        nodeCons.setAccessible(true);
+        Reflections.setAccessible(nodeCons);
 
         Object tbl = Array.newInstance(nodeC, 2);
         Array.set(tbl, 0, nodeCons.newInstance(0, v1, v1, null));

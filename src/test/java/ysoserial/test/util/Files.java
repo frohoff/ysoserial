@@ -1,4 +1,4 @@
-package ysoserial.util;
+package ysoserial.test.util;
 
 import java.io.File;
 

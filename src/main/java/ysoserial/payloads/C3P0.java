@@ -38,7 +38,7 @@ import ysoserial.payloads.util.Reflections;
  * @author mbechler
  *
  */
-@PayloadTest ( harness = "ysoserial.payloads.RemoteClassLoadingTest" )
+@PayloadTest ( harness="ysoserial.test.payloads.RemoteClassLoadingTest" )
 @Dependencies( { "com.mchange:c3p0:0.9.5.2" ,"com.mchange:mchange-commons-java:0.2.11"} )
 @Authors({ Authors.MBECHLER })
 public class C3P0 implements ObjectPayload<Object> {

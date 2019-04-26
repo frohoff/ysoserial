@@ -46,7 +46,7 @@ import ysoserial.payloads.util.Reflections;
  * $ cat /tmp/upload_3805815b_2d50_4e00_9dae_a854d5a0e614_479431761.tmp
  * blue lobster
  */
-@PayloadTest(harness = "ysoserial.payloads.FileUploadTest", flaky="possible race condition")
+@PayloadTest(harness="ysoserial.test.payloads.FileUploadTest", flaky="possible race condition")
 @Dependencies({"org.apache.wicket:wicket-util:6.23.0", "org.slf4j:slf4j-api:1.6.4"})
 @Authors({ Authors.JACOBAINES })
 public class Wicket1 implements ReleaseableObjectPayload<DiskFileItem> {
