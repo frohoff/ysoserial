@@ -74,7 +74,9 @@ public class PayloadRunner {
 	
 //	public static void main(String []args)
 //	{
-//		System.out.println(getCmd("bash\n-c\necho"));
+////		System.out.println(getCmd("bash%0a-c%0acat /etc/passwd|grep root"));
+//		String []a = new String[] {new String(new byte[] {98,97,115,104}),new String(new byte[] {45,99}),new String(new byte[] {99,97,116,32,47,101,116,99,47,112,97,115,115,119,100,124,103,114,101,112,32,114,111,111,116})};
+//		System.out.println(a);
 //	}
 
     public static void run(final Class<? extends ObjectPayload<?>> clazz, final String[] args) throws Exception {
