@@ -4,6 +4,8 @@ import java.util.concurrent.Callable;
 
 import ysoserial.Deserializer;
 import ysoserial.Serializer;
+import static ysoserial.Deserializer.deserialize;		
+import static ysoserial.Serializer.serialize;
 import ysoserial.payloads.ObjectPayload;
 import ysoserial.payloads.ObjectPayload.Utils;
 import ysoserial.secmgr.ExecCheckingSecurityManager;
