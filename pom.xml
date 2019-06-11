@@ -178,7 +178,7 @@
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<version>3.2.1</version>
+			<version>3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.beanshell</groupId>
@@ -188,7 +188,7 @@
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
-			<version>1.8.2</version>
+			<version>1.9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
