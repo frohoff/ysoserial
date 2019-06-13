@@ -272,9 +272,9 @@
 			<version>1.7R2</version>
 		</dependency>
 		<dependency>
-		<groupId>javassist</groupId>
-		<artifactId>javassist</artifactId>
-		<version>3.12.0.GA</version>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.12.0.GA</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.weld</groupId>
@@ -320,6 +320,11 @@
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
 			<version>7.7.14</version>
+		</dependency>
+		<dependency>
+    		<groupId>com.atomikos</groupId>
+    		<artifactId>transactions-osgi</artifactId>
+    		<version>4.0.6</version>
 		</dependency>
 	</dependencies>
 
