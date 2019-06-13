@@ -16,7 +16,7 @@ import ysoserial.payloads.util.Reflections;
 * 	javax/management/BadAttributeValueExpException.readObject()
 *  		com/atomikos/icatch/jta/RemoteClientUserTransaction.toString()
 *  		com/atomikos/icatch/jta/RemoteClientUserTransaction.checkSetup()
-*  			javax.naming.InitialContext.lookup()
+*  			javax/naming/InitialContext.lookup()
 *
 *
 * Arguments:
