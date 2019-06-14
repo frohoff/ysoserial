@@ -326,6 +326,16 @@
     		<artifactId>transactions-osgi</artifactId>
     		<version>4.0.6</version>
 		</dependency>
+		<dependency>
+      		<groupId>org.springframework</groupId>
+      		<artifactId>spring-tx</artifactId>
+      		<version>5.1.7.RELEASE</version>
+    	</dependency>
+    	<dependency>
+      		<groupId>org.springframework</groupId>
+      		<artifactId>spring-context</artifactId>
+      		<version>5.1.7.RELEASE</version>
+    	</dependency>
 	</dependencies>
 
 	<profiles>
