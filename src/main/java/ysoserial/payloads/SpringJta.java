@@ -4,6 +4,7 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 
 import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 
 /**
@@ -26,9 +27,10 @@ import ysoserial.payloads.util.PayloadRunner;
 * This gadget was discovered by zerothoughts:
 * https://github.com/zerothoughts/spring-jndi
 */
-@Dependencies( { "org.springframework:spring-tx:5.1.7.RELEASE", "org.springframework:spring-context:5.1.7.RELEASE" } )
+@PayloadTest(harness="ysoserial.test.payloads.JRMPReverseConnectTest")
+@Dependencies( { "org.springframework:spring-tx:5.1.7.RELEASE", "javax.transaction:jta:1.1" } )
 @Authors({ Authors.ZEROTHOUGHTS, Authors.SCICCONE })
-public class SpringJta implements ObjectPayload<Object> {
+public class SpringJta implements ObjectPayload<Object>, DynamicDependencies {
 
 	@Override
 	public Object getObject(String command) throws Exception {
@@ -48,5 +50,19 @@ public class SpringJta implements ObjectPayload<Object> {
 	
     public static void main ( final String[] args ) throws Exception {
         PayloadRunner.run(SpringJta.class, args);
+    }
+    
+    
+    // add dependencies for testing 
+    public static String[] getDependencies () {
+        return new String[] {
+        	"org.springframework:spring-tx:5.1.7.RELEASE",
+        	"org.springframework:spring-context:5.1.7.RELEASE", 
+        	"org.springframework:spring-beans:5.1.7.RELEASE",
+        	"org.springframework:spring-core:5.1.7.RELEASE",
+        	"commons-logging:commons-logging:1.2",
+        	"javax.transaction:jta:1.1"
+        };
+
     }
 }
