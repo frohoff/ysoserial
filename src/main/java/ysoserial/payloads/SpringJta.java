@@ -22,10 +22,12 @@ import ysoserial.payloads.util.PayloadRunner;
 * - (rmi,ldap)://<attacker_server>[:<attacker_port>]/<classname>
 *
 *
-* @author zerothoughts, sciccone
+* @author zerothoughts
+* 	payload added by sciccone
 * 
 * This gadget was discovered by zerothoughts:
 * https://github.com/zerothoughts/spring-jndi
+* 
 */
 @PayloadTest(harness="ysoserial.test.payloads.JRMPReverseConnectTest")
 @Dependencies( { 

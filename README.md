@@ -45,11 +45,9 @@ $  java -jar ysoserial.jar
 Y SO SERIAL?
 Usage: java -jar ysoserial-[version]-all.jar [payload] '[command]'
   Available payload types:
-Jun 20, 2019 11:04:22 AM org.reflections.Reflections scan
-INFO: Reflections took 92 ms to scan 1 urls, producing 18 keys and 160 values 
      Payload             Authors                                Dependencies                                                                                                                                                                                        
      -------             -------                                ------------                                                                                                                                                                                        
-     Atomikos            @sciccone                              transactions-osgi:4.0.6, jta:1.1                                                                                                                                                                    
+     Atomikos            @pwntester, @sciccone                  transactions-osgi:4.0.6, jta:1.1                                                                                                                                                                    
      BeanShell1          @pwntester, @cschneider4711            bsh:2.0b5                                                                                                                                                                                           
      C3P0                @mbechler                              c3p0:0.9.5.2, mchange-commons-java:0.2.11                                                                                                                                                           
      Clojure             @JackOfMostTrades                      clojure:1.8.0                                                                                                                                                                                       
@@ -79,7 +77,7 @@ INFO: Reflections took 92 ms to scan 1 urls, producing 18 keys and 160 values
      ROME                @mbechler                              rome:1.0                                                                                                                                                                                            
      Spring1             @frohoff                               spring-core:4.1.4.RELEASE, spring-beans:4.1.4.RELEASE                                                                                                                                               
      Spring2             @mbechler                              spring-core:4.1.4.RELEASE, spring-aop:4.1.4.RELEASE, aopalliance:1.0, commons-logging:1.2                                                                                                           
-     SpringJta           @zerothoughts, @sciccone               spring-tx:5.1.7.RELEASE, jta:1.1                                                                                                                                                                    
+     SpringJta           @zerothoughts, @sciccone               spring-tx:5.1.7.RELEASE, spring-context:5.1.7.RELEASE, jta:1.1                                                                                                                                      
      StrutsJasperReports @sciccone                              struts2-core:2.5.20, struts2-jasperreports-plugin:2.5.20                                                                                                                                            
      URLDNS              @gebl                                                                                                                                                                                                                                      
      Vaadin1             @kai_ullrich                           vaadin-server:7.7.14, vaadin-shared:7.7.14                                                                                                                                                          

