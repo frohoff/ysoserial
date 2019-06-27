@@ -11,7 +11,7 @@ import com.opensymphony.xwork2.inject.Container;
 import ysoserial.Deserializer;
 import ysoserial.test.CustomDeserializer;
 
-public class StrutsJasperReportsTest extends CommandExecTest implements CustomDeserializer {
+public class Struts2JasperReportsTest extends CommandExecTest implements CustomDeserializer {
 
 	@Override
 	public Class<?> getCustomDeserializer() {

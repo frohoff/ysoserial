@@ -46,10 +46,10 @@ import ysoserial.payloads.util.PayloadRunner;
 *
 */
 @SuppressWarnings({ "unchecked" })
-@PayloadTest(harness="ysoserial.test.payloads.StrutsJasperReportsTest")
+@PayloadTest(harness="ysoserial.test.payloads.Struts2JasperReportsTest")
 @Dependencies( { "org.apache.struts:struts2-core:2.5.20", "org.apache.struts:struts2-jasperreports-plugin:2.5.20" } )
 @Authors({ Authors.SCICCONE })
-public class StrutsJasperReports implements ObjectPayload<Object>, DynamicDependencies {
+public class Struts2JasperReports implements ObjectPayload<Object>, DynamicDependencies {
 
 	@Override
 	public Object getObject(String command) throws Exception {
@@ -81,7 +81,7 @@ public class StrutsJasperReports implements ObjectPayload<Object>, DynamicDepend
     
     public static void main ( final String[] args ) throws Exception {
     	initializeThreadLocalMockContainerForTesting();
-    	PayloadRunner.run(StrutsJasperReports.class, args);
+    	PayloadRunner.run(Struts2JasperReports.class, args);
     }
     
     
