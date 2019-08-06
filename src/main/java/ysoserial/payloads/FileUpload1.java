@@ -41,7 +41,7 @@ import ysoserial.payloads.util.Reflections;
     "commons-fileupload:commons-fileupload:1.3.1",
     "commons-io:commons-io:2.4"
 } )
-@PayloadTest(harness="ysoserial.test.payloads.FileUploadTest", precondition = "isApplicableJavaVersion")
+@PayloadTest(harness="ysoserial.test.payloads.FileUploadTest", precondition = "isApplicableJavaVersion", flaky = "possible race condition")
 @Authors({ Authors.MBECHLER })
 public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
     public static boolean isApplicableJavaVersion() {
