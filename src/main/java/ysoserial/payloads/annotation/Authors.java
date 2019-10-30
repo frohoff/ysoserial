@@ -23,6 +23,7 @@ public @interface Authors {
     String SCRISTALLI = "scristalli";
     String HANYRAX = "hanyrax";
     String EDOARDOVIGNATI = "EdoardoVignati";
+    String YKOSTER = "ykoster";
 
     String[] value() default {};
 
