@@ -31,7 +31,7 @@ public class Strings {
         final Integer[] maxLengths = new Integer[rows.get(0).length];
         // Max column width, will try to split on spaces if possible
         // Uses 210 as default terminal width, if not specified as system property
-        final int maxColumnWidth = Integer.getInteger("terminalWidth", 140) / maxLengths.length;
+        final int maxColumnWidth = Integer.getInteger("terminalWidth", 210) / maxLengths.length;
         for(int index = 0; index < rows.size(); index++) {
             String[] row = rows.get(index);
             if (maxLengths.length != row.length) throw new IllegalStateException("mismatched columns");
