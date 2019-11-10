@@ -57,6 +57,8 @@ Usage: java -jar ysoserial.jar [payload] '[command]'
      CommonsCollections4 @frohoff                    commons-collections4:4.0
      CommonsCollections5 @matthias_kaiser, @jasinner commons-collections:3.1
      CommonsCollections6 @matthias_kaiser            commons-collections:3.1
+     CommonsCollections8 @navalorenzo                commons-collections4:4.0
+     CommonsCollections9 @wh1t3p1g                   commons-collections:3.1
      FileUpload1         @mbechler                   commons-fileupload:1.3.1, commons-io:2.4
      Groovy1             @frohoff                    groovy:2.3.9
      Hibernate1          @mbechler

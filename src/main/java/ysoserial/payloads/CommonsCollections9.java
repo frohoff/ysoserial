@@ -16,6 +16,19 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+/*
+ Gadget chain:
+    java.util.Hashtable.readObject
+        java.util.Hashtable.reconstitutionPut
+        org.apache.commons.collections.keyvalue.TiedMapEntry.hashCode()
+            org.apache.commons.collections.keyvalue.TiedMapEntry.getValue()
+                org.apache.commons.collections.map.LazyMap.get()
+                    org.apache.commons.collections.functors.ChainedTransformer.transform()
+                    org.apache.commons.collections.functors.InvokerTransformer.transform()
+                    java.lang.reflect.Method.invoke()
+                        java.lang.Runtime.exec()
+
+ */
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"commons-collections:commons-collections:3.1"})
