@@ -23,11 +23,3 @@ jobs:
         name: ysoserial
         # Directory containing files to upload
         path: /home/runner/work/ysoserial/ysoserial/target/
-
-    - name: Action Release
-      uses: yakuhzi/action-release@v1.2.0
-      with:
-        # File to upload to the release
-        file: /home/runner/work/ysoserial/ysoserial/target/ysoserial-0.0.6-SNAPSHOT-all.jar
-        # Path to changelog file
-        changelogs: # optional
