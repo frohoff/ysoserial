@@ -20,7 +20,7 @@ jobs:
       uses: actions/upload-artifact@v1.0.0
       with:
         # Artifact name
-        name: ysoserial-SNAPSHOT
+        name: ysoserial
         # Directory containing files to upload
         path: /home/runner/work/ysoserial/ysoserial/target/
 
@@ -28,6 +28,6 @@ jobs:
       uses: yakuhzi/action-release@v1.2.0
       with:
         # File to upload to the release
-        file: ysoserial-SNAPSHOT.zip
+        file: /home/runner/work/ysoserial/ysoserial/target/ysoserial-0.0.6-SNAPSHOT-all.jar
         # Path to changelog file
         changelogs: # optional
