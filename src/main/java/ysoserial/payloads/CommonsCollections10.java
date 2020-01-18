@@ -16,6 +16,7 @@ import java.util.*;
 
 
 /*
+java.security.manager off OR set jdk.xml.enableTemplatesImplDeserialization=true
 	Gadget chain:
 	    java.io.ObjectInputStream.readObject()
             java.util.HashSet.readObject()

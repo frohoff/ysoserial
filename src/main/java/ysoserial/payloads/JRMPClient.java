@@ -70,9 +70,10 @@ public class JRMPClient extends PayloadRunner implements ObjectPayload<Registry>
         TCPEndpoint te = new TCPEndpoint(host, port);
         UnicastRef ref = new UnicastRef(new LiveRef(id, te, false));
         RemoteObjectInvocationHandler obj = new RemoteObjectInvocationHandler(ref);
-        Registry proxy = (Registry) Proxy.newProxyInstance(JRMPClient.class.getClassLoader(), new Class[] {
-            Registry.class
-        }, obj);
+        Registry proxy = (Registry) Proxy.newProxyInstance(
+                        JRMPClient.class.getClassLoader(),
+                        new Class[] { Registry.class },
+                        obj);
         return proxy;
     }
 

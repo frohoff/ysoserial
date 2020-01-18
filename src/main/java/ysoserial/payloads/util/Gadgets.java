@@ -48,9 +48,7 @@ public class Gadgets {
 
         private static final long serialVersionUID = -5971610431559700674L;
 
-
         public void transform ( DOM document, SerializationHandler[] handlers ) throws TransletException {}
-
 
         @Override
         public void transform ( DOM document, DTMAxisIterator iterator, SerializationHandler handler ) throws TransletException {}

@@ -52,7 +52,7 @@ public class PayloadRunner {
     }
 
     private static String getFirstExistingFile(String ... files) {
-        return "calc.exe";
+        return "open /System/Applications/Calculator.app";
 //        for (String path : files) {
 //            if (new File(path).exists()) {
 //                return path;
