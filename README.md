@@ -13,6 +13,11 @@ A proof-of-concept tool for generating payloads that exploit unsafe Java object 
 
 ![logo](ysoserial.png)
 
+## update
+
+* CommonsCollection8,9,10
+* RMIRegistryExploit2,3
+
 ## Description
 
 Originally released as part of AppSecCali 2015 Talk
