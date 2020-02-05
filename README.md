@@ -13,10 +13,12 @@ A proof-of-concept tool for generating payloads that exploit unsafe Java object 
 
 ![logo](ysoserial.png)
 
-## update
+## Update
 
 * CommonsCollection8,9,10
 * RMIRegistryExploit2,3
+* RMIRefListener,RMIRefListener2
+* PayloadHTTPServer
 
 ## Description
 
