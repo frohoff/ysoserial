@@ -1,13 +1,12 @@
 package ysoserial.payloads.util;
 
+import com.nqzero.permit.Permit;
+import sun.reflect.ReflectionFactory;
+
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-
-import sun.reflect.ReflectionFactory;
-
-import com.nqzero.permit.Permit;
 
 @SuppressWarnings ( "restriction" )
 public class Reflections {

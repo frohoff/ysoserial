@@ -177,12 +177,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
-            <version>5.2.3.RELEASE</version>
+            <version>4.2.4.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>5.2.3.RELEASE</version>
+            <version>4.2.4.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>javax.transaction</groupId>
