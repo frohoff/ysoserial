@@ -19,6 +19,7 @@ A proof-of-concept tool for generating payloads that exploit unsafe Java object 
 * RMIRegistryExploit2,3
 * RMIRefListener,RMIRefListener2
 * PayloadHTTPServer
+* Spring3
 
 ## Description
 
