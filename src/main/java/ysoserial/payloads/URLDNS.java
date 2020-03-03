@@ -1,17 +1,17 @@
 package ysoserial.payloads;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
-import java.util.HashMap;
-import java.net.URL;
-
 import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
+import java.util.HashMap;
 
 
 /**

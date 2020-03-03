@@ -21,6 +21,8 @@ A proof-of-concept tool for generating payloads that exploit unsafe Java object 
 * PayloadHTTPServer
 * Spring3
 
+最新的相关研究已转移到[ysomap](https://github.com/wh1t3p1g/ysomap)
+
 ## Description
 
 Originally released as part of AppSecCali 2015 Talk
