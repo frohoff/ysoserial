@@ -69,7 +69,7 @@
 		<repository>
 			<id>jenkins</id>
 			<layout>default</layout>
-			<url>http://repo.jenkins-ci.org/public/</url>
+			<url>https://repo.jenkins-ci.org/public/</url>
 		</repository>
 	</repositories>
 
@@ -350,13 +350,13 @@
             <repositories>
                 <repository>
                     <id>repo1</id>
-                    <url>http://repo1.maven.org/maven2</url>
+                    <url>https://repo1.maven.org/maven2</url>
                 </repository>
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
                     <id>repo1</id>
-                    <url>http://repo1.maven.org/maven2</url>
+                    <url>https://repo1.maven.org/maven2</url>
                 </pluginRepository>
             </pluginRepositories>
         </profile>
