@@ -17,7 +17,7 @@ A proof-of-concept tool for generating payloads that exploit unsafe Java object 
 
 Originally released as part of AppSecCali 2015 Talk
 ["Marshalling Pickles: how deserializing objects will ruin your day"](
-        http://frohoff.github.io/appseccali-marshalling-pickles/)
+        https://frohoff.github.io/appseccali-marshalling-pickles/)
 with gadget chains for Apache Commons Collections (3.x and 4.x), Spring Beans/Core (4.x), and Groovy (2.3.x).
 Later updated to include additional gadget chains for
 [JRE <= 1.7u21](https://gist.github.com/frohoff/24af7913611f8406eaf3) and several other libraries.
