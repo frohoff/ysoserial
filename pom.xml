@@ -321,6 +321,11 @@
 			<artifactId>vaadin-server</artifactId>
 			<version>7.7.14</version>
 		</dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.5</version>
+        </dependency>
 	</dependencies>
 
 	<profiles>
