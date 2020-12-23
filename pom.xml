@@ -355,13 +355,13 @@
             <repositories>
                 <repository>
                     <id>repo1</id>
-                    <url>https://repo1.maven.org/maven2</url>
+                    <url>http://repo1.maven.org/maven2</url><!-- intentionally http (see above) -->
                 </repository>
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
                     <id>repo1</id>
-                    <url>https://repo1.maven.org/maven2</url>
+                    <url>http://repo1.maven.org/maven2</url><!-- intentionally http (see above) -->
                 </pluginRepository>
             </pluginRepositories>
         </profile>
