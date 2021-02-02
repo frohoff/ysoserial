@@ -24,6 +24,7 @@ public @interface Authors {
     String HANYRAX = "hanyrax";
     String EDOARDOVIGNATI = "EdoardoVignati";
     String JANG = "Jang";
+    String ARTSPLOIT = "artsploit";
 
     String[] value() default {};
 
