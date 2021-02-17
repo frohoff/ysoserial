@@ -1,6 +1,7 @@
 package ysoserial;
 
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import ysoserial.payloads.ObjectPayload;
@@ -13,7 +14,7 @@ public class GeneratePayload {
 	private static final int INTERNAL_ERROR_CODE = 70;
 	private static final int USAGE_CODE = 64;
 
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		if (args.length != 2) {
 			printUsage();
 			System.exit(USAGE_CODE);
@@ -43,7 +44,7 @@ public class GeneratePayload {
 		System.exit(0);
 	}
 
-	private static void printUsage() {
+	private static void printUsage() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		System.err.println("Y SO SERIAL?");
 		System.err.println("Usage: java -jar ysoserial-[version]-all.jar [payload] '[command]'");
 		System.err.println("  Available payload types:");
@@ -56,10 +57,10 @@ public class GeneratePayload {
         rows.add(new String[] {"Payload", "Authors", "Dependencies"});
         rows.add(new String[] {"-------", "-------", "------------"});
         for (Class<? extends ObjectPayload> payloadClass : payloadClasses) {
-             rows.add(new String[] {
+            rows.add(new String[]{
                 payloadClass.getSimpleName(),
                 Strings.join(Arrays.asList(Authors.Utils.getAuthors(payloadClass)), ", ", "@", ""),
-                Strings.join(Arrays.asList(Dependencies.Utils.getDependenciesSimple(payloadClass)),", ", "", "")
+                Strings.join(Arrays.asList(Dependencies.Utils.getDependenciesSimple(payloadClass)), ", ", "", "")
             });
         }
 
