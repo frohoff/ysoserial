@@ -32,7 +32,7 @@ import java.util.Map;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"commons-collections:commons-collections:3.1"})
-@Authors({ Authors.WH1T3P1G })
+@Authors({ Authors.BACKCOVER7 })
 public class CommonsCollections9Time extends PayloadRunner implements ObjectPayload<Hashtable>{
     @Override
     public Hashtable getObject(String command) throws Exception {

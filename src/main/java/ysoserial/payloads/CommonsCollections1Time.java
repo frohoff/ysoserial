@@ -42,7 +42,7 @@ import java.util.Map;
 @SuppressWarnings({"rawtypes", "unchecked"})
 @PayloadTest ( precondition = "isApplicableJavaVersion")
 @Dependencies({"commons-collections:commons-collections:3.1"})
-@Authors({ Authors.FROHOFF })
+@Authors({ Authors.BACKCOVER7 })
 public class CommonsCollections1Time extends PayloadRunner implements ObjectPayload<InvocationHandler> {
 
 	public InvocationHandler getObject(final String command) throws Exception {

@@ -27,7 +27,7 @@ import ysoserial.payloads.util.Reflections;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"org.apache.commons:commons-collections4:4.0"})
-@Authors({ Authors.NAVALORENZO })
+@Authors({ Authors.BACKCOVER7 })
 public class CommonsCollections8Time extends PayloadRunner implements ObjectPayload<TreeBag> {
 
     public TreeBag getObject(final String command) throws Exception {

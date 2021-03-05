@@ -25,6 +25,7 @@ public @interface Authors {
     String EDOARDOVIGNATI = "EdoardoVignati";
     String NAVALORENZO = "navalorenzo";
     String WH1T3P1G = "wh1t3p1g";
+    String BACKCOVER7 = "backcover7";
 
     String[] value() default {};
 

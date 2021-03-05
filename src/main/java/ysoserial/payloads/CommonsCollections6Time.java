@@ -35,7 +35,7 @@ import java.util.Map;
 */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"commons-collections:commons-collections:3.1"})
-@Authors({ Authors.MATTHIASKAISER })
+@Authors({ Authors.BACKCOVER7 })
 public class CommonsCollections6Time extends PayloadRunner implements ObjectPayload<Serializable> {
 
     public Serializable getObject(final String command) throws Exception {

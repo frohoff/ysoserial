@@ -25,7 +25,7 @@ import java.util.Queue;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({ "org.apache.commons:commons-collections4:4.0" })
-@Authors({ Authors.FROHOFF })
+@Authors({ Authors.BACKCOVER7 })
 public class CommonsCollections2Time implements ObjectPayload<Queue<Object>> {
 
 	public Queue<Object> getObject(final String command) throws Exception {

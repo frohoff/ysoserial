@@ -23,7 +23,7 @@ import java.util.Map;
 		Versions since 1.2.0 are vulnerable, although some class names may need to be changed for other versions
  */
 @Dependencies({"org.clojure:clojure:1.8.0"})
-@Authors({ Authors.JACKOFMOSTTRADES })
+@Authors({ Authors.BACKCOVER7 })
 public class ClojureTime extends PayloadRunner implements ObjectPayload<Map<?, ?>> {
 
 	public Map<?, ?> getObject(final String command) throws Exception {

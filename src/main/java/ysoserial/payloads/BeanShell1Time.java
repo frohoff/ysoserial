@@ -18,7 +18,7 @@ import java.util.PriorityQueue;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({ "org.beanshell:bsh:2.0b5" })
-@Authors({Authors.PWNTESTER, Authors.CSCHNEIDER4711})
+@Authors({ Authors.BACKCOVER7 })
 public class BeanShell1Time extends PayloadRunner implements ObjectPayload<PriorityQueue> {
 
     public PriorityQueue getObject(String command) throws Exception {
