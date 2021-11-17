@@ -104,7 +104,7 @@ $ java -cp ysoserial.jar ysoserial.exploit.RMIRegistryExploit myhost 1099 Common
 If you use the Dockerfile provided to build your payloads make sure you run docker with `--tty=false`:
 
 ```shell
-$ docker run -it --tty=false ysoserial CommonsCollections6 uname > payload.bin
+$ docker run -i --tty=false ysoserial CommonsCollections6 uname > payload.bin
 ```
 
 ## Installation
