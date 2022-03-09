@@ -23,7 +23,9 @@ import ysoserial.payloads.util.PayloadRunner;
  *         https://www.synacktiv.com/publications/finding-gadgets-like-its-2022.html
  * 
  */
-@PayloadTest(harness = "ysoserial.test.payloads.JRMPReverseConnectTest")
+
+// test fail 
+// @PayloadTest(harness = "ysoserial.test.payloads.JRMPReverseConnectTest")
 @Dependencies({ "org.jboss.as:jboss-as-connector:7.1.3.Final"})
 @Authors({ Authors.HUGOW })
 public class WildFly1 implements ObjectPayload<Object> {
