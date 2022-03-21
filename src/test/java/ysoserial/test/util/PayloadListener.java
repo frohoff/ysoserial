@@ -52,7 +52,7 @@ public class PayloadListener extends RunListener {
         Map<String,String> props = new HashMap<String, String>();
         props.put("payload", payload);
         props.put("status", status.toString());
-//        props.put("out", out);
+        props.put("out", out);
         for (String k : Arrays.asList("java.version", "java.vendor", "java.vm.version", "java.runtime.version", "os.arch", "os.name", "os.version")) {
             props.put(k, System.getProperty(k));
         }
