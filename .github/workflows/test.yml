@@ -58,7 +58,7 @@ jobs:
 #        version: ${{ fromJson(needs.set-matrix.outputs.versions) }} # broken in act
         version:
           - 7u21-jdk
-#          - 7u25-jdk
+          - 7u25-jdk
     runs-on: ubuntu-latest
     container:
       image: vulhub/java:${{ matrix.version }}
@@ -75,4 +75,16 @@ jobs:
           name: out-${{ matrix.version }}
           path: out.txt
 
+  analyze:
+    needs: run-java
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+      - run: cat artifacts/out* out.txt
 
+      - uses: actions/upload-artifact@v3
+        with:
+          name: out
+          path: out.txt
