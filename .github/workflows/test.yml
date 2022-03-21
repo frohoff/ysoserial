@@ -67,7 +67,12 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: jar
-          path: ysoserial.jar
-      - run: ls -la ysoserial.jar
-      - run: echo ${{ matrix.version }} && java -version && env
+          path: jar
+      - run: java -cp jar/ysoserial-*-all.jar -DforceTests=true ysoserial.test.payloads.PayloadsTest | tee > out.txt
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: out-${{ matrix.version }}
+          path: out.txt
+
 
