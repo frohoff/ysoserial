@@ -82,7 +82,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           path: artifacts
-      - run: cat artifacts/out*/*.txr out.txt
+      - run: cat artifacts/out*/*.txt out.txt
 
       - uses: actions/upload-artifact@v3
         with:
