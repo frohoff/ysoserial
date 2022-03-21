@@ -67,5 +67,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: jar
+          path: ysoserial.jar
+      - run: ls -la ysoserial.jar
       - run: echo ${{ matrix.version }} && java -version && env
 

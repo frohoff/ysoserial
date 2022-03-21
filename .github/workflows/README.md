@@ -11,3 +11,4 @@ act version HEAD-4d71071
 Known issues:
 - https://github.com/nektos/act/issues/910
 - https://github.com/nektos/act/issues/973
+- https://github.com/nektos/act/issues/284
