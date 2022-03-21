@@ -1,0 +1,71 @@
+# https://michaelheap.com/dynamic-matrix-generation-github-actions/
+
+name: test
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: which node && node --version && env
+
+      - if: ${{ env.ACT }} # act workaround
+        run: sudo chown -R runner:runner /var/run/act
+
+      - uses: actions/checkout@v2
+
+      - if: ${{ env.ACT }} # act workaround
+        run: sudo chown -R runner:runner .
+
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v2
+        with:
+          java-version: 8
+          distribution: adopt
+
+      - if: ${{ !env.ACT }} # use -r with act
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - run: mvn -B clean package -DskipTests
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: jar
+          path: target/ysoserial-*-all.jar
+
+  set-matrix:
+    runs-on: ubuntu-latest
+    container: dwdraju/alpine-curl-jq
+    steps:
+      - id: get-versions
+        # TODO paging
+        run: echo "::set-output name=versions::$(curl -s https://hub.docker.com/v2/repositories/vulhub/java/tags/?page_size=100 | jq -rc [.results[].name])"
+
+    outputs:
+      versions: ${{ steps.get-versions.outputs.versions }}
+
+  run-java:
+    needs:
+      - set-matrix
+      - build
+    strategy:
+      matrix:
+        version: ${{ fromJson(needs.set-matrix.outputs.versions) }} # broken in act
+#        version:
+#          - 7u21-jdk
+##          - 7u25-jdk
+    runs-on: ubuntu-latest
+    container:
+      image: vulhub/java:${{ matrix.version }}
+
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: jar
+      - run: echo ${{ matrix.version }} && java -version && env
+
