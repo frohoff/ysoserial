@@ -5,6 +5,7 @@ import javassist.util.proxy.ProxyFactory;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /*

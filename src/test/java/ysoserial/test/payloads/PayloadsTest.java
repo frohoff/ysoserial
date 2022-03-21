@@ -5,9 +5,11 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -33,6 +35,7 @@ import ysoserial.payloads.annotation.Dependencies;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.ClassFiles;
 import ysoserial.test.util.Logging;
+import ysoserial.test.util.OpenURLClassLoader;
 import ysoserial.test.util.PayloadListener;
 import ysoserial.test.util.StdIoRedirection;
 
@@ -71,7 +74,7 @@ public class PayloadsTest {
     }
 
 
-    public static void testPayload ( final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader )
+    public static void testPayload(final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader)
             throws Exception {
         System.out.println("Testing payload: " + payloadClass.getName());
 
@@ -140,10 +143,7 @@ public class PayloadsTest {
             }
             if (ex != null) throw ex;
         }
-
     }
-
-
 
     private static Callable<byte[]> makeSerializeCallable ( final Class<? extends ObjectPayload<?>> payloadClass, final String command ) {
         return new Callable<byte[]>() {
@@ -158,7 +158,6 @@ public class PayloadsTest {
         };
     }
 
-
     private static Callable<Object> makeDeserializeCallable ( PayloadTest t, final Class<?>[] addlClassesForClassLoader, final String[] deps,
             final byte[] serialized, final Class<?> customDeserializer ) {
         return new Callable<Object>() {
@@ -169,13 +168,11 @@ public class PayloadsTest {
         };
     }
 
-
     private static boolean checkPrecondition ( Class<? extends ObjectPayload<?>> pc, String precondition )
             throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Method precondMethod = pc.getMethod(precondition);
         return (Boolean) precondMethod.invoke(null);
     }
-
 
     private static String[] buildDeps ( final Class<? extends ObjectPayload<?>> payloadClass ) throws Exception {
         String[] baseDeps;
@@ -193,9 +190,52 @@ public class PayloadsTest {
         return baseDeps;
     }
 
-
-    static Object deserializeWithDependencies ( byte[] serialized, final String[] dependencies, final Class<?>[] classDependencies, final Class<?> customDeserializer )
+    static Object deserializeWithDependencies(byte[] serialized, final String[] dependencies, final Class<?>[] classDependencies, final Class<?> customDeserializer)
             throws Exception {
+        URL[] urls = getDependencyUrls(dependencies);
+
+        Map<String, byte[]> addlClasses = new HashMap<String, byte[]>();
+
+        for ( Class<?> clazz : classDependencies ) {
+            byte[] classAsBytes = ClassFiles.classAsBytes(clazz);
+            addlClasses.put(clazz.getName(), classAsBytes);
+        }
+        addlClasses.put(Deserializer.class.getName(), ClassFiles.classAsBytes(Deserializer.class));
+
+        if (customDeserializer != null) {
+            try {
+                Method method = customDeserializer.getMethod("getExtraDependencies");
+                for (Class extra : (Class[]) method.invoke(null)) {
+                    addlClasses.put(extra.getName(), ClassFiles.classAsBytes(extra));
+                }
+            } catch (NoSuchMethodException e) {}
+
+            addlClasses.put(customDeserializer.getName(), ClassFiles.classAsBytes(customDeserializer));
+        }
+
+        OpenURLClassLoader isolatedClassLoader = new OpenURLClassLoader(urls, null);
+        for (Map.Entry<String, byte[]> e : addlClasses.entrySet()) {
+            isolatedClassLoader.defineNewClass(e.getKey(), e.getValue());
+        }
+
+        Class<?> deserializerClass = isolatedClassLoader.loadClass(customDeserializer != null ? customDeserializer.getName() : Deserializer.class.getName());
+        Callable<Object> deserializer = (Callable<Object>) deserializerClass.getConstructors()[0].newInstance(serialized);
+
+        // set CCL for Clojure https://groups.google.com/forum/#!topic/clojure/F3ERon6Fye0
+        return callWithContextClassLoader(isolatedClassLoader, deserializer);
+    }
+
+    private static Object callWithContextClassLoader(ClassLoader classLoader, Callable<Object> callable) throws Exception {
+        ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
+        try {
+            return callable.call();
+        } finally {
+            Thread.currentThread().setContextClassLoader(ccl);
+        }
+    }
+
+    private static URL[] getDependencyUrls(String[] dependencies) throws MalformedURLException {
         File[] jars = dependencies.length > 0
             ? Maven.configureResolver()
                 .withMavenCentralRepo(true)
@@ -206,46 +246,7 @@ public class PayloadsTest {
         for ( int i = 0; i < jars.length; i++ ) {
             urls[ i ] = jars[ i ].toURI().toURL();
         }
-
-        URLClassLoader isolatedClassLoader = new URLClassLoader(urls, null) {
-
-            {
-                for ( Class<?> clazz : classDependencies ) {
-                    byte[] classAsBytes = ClassFiles.classAsBytes(clazz);
-                    defineClass(clazz.getName(), classAsBytes, 0, classAsBytes.length);
-                }
-                byte[] deserializerClassBytes = ClassFiles.classAsBytes(Deserializer.class);
-                defineClass(Deserializer.class.getName(), deserializerClassBytes, 0, deserializerClassBytes.length);
-
-                if ( customDeserializer != null ) {
-
-                    try {
-                        Method method = customDeserializer.getMethod("getExtraDependencies");
-                        for ( Class extra : (Class[])method.invoke(null)) {
-                            deserializerClassBytes = ClassFiles.classAsBytes(extra);
-                            defineClass(extra.getName(), deserializerClassBytes, 0, deserializerClassBytes.length);
-                        }
-                    } catch ( NoSuchMethodException e ) { }
-
-                    deserializerClassBytes = ClassFiles.classAsBytes(customDeserializer);
-                    defineClass(customDeserializer.getName(), deserializerClassBytes, 0, deserializerClassBytes.length);
-                }
-
-            }
-        };
-
-        Class<?> deserializerClass = isolatedClassLoader.loadClass(customDeserializer != null ? customDeserializer.getName() : Deserializer.class.getName());
-        Callable<Object> deserializer = (Callable<Object>) deserializerClass.getConstructors()[ 0 ].newInstance(serialized);
-
-        ClassLoader ccl = Thread.currentThread().getContextClassLoader();
-        try {
-            // set CCL for Clojure https://groups.google.com/forum/#!topic/clojure/F3ERon6Fye0
-            Thread.currentThread().setContextClassLoader(isolatedClassLoader);
-            final Object obj = deserializer.call();
-            return obj;
-        } finally {
-            Thread.currentThread().setContextClassLoader(ccl);
-        }
+        return urls;
     }
 
     public static void main(String[] args) throws IOException {
