@@ -238,8 +238,9 @@ public class PayloadsTest {
     private static URL[] getDependencyUrls(String[] dependencies) throws MalformedURLException {
         File[] jars = dependencies.length > 0
             ? Maven.configureResolver()
-                .withMavenCentralRepo(true)
-                .withRemoteRepo("jenkins", "https://repo.jenkins-ci.org/public/", "default")
+                .withRemoteRepo("central", "https://repo1.maven.org/maven2/", "default")
+                .withMavenCentralRepo(false)
+//                .withRemoteRepo("jenkins", "https://repo.jenkins-ci.org/public/", "default")
                 .resolve(dependencies).withoutTransitivity().asFile()
             : new File[0];
         URL[] urls = new URL[jars.length];
@@ -250,6 +251,7 @@ public class PayloadsTest {
     }
 
     public static void main(String[] args) throws IOException {
+        System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
         StdIoRedirection.init();
         Logging.init();
 
