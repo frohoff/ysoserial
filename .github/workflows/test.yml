@@ -41,7 +41,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: results
-          path: .github/workflow/results.py
+          path: .github/workflows/results.py
 
   set-matrix:
     runs-on: ubuntu-latest
