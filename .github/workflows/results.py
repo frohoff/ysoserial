@@ -5,11 +5,13 @@ import sys
 
 import subprocess
 
-try:
-    import pytablewriter
-except:
-    subprocess.check_call(['pip', 'install', 'pytablewriter'])
-    import pytablewriter
+import pytablewriter
+
+# try:
+#     import pytablewriter
+# except:
+#     subprocess.check_call(['pip', 'install', 'pytablewriter'])
+#     import pytablewriter
 
 def ver(v):
     return v.split(".", 1)[1] if v.startswith("1.") else v
@@ -47,5 +49,6 @@ md = pytablewriter.MarkdownTableWriter()
 md.table_name = ''
 md.header_list = [''] + vers
 md.value_matrix = [[p] + [o[v] for v in vers] for p, o in sorted(by_payload.items())]
+md.margin = 1
 
 md.write_table()

@@ -88,6 +88,7 @@ jobs:
         with:
           path: artifacts
       - run: cat artifacts/out*/*.txt > out.txt
+      - run: pip install pytablewriter
       - run: cat out.txt | python artifacts/results/results.py > matrix.md
       - uses: actions/upload-artifact@v3
         with:
