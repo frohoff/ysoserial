@@ -47,7 +47,7 @@ public class PayloadListener extends RunListener {
 
         Status status = statuses.get(description);
         String payload = getPayload(description.getDisplayName());
-        String out = outs.get(description).toString();
+        String out = outs.get(description).toString().trim();
 
         Map<String,String> props = new HashMap<String, String>();
         props.put("payload", payload);

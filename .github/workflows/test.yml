@@ -38,6 +38,11 @@ jobs:
           name: jar
           path: target/ysoserial-*-all.jar
 
+      - uses: actions/upload-artifact@v3
+        with:
+          name: results
+          path: .github/workflow/results.py
+
   set-matrix:
     runs-on: ubuntu-latest
     container: dwdraju/alpine-curl-jq
@@ -55,10 +60,10 @@ jobs:
       - build
     strategy:
       matrix:
-#        version: ${{ fromJson(needs.set-matrix.outputs.versions) }} # broken in act
-        version:
-          - 7u21-jdk
-          - 7u25-jdk
+        version: ${{ fromJson(needs.set-matrix.outputs.versions) }} # broken in act
+#        version:
+#          - 7u21-jdk
+#          - 7u25-jdk
     runs-on: ubuntu-latest
     container:
       image: vulhub/java:${{ matrix.version }}
@@ -83,8 +88,13 @@ jobs:
         with:
           path: artifacts
       - run: cat artifacts/out*/*.txt > out.txt
-
+      - run: cat out.txt | python artifacts/results/results.py > matrix.md
       - uses: actions/upload-artifact@v3
         with:
           name: out
           path: out.txt
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: matrix
+          path: matrix.md
