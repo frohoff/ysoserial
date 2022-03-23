@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: which node && node --version && env
-      - run: docker run --it --rm vulhub/java:7u21-jdk java -version
+      - run: docker run -it --rm vulhub/java:7u21-jdk java -version
 
       - if: ${{ env.ACT }} # act workaround
         run: sudo chown -R runner:runner /var/run/act
