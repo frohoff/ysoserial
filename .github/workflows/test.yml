@@ -92,14 +92,33 @@ jobs:
           path: artifacts
       - run: cat artifacts/out*/*.txt > out.txt
       - run: pip install pytablewriter
-#      - run: cat out.txt | python artifacts/results/results.py > matrix.md
       - run: cat out.txt | python .github/workflows/results.py > matrix.md
       - uses: actions/upload-artifact@v3
         with:
           name: out
           path: out.txt
-
       - uses: actions/upload-artifact@v3
         with:
           name: matrix
           path: matrix.md
+
+  update-wiki:
+    needs: analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{github.repository}}.wiki
+      - uses: actions/download-artifact@v3
+        with:
+          name: matrix
+      - run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add matrix/matrix.md
+          git commit -m "Add changes"
+        uses: ad-m/github-push-action@master
+        with:
+          repository: ${{github.repository}}.wiki
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
