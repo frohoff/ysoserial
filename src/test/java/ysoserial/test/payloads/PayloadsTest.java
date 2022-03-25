@@ -84,7 +84,7 @@ public class PayloadsTest {
 
         int tries = 1;
         if ( t != null ) {
-            if (isForceTests()) {
+            if (! isForceTests()) {
                 if ( !t.skip().isEmpty() ) {
                     Assume.assumeTrue(t.skip(), false);
                 }
@@ -146,7 +146,7 @@ public class PayloadsTest {
     }
 
     private static boolean isForceTests() {
-        return System.getProperty("forceTests") == null;
+        return System.getProperty("forceTests") != null;
     }
 
     private static Callable<byte[]> makeSerializeCallable ( final Class<? extends ObjectPayload<?>> payloadClass, final String command ) {
