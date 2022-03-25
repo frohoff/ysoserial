@@ -84,6 +84,7 @@ jobs:
       - run: |
           touch out.txt
           for v in ${{ matrix.version }}; do
+            echo running $v
             docker pull vulhub/java:$v
             docker run --rm -v $(pwd):/app vulhub/java:$v java -cp '/app/jar/ysoserial.jar' -DforceTests=true ysoserial.test.payloads.PayloadsTest >> out.txt
           done
