@@ -117,8 +117,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git add matrix/matrix.md
           git commit -m "Add changes"
-        uses: ad-m/github-push-action@master
+      - uses: ad-m/github-push-action@master
         with:
           repository: ${{github.repository}}.wiki
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
