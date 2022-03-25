@@ -61,21 +61,21 @@ jobs:
       - build
     strategy:
       matrix:
-        version: ${{ fromJson(needs.set-matrix.outputs.versions) }} # broken in act
-#        version:
-#          - 7u21-jdk
-#          - 7u25-jdk
+#        version: ${{ fromJson(needs.set-matrix.outputs.versions) }} # broken in act
+        version:
+          - 7u21-jdk
+          - 7u25-jdk
     runs-on: ubuntu-latest
-    container:
-      image: vulhub/java:${{ matrix.version }}
+#    container:
+#      image: vulhub/java:${{ matrix.version }}
 
     steps:
       - uses: actions/download-artifact@v3
         with:
           name: jar
           path: jar
-      - run: java -cp jar/ysoserial-*-all.jar -DforceTests=true ysoserial.test.payloads.PayloadsTest | tee > out.txt
-
+#      - run: java -cp jar/ysoserial-*-all.jar -DforceTests=true ysoserial.test.payloads.PayloadsTest | tee > out.txt
+       - run: docker run --rm vulhub/java:${{ matrix.version }} java -cp jar/ysoserial-*-all.jar -DforceTests=true ysoserial.test.payloads.PayloadsTest | tee > out.txt
       - uses: actions/upload-artifact@v3
         with:
           name: out-${{ matrix.version }}
