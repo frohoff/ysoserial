@@ -3,6 +3,7 @@
 name: test
 on: [push]
 jobs:
+  # TODO cache build output by commit
   build:
     runs-on: ubuntu-latest
     steps:
@@ -50,7 +51,7 @@ jobs:
     steps:
       - id: get-versions
         # TODO paging
-        run: echo "::set-output name=versions::$(curl -s https://hub.docker.com/v2/repositories/vulhub/java/tags/?page_size=100 | jq -rc [.results[].name])"
+        run: echo "::set-output name=versions::$(curl -s https://hub.docker.com/v2/repositories/vulhub/java/tags/?page_size=100 | jq -rc '[[.results[].name] | _nwise(3) | join(\" \") ]'"
 
     outputs:
       versions: ${{ steps.get-versions.outputs.versions }}
@@ -61,10 +62,10 @@ jobs:
       - build
     strategy:
       matrix:
-#        version: ${{ fromJson(needs.set-matrix.outputs.versions) }} # broken in act
-        version:
-          - 7u21-jdk 7u25-jdk
-          - 7u40-jdk
+        version: ${{ fromJson(needs.set-matrix.outputs.versions) }} # broken in act
+#        version:
+#          - 7u21-jdk 7u25-jdk
+#          - 7u40-jdk
     runs-on: ubuntu-latest
 #    container:
 #      image: vulhub/java:${{ matrix.version }}
