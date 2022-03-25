@@ -82,10 +82,11 @@ jobs:
       - run: pwd
       - run: mv jar/ysoserial-*-all.jar jar/ysoserial.jar
       - run: |
+          touch out.txt
           for v in ${{ matrix.version }}; do
             docker pull vulhub/java:$v
-            docker run --rm -v $(pwd):/app vulhub/java:$v java -cp '/app/jar/ysoserial.jar' -DforceTests=true ysoserial.test.payloads.PayloadsTest
-          done | tee > out.txt
+            docker run --rm -v $(pwd):/app vulhub/java:$v java -cp '/app/jar/ysoserial.jar' -DforceTests=true ysoserial.test.payloads.PayloadsTest >> out.txt
+          done
       - uses: actions/upload-artifact@v3
         with:
           name: out-${{ matrix.version }}
