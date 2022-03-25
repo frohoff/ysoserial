@@ -113,4 +113,5 @@ jobs:
       - uses: ad-m/github-push-action@master
         with:
           repository: ${{github.repository}}.wiki
+          branch: master
           github_token: ${{ secrets.GITHUB_TOKEN }}
