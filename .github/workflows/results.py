@@ -52,7 +52,7 @@ ver_groups = [list(v for v, r in vers) for res, vers in itertools.groupby(sorted
 ver_ranges = [[vs[0], vs[-1]] for vs in ver_groups]
 
 
-print('\n'.join(repr(v) for v in ver_groups))
+# print('\n'.join(repr(v) for v in ver_groups))
 #
 # print(repr(by_payload))
 # print(repr(by_version))
