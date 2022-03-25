@@ -84,7 +84,7 @@ public class PayloadsTest {
 
         int tries = 1;
         if ( t != null ) {
-            if (System.getProperty("forceTests") == null) {
+            if (isForceTests()) {
                 if ( !t.skip().isEmpty() ) {
                     Assume.assumeTrue(t.skip(), false);
                 }
@@ -143,6 +143,10 @@ public class PayloadsTest {
             }
             if (ex != null) throw ex;
         }
+    }
+
+    private static boolean isForceTests() {
+        return System.getProperty("forceTests") == null;
     }
 
     private static Callable<byte[]> makeSerializeCallable ( final Class<? extends ObjectPayload<?>> payloadClass, final String command ) {
@@ -259,6 +263,6 @@ public class PayloadsTest {
         PayloadListener listener = new PayloadListener();
         junit.addListener(listener);
         Result result = junit.run(PayloadsTest.class);
-        System.exit(result.wasSuccessful() ? 0 : 1);
+        System.exit(isForceTests() ? 0 : (result.wasSuccessful() ? 0 : 1));
     }
 }
