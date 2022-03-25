@@ -7,9 +7,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - run: which node && node --version && env
-      - run: docker run --rm vulhub/java:7u21-jdk java -version
-
       - if: ${{ env.ACT }} # act workaround
         run: sudo chown -R runner:runner /var/run/act
 
@@ -89,6 +86,7 @@ jobs:
             docker run --rm -v $(pwd):/app vulhub/java:$v java -cp '/app/jar/ysoserial.jar' -DforceTests=true ysoserial.test.payloads.PayloadsTest >> out.txt
           done
       - uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: out-${{ matrix.version }}
           path: out.txt
@@ -104,7 +102,6 @@ jobs:
       - run: pip install pytablewriter
       - run: cat out.txt | python artifacts/results/results.py > matrix.md
       - uses: actions/upload-artifact@v3
-        if: always()
         with:
           name: out
           path: out.txt
