@@ -104,6 +104,7 @@ jobs:
       - run: pip install pytablewriter
       - run: cat out.txt | python artifacts/results/results.py > matrix.md
       - uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: out
           path: out.txt
