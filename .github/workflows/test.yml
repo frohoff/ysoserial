@@ -53,7 +53,7 @@ jobs:
         # TODO paging
         run: |
           URL="https://hub.docker.com/v2/repositories/vulhub/java/tags/?page_size=100"
-          VERSIONS=$((curl -s $URL && curl -s "$URL&page=2") | jq -rc '[[.results[].name] | _nwise(3) | join(" ")]')
+          VERSIONS=$(curl -s $URL "$URL&page=2" | jq -rc '[[.results[].name] | _nwise(3) | join(" ")]')
           echo "::set-output name=versions::$VERSIONS"
 
     outputs:
