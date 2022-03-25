@@ -15,9 +15,7 @@ jobs:
       - if: ${{ env.ACT }} # act workaround
         run: sudo chown -R runner:runner .
 
-
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v2
+      - uses: actions/setup-java@v2
         with:
           java-version: 8
           distribution: adopt
@@ -37,11 +35,6 @@ jobs:
           name: jar
           path: target/ysoserial-*-all.jar
 
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          name: results
-#          path: .github/workflows/results.py
-
   set-matrix:
     runs-on: ubuntu-latest
     container: dwdraju/alpine-curl-jq
@@ -60,8 +53,8 @@ jobs:
       - build
     strategy:
       matrix:
-        version: ${{ fromJson(needs.set-matrix.outputs.versions) }} # broken in act
-#        version: [7u21-jdk 7u25-jdk, 7u40-jdk]
+#        version: ${{ fromJson(needs.set-matrix.outputs.versions) }} # broken in act
+        version: [7u21-jdk 7u25-jdk, 7u40-jdk]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
@@ -115,7 +108,7 @@ jobs:
       - run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add matrix/matrix.md
+          git add matrix.md
           git commit -m "Add changes"
       - uses: ad-m/github-push-action@master
         with:
