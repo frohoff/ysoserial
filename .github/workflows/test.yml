@@ -63,8 +63,8 @@ jobs:
       matrix:
 #        version: ${{ fromJson(needs.set-matrix.outputs.versions) }} # broken in act
         version:
-          - 7u21-jdk
-          - 7u25-jdk
+          - 7u21-jdk 7u25-jdk
+          - 7u40-jdk
     runs-on: ubuntu-latest
 #    container:
 #      image: vulhub/java:${{ matrix.version }}
@@ -75,7 +75,8 @@ jobs:
           name: jar
           path: jar
 #      - run: java -cp jar/ysoserial-*-all.jar -DforceTests=true ysoserial.test.payloads.PayloadsTest | tee > out.txt
-      - run: for v in ${{ matrix.version }}; do docker run --rm -v $(pwd):/app vulhub/java:$v java -cp /app/jar/ysoserial-*-all.jar -DforceTests=true ysoserial.test.payloads.PayloadsTest; done | tee > out.txt
+      - run: pwd
+      - run: for v in ${{ matrix.version }}; do docker run --rm -v $(pwd):/app vulhub/java:$v java -cp '/app/jar/ysoserial-*-all.jar' -DforceTests=true ysoserial.test.payloads.PayloadsTest; done | tee > out.txt
       - uses: actions/upload-artifact@v3
         with:
           name: out-${{ matrix.version }}
