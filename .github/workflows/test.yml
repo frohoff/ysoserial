@@ -52,7 +52,8 @@ jobs:
       - id: get-versions
         # TODO paging
         run: |
-          VERSIONS=$(curl -s https://hub.docker.com/v2/repositories/vulhub/java/tags/?page_size=100 | jq -rc '[[.results[].name] | _nwise(3) | join(" ") ]')
+          URL=https://hub.docker.com/v2/repositories/vulhub/java/tags/?page_size=100
+          VERSIONS=$((curl -s $URL && curl -s "$URL&page=2") | jq -rc '[[.results[].name] | _nwise(3) | join(" ")]')
           echo "::set-output name=versions::$VERSIONS"
 
     outputs:
@@ -80,7 +81,11 @@ jobs:
 #      - run: java -cp jar/ysoserial-*-all.jar -DforceTests=true ysoserial.test.payloads.PayloadsTest | tee > out.txt
       - run: pwd
       - run: mv jar/ysoserial-*-all.jar jar/ysoserial.jar
-      - run: for v in ${{ matrix.version }}; do docker run --rm -v $(pwd):/app vulhub/java:$v java -cp '/app/jar/ysoserial.jar' -DforceTests=true ysoserial.test.payloads.PayloadsTest; done | tee > out.txt
+      - run: |
+          for v in ${{ matrix.version }}; do
+            docker pull vulhub/java:$v
+            docker run --rm -v $(pwd):/app vulhub/java:$v java -cp '/app/jar/ysoserial.jar' -DforceTests=true ysoserial.test.payloads.PayloadsTest
+          done | tee > out.txt
       - uses: actions/upload-artifact@v3
         with:
           name: out-${{ matrix.version }}
