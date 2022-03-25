@@ -51,7 +51,9 @@ jobs:
     steps:
       - id: get-versions
         # TODO paging
-        run: echo "::set-output name=versions::$(curl -s https://hub.docker.com/v2/repositories/vulhub/java/tags/?page_size=100 | jq -rc '[[.results[].name] | _nwise(3) | join(\" \") ]')"
+        run: |
+          VERSIONS=$(curl -s https://hub.docker.com/v2/repositories/vulhub/java/tags/?page_size=100 | jq -rc '[[.results[].name] | _nwise(3) | join(" ") ]')
+          echo "::set-output name=versions::$VERSIONS"
 
     outputs:
       versions: ${{ steps.get-versions.outputs.versions }}
