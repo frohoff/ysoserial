@@ -37,22 +37,20 @@ jobs:
           name: jar
           path: target/ysoserial-*-all.jar
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: results
-          path: .github/workflows/results.py
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: results
+#          path: .github/workflows/results.py
 
   set-matrix:
     runs-on: ubuntu-latest
     container: dwdraju/alpine-curl-jq
     steps:
       - id: get-versions
-        # TODO paging
         run: |
           URL="https://hub.docker.com/v2/repositories/vulhub/java/tags/?page_size=100"
           VERSIONS=$(curl -s $URL "$URL&page=2" | jq -rc '[[.results[].name] | _nwise(3) | join(" ")]')
           echo "::set-output name=versions::$VERSIONS"
-
     outputs:
       versions: ${{ steps.get-versions.outputs.versions }}
 
@@ -67,16 +65,11 @@ jobs:
 #          - 7u21-jdk 7u25-jdk
 #          - 7u40-jdk
     runs-on: ubuntu-latest
-#    container:
-#      image: vulhub/java:${{ matrix.version }}
-
     steps:
       - uses: actions/download-artifact@v3
         with:
           name: jar
           path: jar
-#      - run: java -cp jar/ysoserial-*-all.jar -DforceTests=true ysoserial.test.payloads.PayloadsTest | tee > out.txt
-      - run: pwd
       - run: mv jar/ysoserial-*-all.jar jar/ysoserial.jar
       - run: |
           touch out.txt
@@ -95,12 +88,14 @@ jobs:
     needs: run-java
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v3
         with:
           path: artifacts
       - run: cat artifacts/out*/*.txt > out.txt
       - run: pip install pytablewriter
-      - run: cat out.txt | python artifacts/results/results.py > matrix.md
+#      - run: cat out.txt | python artifacts/results/results.py > matrix.md
+      - run: cat out.txt | python .github/workflows/results.py > matrix.md
       - uses: actions/upload-artifact@v3
         with:
           name: out
