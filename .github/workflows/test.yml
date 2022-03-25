@@ -75,7 +75,7 @@ jobs:
           name: jar
           path: jar
 #      - run: java -cp jar/ysoserial-*-all.jar -DforceTests=true ysoserial.test.payloads.PayloadsTest | tee > out.txt
-      - run: docker run --rm vulhub/java:${{ matrix.version }} java -cp jar/ysoserial-*-all.jar -DforceTests=true ysoserial.test.payloads.PayloadsTest | tee > out.txt
+      - run: for v in ${{ matrix.version }}; do docker run --rm vulhub/java:$v java -cp jar/ysoserial-*-all.jar -DforceTests=true ysoserial.test.payloads.PayloadsTest; done | tee > out.txt
       - uses: actions/upload-artifact@v3
         with:
           name: out-${{ matrix.version }}
