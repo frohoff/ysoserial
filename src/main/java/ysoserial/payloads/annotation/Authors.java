@@ -30,6 +30,7 @@ public @interface Authors {
     String NAVALORENZO = "navalorenzo";
     String JANG = "Jang";
     String ARTSPLOIT = "artsploit";
+    String Firebasky = "Firebasky";
     String K4n5ha0 = "k4n5ha0";
 
     String[] value() default {};
