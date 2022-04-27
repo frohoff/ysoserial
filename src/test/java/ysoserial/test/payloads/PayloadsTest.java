@@ -203,7 +203,7 @@ public class PayloadsTest {
         File[] jars = dependencies.length > 0
             ? Maven.configureResolver()
                 .withMavenCentralRepo(true)
-                .withRemoteRepo("jenkins", "http://repo.jenkins-ci.org/public/", "default")
+                .withRemoteRepo("jenkins", "https://repo.jenkins-ci.org/public/", "default")
                 .resolve(dependencies).withoutTransitivity().asFile()
             : new File[0];
         URL[] urls = new URL[jars.length];
