@@ -15,7 +15,7 @@ public @interface Authors {
     String MBECHLER = "mbechler";
     String JACKOFMOSTTRADES = "JackOfMostTrades";
     String MATTHIASKAISER = "matthias_kaiser";
-    String GEBL = "gebl" ;
+    String GEBL = "gebl";
     String JACOBAINES = "jacob-baines";
     String JASINNER = "jasinner";
     String KULLRICH = "kai_ullrich";
@@ -23,9 +23,15 @@ public @interface Authors {
     String SCRISTALLI = "scristalli";
     String HANYRAX = "hanyrax";
     String EDOARDOVIGNATI = "EdoardoVignati";
+    String YKOSTER = "ykoster";
+    String MEIZJM3I = "meizjm3i";
+    String SCICCONE = "sciccone";
+    String ZEROTHOUGHTS = "zerothoughts";
+    String NAVALORENZO = "navalorenzo";
     String JANG = "Jang";
     String ARTSPLOIT = "artsploit";
     String Firebasky = "Firebasky";
+    String K4n5ha0 = "k4n5ha0";
 
     String[] value() default {};
 
