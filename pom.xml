@@ -326,6 +326,10 @@
 			<artifactId>vaadin-server</artifactId>
 			<version>7.7.14</version>
 		</dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.12.6</version>
 		<dependency>
     		<groupId>com.atomikos</groupId>
     		<artifactId>transactions-osgi</artifactId>
