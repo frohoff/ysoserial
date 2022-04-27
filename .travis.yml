@@ -26,6 +26,7 @@ after_script:
       grep testcase -A1 | grep -B1 -E 'failure|error|skipped' | grep -v -- --
 
 matrix:
+  fast_finish: true
   allow_failures:
     - jdk: oraclejdk11
     - jdk: openjdk6
