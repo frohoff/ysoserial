@@ -6,7 +6,7 @@
     https://gitter.im/frohoff/ysoserial?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Download Latest Snapshot](https://img.shields.io/badge/download-master-green.svg)](
     https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar)
-[![Travis Build Status](https://api.travis-ci.org/frohoff/ysoserial.svg?branch=master)](https://travis-ci.org/frohoff/ysoserial)
+[![Travis Build Status](https://api.travis-ci.com/frohoff/ysoserial.svg?branch=master)](https://travis-ci.com/frohoff/ysoserial)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/a8tbk9blgr3yut4g/branch/master?svg=true)](https://ci.appveyor.com/project/frohoff/ysoserial/branch/master)
 
 A proof-of-concept tool for generating payloads that exploit unsafe Java object deserialization.
@@ -17,7 +17,7 @@ A proof-of-concept tool for generating payloads that exploit unsafe Java object 
 
 Originally released as part of AppSecCali 2015 Talk
 ["Marshalling Pickles: how deserializing objects will ruin your day"](
-        http://frohoff.github.io/appseccali-marshalling-pickles/)
+        https://frohoff.github.io/appseccali-marshalling-pickles/)
 with gadget chains for Apache Commons Collections (3.x and 4.x), Spring Beans/Core (4.x), and Groovy (2.3.x).
 Later updated to include additional gadget chains for
 [JRE <= 1.7u21](https://gist.github.com/frohoff/24af7913611f8406eaf3) and several other libraries.
@@ -82,6 +82,7 @@ Usage: java -jar ysoserial-[version]-all.jar [payload] '[command]'
      URLDNS               @gebl                                                                                                                                                                                                                                      
      Vaadin1              @kai_ullrich                           vaadin-server:7.7.14, vaadin-shared:7.7.14                                                                                                                                                          
      Wicket1              @jacob-baines                          wicket-util:6.23.0, slf4j-api:1.6.4                                                                                                                                                                
+
 ```
 
 ## Examples
