@@ -332,9 +332,19 @@
         </dependency>
 		<dependency>
     		<groupId>com.atomikos</groupId>
-    		<artifactId>transactions-osgi</artifactId>
+    		<artifactId>transactions-jta</artifactId>
     		<version>4.0.6</version>
 		</dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-api</artifactId>
+            <version>4.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>atomikos-util</artifactId>
+            <version>4.0.6</version>
+        </dependency>
 		<dependency>
       		<groupId>org.springframework</groupId>
       		<artifactId>spring-tx</artifactId>

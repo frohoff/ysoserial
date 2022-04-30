@@ -12,7 +12,7 @@ import java.util.PriorityQueue;
 // Origin Detective is PHITHON From
 // https://www.leavesongs.com/PENETRATION/commons-beanutils-without-commons-collections.html
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Dependencies({"commons-beanutils:commons-beanutils:1.9.2"})
+@Dependencies({"commons-beanutils:commons-beanutils:1.9.2", "commons-logging:commons-logging:1.2"})
 @Authors({Authors.K4n5ha0})
 public class CommonsBeanutils2 implements ObjectPayload<Object> {
 
