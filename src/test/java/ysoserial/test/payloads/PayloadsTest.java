@@ -243,7 +243,7 @@ public class PayloadsTest {
     private static URL[] getDependencyUrls(String[] dependencies) throws MalformedURLException {
         File[] jars = dependencies.length > 0
             ? Maven.configureResolver()
-                .workOffline(JavaVersion.getLocalVersion().major == 6) //  use cached deps for java 1.6
+//                .workOffline(JavaVersion.getLocalVersion().major == 6) //  use cached deps for java 1.6
                 .withRemoteRepo("central", "https://repo1.maven.org/maven2/", "default")
                 .withMavenCentralRepo(false)
 //                .withRemoteRepo("jenkins", "https://repo.jenkins-ci.org/public/", "default")
