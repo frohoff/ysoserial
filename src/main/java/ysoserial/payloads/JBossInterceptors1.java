@@ -31,7 +31,7 @@ import java.util.*;
 @SuppressWarnings({"rawtypes", "unchecked"})
 @PayloadTest(precondition = "isApplicableJavaVersion")
 @Dependencies({ "javassist:javassist:3.12.1.GA", "org.jboss.interceptor:jboss-interceptor-core:2.0.0.Final",
-    "javax.enterprise:cdi-api:1.0-SP1", "javax.interceptor:javax.interceptor-api:1.2.2",
+    "javax.enterprise:cdi-api:1.0-SP1", "javax.interceptor:javax.interceptor-api:1.2.2", // https://github.com/jakartaee/interceptors/issues/4
     "org.jboss.interceptor:jboss-interceptor-spi:2.0.0.Final", "org.slf4j:slf4j-api:1.7.21" })
 @Authors({ Authors.MATTHIASKAISER })
 public class JBossInterceptors1 implements ObjectPayload<Object> {
