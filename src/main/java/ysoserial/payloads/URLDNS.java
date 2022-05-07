@@ -41,7 +41,7 @@ import ysoserial.payloads.util.Reflections;
  *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-@PayloadTest(skip = "true")
+@PayloadTest(harness="ysoserial.test.payloads.DnsLookupTest")
 @Dependencies()
 @Authors({ Authors.GEBL })
 public class URLDNS implements ObjectPayload<Object> {
