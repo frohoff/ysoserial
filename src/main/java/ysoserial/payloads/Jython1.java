@@ -39,7 +39,7 @@ import ysoserial.payloads.util.PayloadRunner;
  * exception information).
  */
 
-@PayloadTest(skip="non RCE")
+@PayloadTest(harness="ysoserial.test.payloads.PythonUploadExecTest")
 @SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
 @Dependencies({ "org.python:jython-standalone:2.5.2" })
 @Authors({ Authors.PWNTESTER, Authors.CSCHNEIDER4711 })

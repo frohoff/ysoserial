@@ -2,10 +2,7 @@ package ysoserial;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Strings {
     public static String join(Iterable<String> strings, String sep, String prefix, String suffix) {
@@ -47,6 +44,10 @@ public class Strings {
             lines.add(join(Arrays.asList(row), " ", "", ""));
         }
         return lines;
+    }
+
+    public static String randUUID() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
     public static class ToStringComparator implements Comparator<Object> {
