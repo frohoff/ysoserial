@@ -2,7 +2,6 @@ package ysoserial.payloads.util;
 
 import java.util.concurrent.Callable;
 
-import ysoserial.Deserializer;
 import ysoserial.Serializer;
 import static ysoserial.Deserializer.deserialize;
 import static ysoserial.Serializer.serialize;
@@ -16,30 +15,40 @@ import ysoserial.secmgr.ExecCheckingSecurityManager;
 @SuppressWarnings("unused")
 public class PayloadRunner {
 
-    public static void run(final Class<? extends ObjectPayload<?>> clazz, final String[] args) throws Exception {
+    public static <T> T run(final Class<? extends ObjectPayload<T>> clazz, final String[] args) throws Exception {
+        return run(clazz, args, false);
+    }
+
+    public static <T> T run(final Class<? extends ObjectPayload<T>> clazz, final String[] args, boolean releasePostDeserialize) throws Exception {
 		// ensure payload generation doesn't throw an exception
+        final String command = args.length > 0 && args[0] != null ? args[0] : getDefaultTestCmd();
+
+        System.out.println("generating payload object(s) for command: '" + command + "'");
+
+        final ObjectPayload<?> payload = clazz.newInstance();
+
 		byte[] serialized = new ExecCheckingSecurityManager().callWrapped(new Callable<byte[]>(){
 			public byte[] call() throws Exception {
-				final String command = args.length > 0 && args[0] != null ? args[0] : getDefaultTestCmd();
 
-				System.out.println("generating payload object(s) for command: '" + command + "'");
-
-				ObjectPayload<?> payload = clazz.newInstance();
                 final Object objBefore = payload.getObject(command);
 
 				System.out.println("serializing payload");
 				byte[] ser = Serializer.serialize(objBefore);
-				Utils.releasePayload(payload, objBefore);
+				Utils.postSerializeRelease(payload, objBefore);
                 return ser;
 		}});
 
 		try {
 			System.out.println("deserializing payload");
-			final Object objAfter = Deserializer.deserialize(serialized);
+            T deserialize = (T) deserialize(serialized);
+            if (releasePostDeserialize) {
+                Utils.postDeserializeRelease(payload, deserialize);
+            }
+            return deserialize;
 		} catch (Exception e) {
 			e.printStackTrace();
+            return null;
 		}
-
 	}
 
     private static String getDefaultTestCmd() {

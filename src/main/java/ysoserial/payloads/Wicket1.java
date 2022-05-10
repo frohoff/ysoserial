@@ -49,7 +49,7 @@ import ysoserial.payloads.util.Reflections;
 @PayloadTest(harness="ysoserial.test.payloads.FileUploadTest", flaky="possible race condition")
 @Dependencies({"org.apache.wicket:wicket-util:6.23.0", "org.slf4j:slf4j-api:1.6.4"})
 @Authors({ Authors.JACOBAINES })
-public class Wicket1 implements ReleaseableObjectPayload<DiskFileItem> {
+public class Wicket1 implements PostSerializeReleasable<DiskFileItem> {
 
     public DiskFileItem getObject(String command) throws Exception {
 
@@ -77,7 +77,7 @@ public class Wicket1 implements ReleaseableObjectPayload<DiskFileItem> {
         throw new IllegalArgumentException("Unsupported command " + command + " " + Arrays.toString(parts));
     }
 
-	public void release(DiskFileItem obj) throws Exception {
+	public void postSerializeRelease(DiskFileItem obj) throws Exception {
 	}
 
     private static DiskFileItem copyAndDelete ( String copyAndDelete, String copyTo ) throws IOException, Exception {

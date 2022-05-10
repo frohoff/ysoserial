@@ -76,14 +76,14 @@ public interface ObjectPayload <T> {
 
 
         @SuppressWarnings ( "unchecked" )
-        public static void releasePayload ( ObjectPayload payload, Object object ) throws Exception {
-            if ( payload instanceof ReleaseableObjectPayload ) {
-                ( (ReleaseableObjectPayload) payload ).release(object);
+        public static void postSerializeRelease(ObjectPayload payload, Object object ) throws Exception {
+            if ( payload instanceof PostSerializeReleasable) {
+                ((PostSerializeReleasable) payload).postSerializeRelease(object);
             }
         }
 
 
-        public static void releasePayload ( String payloadType, Object payloadObject ) {
+        public static void postSerializeRelease(String payloadType, Object payloadObject ) {
             final Class<? extends ObjectPayload> payloadClass = getPayloadClass(payloadType);
             if ( payloadClass == null || !ObjectPayload.class.isAssignableFrom(payloadClass) ) {
                 throw new IllegalArgumentException("Invalid payload type '" + payloadType + "'");
@@ -92,12 +92,17 @@ public interface ObjectPayload <T> {
 
             try {
                 final ObjectPayload payload = payloadClass.newInstance();
-                releasePayload(payload, payloadObject);
+                postSerializeRelease(payload, payloadObject);
             }
             catch ( Exception e ) {
                 e.printStackTrace();
             }
+        }
 
+        public static void postDeserializeRelease(ObjectPayload payload, Object object ) throws Exception {
+            if ( payload instanceof PostDeserializeReleasable) {
+                ((PostDeserializeReleasable) payload).postDeserializeRelease(object);
+            }
         }
     }
 }

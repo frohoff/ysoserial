@@ -7,10 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
@@ -25,7 +22,6 @@ import org.junit.runners.Parameterized.Parameters;
 import ysoserial.*;
 import ysoserial.payloads.DynamicDependencies;
 import ysoserial.payloads.ObjectPayload;
-import ysoserial.payloads.util.JavaVersion;
 import ysoserial.test.CustomTest;
 import ysoserial.test.CustomDeserializer;
 import ysoserial.test.CustomPayloadArgs;
@@ -75,7 +71,7 @@ public class PayloadsTest {
     }
 
 
-    public static void testPayload(final Class<? extends ObjectPayload<?>> payloadClass, final Class<?>[] addlClassesForClassLoader)
+    public static void testPayload(final Class<? extends ObjectPayload<?>> payloadClass, Class<?>[] addlClassesForClassLoader)
             throws Exception {
         System.out.println("Testing payload: " + payloadClass.getName());
 
@@ -123,6 +119,13 @@ public class PayloadsTest {
             customDeserializer = ((CustomDeserializer)testHarness).getCustomDeserializer();
         }
 
+        if (testHarness instanceof NeedsAddlClasses) {
+            List<Class> classes = new LinkedList<Class>();
+            classes.addAll(Arrays.asList(addlClassesForClassLoader));
+            classes.addAll(Arrays.asList(((NeedsAddlClasses) testHarness).getAddlClasses()));
+            addlClassesForClassLoader = classes.toArray(new Class[classes.size()]);
+        }
+
         // TODO per-thread secmgr to enforce no detonation during deserialization
         final byte[] serialized = makeSerializeCallable(payloadClass, payloadCommand).call();
         Callable<Object> callable = makeDeserializeCallable(t, addlClassesForClassLoader, deps, serialized, customDeserializer);
@@ -157,7 +160,7 @@ public class PayloadsTest {
                 ObjectPayload<?> payload = payloadClass.newInstance();
                 final Object f = payload.getObject(command);
                 byte[] serialized =  Serializer.serialize(f);
-                ObjectPayload.Utils.releasePayload(payload, f);
+                ObjectPayload.Utils.postSerializeRelease(payload, f);
                 return serialized;
             }
         };
@@ -246,6 +249,7 @@ public class PayloadsTest {
 //                .workOffline(JavaVersion.getLocalVersion().major == 6) //  use cached deps for java 1.6
                 .withRemoteRepo("central", "https://repo1.maven.org/maven2/", "default")
                 .withMavenCentralRepo(false)
+                .useLegacyLocalRepo(true)
 //                .withRemoteRepo("jenkins", "https://repo.jenkins-ci.org/public/", "default")
                 .resolve(dependencies).withoutTransitivity().asFile()
             : new File[0];

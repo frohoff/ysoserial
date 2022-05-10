@@ -1,9 +1,6 @@
 package ysoserial.payloads.util;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 
 import sun.reflect.ReflectionFactory;
 
@@ -29,26 +26,45 @@ public class Reflections {
 
 	public static Field getField(final Class<?> clazz, final String fieldName) {
         Field field = null;
-	try {
-	    field = clazz.getDeclaredField(fieldName);
-	    setAccessible(field);
-        }
-        catch (NoSuchFieldException ex) {
+	    try {
+            field = clazz.getDeclaredField(fieldName);
+            setAccessible(field);
+        } catch (NoSuchFieldException ex) {
             if (clazz.getSuperclass() != null)
                 field = getField(clazz.getSuperclass(), fieldName);
         }
 		return field;
 	}
 
-	public static void setFieldValue(final Object obj, final String fieldName, final Object value) throws Exception {
-		final Field field = getField(obj.getClass(), fieldName);
+	public static void setFieldValue(Object obj, final String fieldName, final Object value) throws Exception {
+        Class clazz = obj instanceof Class ? (Class) obj : obj.getClass();
+        obj = obj instanceof Class ? null : obj;
+		final Field field = getField(clazz, fieldName);
+
+        field.setAccessible(true);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
 		field.set(obj, value);
 	}
 
-	public static Object getFieldValue(final Object obj, final String fieldName) throws Exception {
-		final Field field = getField(obj.getClass(), fieldName);
+	public static Object getFieldValue(Object obj, final String fieldName) throws Exception {
+        Class clazz = obj instanceof Class ? (Class) obj : obj.getClass();
+        obj = obj instanceof Class ? null : obj;
+		final Field field = getField(clazz, fieldName);
 		return field.get(obj);
 	}
+
+    public static Object getFieldValues(Object obj, final String ... fieldNames) throws Exception {
+        for (String fieldName : fieldNames) {
+            if (obj == null) {
+                throw new NullPointerException();
+            }
+            obj = getFieldValue(obj, fieldName);
+        }
+        return obj;
+    }
 
 	public static Constructor<?> getFirstCtor(final String name) throws Exception {
 		final Constructor<?> ctor = Class.forName(name).getDeclaredConstructors()[0];

