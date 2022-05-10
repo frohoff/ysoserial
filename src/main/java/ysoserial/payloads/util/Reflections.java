@@ -33,19 +33,23 @@ public class Reflections {
             if (clazz.getSuperclass() != null)
                 field = getField(clazz.getSuperclass(), fieldName);
         }
-		return field;
+        field.setAccessible(true);
+
+        try {
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return field;
 	}
 
 	public static void setFieldValue(Object obj, final String fieldName, final Object value) throws Exception {
         Class clazz = obj instanceof Class ? (Class) obj : obj.getClass();
         obj = obj instanceof Class ? null : obj;
 		final Field field = getField(clazz, fieldName);
-
-        field.setAccessible(true);
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
 		field.set(obj, value);
 	}
 

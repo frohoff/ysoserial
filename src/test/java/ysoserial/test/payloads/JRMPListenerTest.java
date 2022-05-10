@@ -12,6 +12,10 @@ import ysoserial.test.util.Files;
 import ysoserial.test.util.OS;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.rmi.Remote;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -24,8 +28,14 @@ public class JRMPListenerTest implements CustomTest, NeedsAddlClasses {
     public void run(Callable<Object> payload) throws Exception {
         Assert.assertFalse("test file shouldn't exist", testFile.exists());
 
-        // disable ObjectInputFilter
-        Reflections.setFieldValue(Class.forName("sun.rmi.transport.DGCImpl"), "dgcFilter", new Filter());
+        // disable ObjectInputFilter if defined
+        Object filter = getFilter();
+        if (filter != null) {
+            Field f = Reflections.getField(Class.forName("sun.rmi.transport.DGCImpl"), "dgcFilter");
+            if (f != null) {
+                f.set(null, filter);
+            }
+        }
 
         // open listener
         Remote res = (Remote) payload.call();
@@ -57,10 +67,34 @@ public class JRMPListenerTest implements CustomTest, NeedsAddlClasses {
         return new Class[] { TestHarnessTest.ExecMockSerializable.class };
     }
 
-    public static class Filter implements ObjectInputFilter {
-        @Override
-        public Status checkInput(FilterInfo filterInfo) {
-            return Status.ALLOWED;
+    public static Class<?> loadFirstClass(String ... classNames) {
+        for (String className : classNames) {
+            try {
+                Class<?> clazz = Class.forName(className);
+                return clazz;
+            } catch (Exception e) {}
         }
+        return null;
+    }
+
+    public static Object getFilter() throws Exception {
+        final Class<?> filterClass = loadFirstClass(
+            "java.io.ObjectInputFilter", "sun.misc.ObjectInputFilter");
+        final Class<?> statusClass = Class.forName(filterClass.getName() + "$Status");
+        return filterClass != null ? Proxy.newProxyInstance(
+            JRMPListener.class.getClass().getClassLoader(),
+            new Class[]{ filterClass },
+            new InvocationHandler() {
+                @Override
+                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                    for (Enum<?> e : (Enum<?>[]) statusClass.getEnumConstants()) {
+                        if (e.name() == "ALLOWED") {
+                            return e;
+                        }
+                    }
+                    throw new RuntimeException("no matching enum");
+                }
+            }
+        ) : null;
     }
 }
