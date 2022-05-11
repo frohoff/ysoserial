@@ -1,7 +1,6 @@
 package ysoserial.test.payloads;
 
 import org.junit.Assert;
-import sun.misc.ObjectInputFilter;
 import sun.rmi.transport.ObjectTable;
 import ysoserial.Strings;
 import ysoserial.exploit.JRMPClient;
@@ -80,6 +79,9 @@ public class JRMPListenerTest implements CustomTest, NeedsAddlClasses {
     public static Object getFilter() throws Exception {
         final Class<?> filterClass = loadFirstClass(
             "java.io.ObjectInputFilter", "sun.misc.ObjectInputFilter");
+        if (filterClass == null) {
+            return null;
+        }
         final Class<?> statusClass = Class.forName(filterClass.getName() + "$Status");
         return filterClass != null ? Proxy.newProxyInstance(
             JRMPListener.class.getClass().getClassLoader(),
