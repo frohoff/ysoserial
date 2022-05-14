@@ -1,7 +1,7 @@
 package ysoserial.test.payloads;
 
 import org.junit.Assert;
-import sun.rmi.transport.ObjectTable;
+    import sun.rmi.transport.ObjectTable;
 import ysoserial.Strings;
 import ysoserial.exploit.JRMPClient;
 import ysoserial.payloads.JRMPListener;
@@ -28,13 +28,13 @@ public class JRMPListenerTest implements CustomTest, NeedsAddlClasses {
         Assert.assertFalse("test file shouldn't exist", testFile.exists());
 
         // disable ObjectInputFilter if defined
-        Object filter = getFilter();
-        if (filter != null) {
-            Field f = Reflections.getField(Class.forName("sun.rmi.transport.DGCImpl"), "dgcFilter");
-            if (f != null) {
-                f.set(null, filter);
-            }
-        }
+//        Object filter = getFilter();
+//        if (filter != null) {
+//            Field f = Reflections.getField(Class.forName("sun.rmi.transport.DGCImpl"), "dgcFilter");
+//            if (f != null) {
+//                f.set(null, filter);
+//            }
+//        }
 
         // open listener
         Remote res = (Remote) payload.call();
