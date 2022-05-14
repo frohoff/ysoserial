@@ -5,16 +5,12 @@ import org.junit.Assert;
 import ysoserial.Strings;
 import ysoserial.exploit.JRMPClient;
 import ysoserial.payloads.JRMPListener;
-import ysoserial.payloads.util.Reflections;
 import ysoserial.test.CustomTest;
 import ysoserial.test.util.Files;
 import ysoserial.test.util.OS;
+import ysoserial.test.util.ObjectInputFilters;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.rmi.Remote;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -27,14 +23,7 @@ public class JRMPListenerTest implements CustomTest, NeedsAddlClasses {
     public void run(Callable<Object> payload) throws Exception {
         Assert.assertFalse("test file shouldn't exist", testFile.exists());
 
-        // disable ObjectInputFilter if defined
-//        Object filter = getFilter();
-//        if (filter != null) {
-//            Field f = Reflections.getField(Class.forName("sun.rmi.transport.DGCImpl"), "dgcFilter");
-//            if (f != null) {
-//                f.set(null, filter);
-//            }
-//        }
+//        ObjectInputFilters.disableDcgFilter();
 
         // open listener
         Remote res = (Remote) payload.call();
@@ -76,27 +65,4 @@ public class JRMPListenerTest implements CustomTest, NeedsAddlClasses {
         return null;
     }
 
-    public static Object getFilter() throws Exception {
-        final Class<?> filterClass = loadFirstClass(
-            "java.io.ObjectInputFilter", "sun.misc.ObjectInputFilter");
-        if (filterClass == null) {
-            return null;
-        }
-        final Class<?> statusClass = Class.forName(filterClass.getName() + "$Status");
-        return filterClass != null ? Proxy.newProxyInstance(
-            JRMPListener.class.getClass().getClassLoader(),
-            new Class[]{ filterClass },
-            new InvocationHandler() {
-                @Override
-                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                    for (Enum<?> e : (Enum<?>[]) statusClass.getEnumConstants()) {
-                        if (e.name() == "ALLOWED") {
-                            return e;
-                        }
-                    }
-                    throw new RuntimeException("no matching enum");
-                }
-            }
-        ) : null;
-    }
 }
