@@ -10,7 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 public class CommandExecTest implements CustomTest {
-    private final File testFile =
+    protected final File testFile =
         new File(OS.getTmpDir(), "ysoserial-test-" + UUID.randomUUID().toString().replaceAll("-", ""));
 
     @Override

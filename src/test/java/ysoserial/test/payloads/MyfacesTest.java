@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import javax.el.BeanELResolver;
 import javax.el.ELContext;
@@ -16,6 +17,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 
+import com.nqzero.permit.Permit;
 import org.apache.myfaces.el.CompositeELResolver;
 import org.apache.myfaces.el.unified.FacesELContext;
 import org.mockito.Matchers;
@@ -23,9 +25,11 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import ysoserial.payloads.Myfaces2;
 import ysoserial.payloads.util.Reflections;
 import ysoserial.test.CustomDeserializer;
 import ysoserial.Deserializer;
+import ysoserial.test.WrappedTest;
 
 
 /**
@@ -34,16 +38,11 @@ import ysoserial.Deserializer;
  */
 public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeserializer {
 
-
-    public MyfacesTest ( String command ) {
-        super(command);
-    }
-
-
-
+    // FIXME replace CustomDeserializer with inner payload wrapper (w/ limited classloader)
     public Class<?> getCustomDeserializer () {
         return MyfacesDeserializer.class;
     }
+
 
     /**
      * need to use a custom deserializer so that the faces context gets set in the isolated class
@@ -51,13 +50,36 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
      * @author mbechler
      *
      */
-    public static final class MyfacesDeserializer extends Deserializer {
 
+    public static final class MyfacesDeserializer extends Deserializer {
         public static Class<?>[] getExtraDependencies () {
             return new Class[] {
-                MockRequestContext.class, MockELResolver.class
+                MockRequestContext.class, MockELResolver.class, Reflections.class, Permit.class
             };
         }
+
+        public MyfacesDeserializer ( byte[] bytes ) {
+            super(bytes);
+        }
+
+
+        @Override
+        public Object call () throws Exception {
+            java.lang.reflect.Method setFC = FacesContext.class.getDeclaredMethod("setCurrentInstance", FacesContext.class);
+            Reflections.setAccessible(setFC);
+            ClassLoader oldTCCL = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+            FacesContext ctx = createMockFacesContext();
+            try {
+                setFC.invoke(null, ctx);
+                return super.call();
+            }
+            finally {
+                setFC.invoke(null, (FacesContext) null);
+                Thread.currentThread().setContextClassLoader(oldTCCL);
+            }
+        }
+
 
         private static class MockRequestContext implements Answer<Object> {
 
@@ -135,29 +157,6 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
 
         }
 
-        public MyfacesDeserializer ( byte[] bytes ) {
-            super(bytes);
-        }
-
-
-        @Override
-        public Object call () throws Exception {
-            java.lang.reflect.Method setFC = FacesContext.class.getDeclaredMethod("setCurrentInstance", FacesContext.class);
-            Reflections.setAccessible(setFC);
-            ClassLoader oldTCCL = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-            FacesContext ctx = createMockFacesContext();
-            try {
-                setFC.invoke(null, ctx);
-                return super.call();
-            }
-            finally {
-                setFC.invoke(null, (FacesContext) null);
-                Thread.currentThread().setContextClassLoader(oldTCCL);
-            }
-        }
-
-
         private static FacesContext createMockFacesContext () throws MalformedURLException {
             FacesContext ctx = Mockito.mock(FacesContext.class);
             CompositeELResolver cer = new CompositeELResolver();
@@ -176,6 +175,13 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
             Mockito.when(ctx.getELContext()).thenReturn(elc);
             return ctx;
         }
+
     }
 
+
+
+
+    public static void main(String[] args) throws Exception {
+        PayloadsTest.testPayload(Myfaces2.class);
+    }
 }

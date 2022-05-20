@@ -7,6 +7,7 @@ import javax.management.BadAttributeValueExpException;
 
 import org.junit.Assert;
 
+import ysoserial.payloads.Atomikos;
 import ysoserial.test.CustomTest;
 import ysoserial.exploit.JRMPListener;
 
@@ -54,4 +55,8 @@ public class JRMPReverseConnectTest implements CustomTest {
     	return "rmi://localhost:" + port + "/ExportObject";
     }
 
+
+    public static void main(String[] args) throws Exception {
+        PayloadsTest.testPayload(Atomikos.class);
+    }
 }

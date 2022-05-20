@@ -20,6 +20,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import ysoserial.*;
+import ysoserial.payloads.Atomikos;
 import ysoserial.payloads.DynamicDependencies;
 import ysoserial.payloads.ObjectPayload;
 import ysoserial.test.CustomTest;
@@ -62,6 +63,10 @@ public class PayloadsTest {
 
     public PayloadsTest ( Class<? extends ObjectPayload<?>> payloadClass ) {
         this.payloadClass = payloadClass;
+    }
+
+    public static void testPayload(Class<? extends ObjectPayload<?>> payloadClass) throws Exception {
+        testPayload(payloadClass, new Class[0]);
     }
 
 
@@ -133,20 +138,19 @@ public class PayloadsTest {
             callable = ( (WrappedTest) testHarness ).createCallable(callable);
         }
 
-        if (testHarness instanceof CustomTest) {
-            // if marked as flaky try up to 5 times
-            Exception ex = new Exception();
-            for (int i = 0; i < tries; i++) {
-                try {
-                    ((CustomTest) testHarness).run(callable);
-                    ex = null;
-                    break;
-                } catch (Exception e) {
-                    ex = e;
-                }
+
+        // if marked as flaky try up to 5 times
+        Exception ex = new Exception();
+        for (int i = 0; i < tries; i++) {
+            try {
+                ((CustomTest) testHarness).run(callable);
+                ex = null;
+                break;
+            } catch (Exception e) {
+                ex = e;
             }
-            if (ex != null) throw ex;
         }
+        if (ex != null) throw ex;
     }
 
     private static boolean isForceTests() {

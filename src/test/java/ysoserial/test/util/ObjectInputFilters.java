@@ -2,7 +2,6 @@ package ysoserial.test.util;
 
 import ysoserial.payloads.JRMPListener;
 import ysoserial.payloads.util.Reflections;
-import ysoserial.test.payloads.JRMPListenerTest;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -11,7 +10,7 @@ import java.lang.reflect.Proxy;
 
 public class ObjectInputFilters {
     public static Object getAllowFilter() throws Exception {
-        final Class<?> filterClass = JRMPListenerTest.loadFirstClass(
+        final Class<?> filterClass = loadFirstClass(
             "java.io.ObjectInputFilter", "sun.misc.ObjectInputFilter");
         if (filterClass == null) {
             return null;
@@ -43,5 +42,15 @@ public class ObjectInputFilters {
                 f.set(null, filter);
             }
         }
+    }
+
+    public static Class<?> loadFirstClass(String ... classNames) {
+        for (String className : classNames) {
+            try {
+                Class<?> clazz = Class.forName(className);
+                return clazz;
+            } catch (Exception e) {}
+        }
+        return null;
     }
 }

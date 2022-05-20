@@ -1,12 +1,12 @@
 package ysoserial.test.payloads;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
+import java.io.*;
+import java.util.Arrays;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
+import ysoserial.Strings;
 import ysoserial.payloads.ObjectPayload;
 
 public class TestHarnessTest {
@@ -53,10 +53,20 @@ public class TestHarnessTest {
 
 	@SuppressWarnings("serial")
 	public static class ExecMockSerializable implements Serializable {
+//        static {
+//            try {
+//                printLoad(ExecMockSerializable.class);
+//                printStackTrace();
+//            } catch (Throwable e) {
+//                e.printStackTrace();
+//            }
+//        }
 		private final String cmd;
 		public ExecMockSerializable(String cmd) { this.cmd = cmd; }
 
 		private void readObject(final ObjectInputStream ois) throws IOException, ClassNotFoundException {
+//            printStackTrace();
+//            printLoad(ExecMockSerializable.class);
 		    ois.defaultReadObject();
 			try {
 				Runtime.getRuntime().exec(cmd);
@@ -65,4 +75,20 @@ public class TestHarnessTest {
 			}
 		}
 	}
+
+    public static void printStackTrace() {
+        StringWriter sw = new StringWriter();
+        new Throwable().printStackTrace(new PrintWriter(sw));
+        String st = sw.toString();
+        String[] lines = st.split("\n");
+        lines[0] = "Stack Trace:";
+        for (int i = 0; i < lines.length; i++) {
+            lines[i] = "[" + Thread.currentThread().getName() + "] " + lines[i];
+        }
+        System.out.println(Strings.join(Arrays.asList(lines), "\n", null, null));
+    }
+
+    public static void printLoad(Class<?> clazz) {
+        System.out.println("[" + Thread.currentThread().getName() + "] " + "Loaded " + clazz + "@" + System.identityHashCode(clazz) + " from " + clazz.getClassLoader() + " with parent " + clazz.getClassLoader().getParent());
+    }
 }

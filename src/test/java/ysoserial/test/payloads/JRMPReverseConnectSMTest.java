@@ -17,8 +17,7 @@ public class JRMPReverseConnectSMTest extends RemoteClassLoadingTest implements 
     private int jrmpPort;
 
 
-    public JRMPReverseConnectSMTest (String command) {
-        super(command);
+    public JRMPReverseConnectSMTest () {
         // some payloads cannot specify the port
         jrmpPort = 1099;
     }

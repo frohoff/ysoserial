@@ -1,5 +1,7 @@
 package ysoserial.test.util;
 
+import ysoserial.Strings;
+
 import java.io.File;
 import java.io.PrintWriter;
 
@@ -19,5 +21,9 @@ public class Files {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static File getTestFile() {
+        return new File(OS.getTmpDir(), "ysoserial-test-" + Strings.randUUID());
     }
 }
