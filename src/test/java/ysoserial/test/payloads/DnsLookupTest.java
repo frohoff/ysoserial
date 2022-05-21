@@ -1,22 +1,18 @@
 package ysoserial.test.payloads;
 
 import org.junit.Assert;
-import ysoserial.Strings;
-import ysoserial.payloads.Scala;
 import ysoserial.payloads.URLDNS;
 import ysoserial.secmgr.SecurityManagers;
 import ysoserial.test.CustomTest;
-import ysoserial.test.util.Files;
-import ysoserial.test.util.OS;
+import ysoserial.test.util.Randomized;
 
-import java.io.File;
 import java.security.Permission;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 public class DnsLookupTest implements CustomTest {
-    private final String testDomain = Strings.randUUID();
+    private final String testDomain = Randomized.randUUID();
 
     @Override
     public void run(Callable<Object> payload) throws Exception {

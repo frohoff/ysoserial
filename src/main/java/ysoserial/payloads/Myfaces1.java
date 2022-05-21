@@ -56,7 +56,6 @@ public class Myfaces1 implements ObjectPayload<Object>, DynamicDependencies {
                 "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9",
                 "org.mortbay.jasper:apache-el:8.0.27",
                 "javax.servlet:javax.servlet-api:3.1.0",
-                "com.nqzero:permit-reflect:0.3", // FIXME for custom deserializer
 
                 // deps for mocking the FacesContext
                 "org.mockito:mockito-core:1.10.19", "org.hamcrest:hamcrest-core:1.1", "org.objenesis:objenesis:2.1"
@@ -66,7 +65,6 @@ public class Myfaces1 implements ObjectPayload<Object>, DynamicDependencies {
                 "org.apache.myfaces.core:myfaces-impl:2.2.9", "org.apache.myfaces.core:myfaces-api:2.2.9",
                 "de.odysseus.juel:juel-impl:2.2.7", "de.odysseus.juel:juel-api:2.2.7",
                 "javax.servlet:javax.servlet-api:3.1.0",
-                "com.nqzero:permit-reflect:0.3", // FIXME for custom deserializer
 
                 // deps for mocking the FacesContext
                 "org.mockito:mockito-core:1.10.19", "org.hamcrest:hamcrest-core:1.1", "org.objenesis:objenesis:2.1"

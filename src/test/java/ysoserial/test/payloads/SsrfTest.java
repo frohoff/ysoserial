@@ -4,9 +4,9 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import org.junit.Assert;
-import ysoserial.Strings;
 import ysoserial.payloads.Scala;
 import ysoserial.test.CustomTest;
+import ysoserial.test.util.Randomized;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -16,9 +16,9 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 
 public class SsrfTest implements CustomTest {
-    int port = 16000 + new Random().nextInt(16000);
+    int port = Randomized.randPort();
     String authority = "http://localhost:" + port;
-    String uri = "/?" + Strings.randUUID();
+    String uri = "/?" + Randomized.randUUID();
 
     @Override
     public String getPayloadArgs() {

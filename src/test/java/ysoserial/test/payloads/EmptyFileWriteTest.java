@@ -1,21 +1,18 @@
 package ysoserial.test.payloads;
 
-import org.apache.commons.codec.binary.Base64;
 import org.junit.Assert;
-import ysoserial.Strings;
 import ysoserial.payloads.Scala;
 import ysoserial.test.CustomTest;
 import ysoserial.test.util.Files;
 import ysoserial.test.util.OS;
+import ysoserial.test.util.Randomized;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.util.concurrent.Callable;
 
 public class EmptyFileWriteTest implements CustomTest {
-    private final File testFile = new File(OS.getTmpDir(), "ysoserial-test-" + Strings.randUUID());
-    private final String testContent = Strings.randUUID();
+    private final File testFile = new File(OS.getTmpDir(), "ysoserial-test-" + Randomized.randUUID());
+    private final String testContent = Randomized.randUUID();
 
     @Override
     public void run(Callable<Object> payload) throws Exception {

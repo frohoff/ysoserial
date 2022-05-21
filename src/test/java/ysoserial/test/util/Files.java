@@ -1,7 +1,5 @@
 package ysoserial.test.util;
 
-import ysoserial.Strings;
-
 import java.io.File;
 import java.io.PrintWriter;
 
@@ -24,6 +22,6 @@ public class Files {
     }
 
     public static File getTestFile() {
-        return new File(OS.getTmpDir(), "ysoserial-test-" + Strings.randUUID());
+        return new File(OS.getTmpDir(), "ysoserial-test-" + Randomized.randUUID());
     }
 }

@@ -4,7 +4,6 @@ package ysoserial.test.payloads;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Random;
 import java.util.concurrent.Callable;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -15,6 +14,7 @@ import javassist.CtClass;
 import ysoserial.payloads.C3P0;
 import ysoserial.test.CustomTest;
 import ysoserial.test.WrappedTest;
+import ysoserial.test.util.Randomized;
 
 
 /**
@@ -23,7 +23,8 @@ import ysoserial.test.WrappedTest;
  */
 public class RemoteClassLoadingTest extends CommandExecTest implements WrappedTest, CustomTest {
 
-    private int port = new Random().nextInt(65535-1024)+1024;
+    private int port = Randomized.randPort();
+
     private String className = "Exploit-" + System.currentTimeMillis();
 
 

@@ -7,7 +7,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import javax.el.BeanELResolver;
 import javax.el.ELContext;
@@ -17,7 +16,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 
-import com.nqzero.permit.Permit;
 import org.apache.myfaces.el.CompositeELResolver;
 import org.apache.myfaces.el.unified.FacesELContext;
 import org.mockito.Matchers;
@@ -26,10 +24,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import ysoserial.payloads.Myfaces2;
-import ysoserial.payloads.util.Reflections;
 import ysoserial.test.CustomDeserializer;
 import ysoserial.Deserializer;
-import ysoserial.test.WrappedTest;
 
 
 /**
@@ -54,7 +50,7 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
     public static final class MyfacesDeserializer extends Deserializer {
         public static Class<?>[] getExtraDependencies () {
             return new Class[] {
-                MockRequestContext.class, MockELResolver.class, Reflections.class, Permit.class
+                MockRequestContext.class, MockELResolver.class, FacesContextSetter.class
             };
         }
 
@@ -63,19 +59,23 @@ public class MyfacesTest extends RemoteClassLoadingTest implements CustomDeseria
         }
 
 
+        public static abstract class FacesContextSetter extends FacesContext {
+            public static void set(FacesContext fc) {
+                FacesContext.setCurrentInstance(fc); // protected
+            }
+        }
+
         @Override
         public Object call () throws Exception {
-            java.lang.reflect.Method setFC = FacesContext.class.getDeclaredMethod("setCurrentInstance", FacesContext.class);
-            Reflections.setAccessible(setFC);
             ClassLoader oldTCCL = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
             FacesContext ctx = createMockFacesContext();
             try {
-                setFC.invoke(null, ctx);
+                FacesContextSetter.set(ctx);
                 return super.call();
             }
             finally {
-                setFC.invoke(null, (FacesContext) null);
+                FacesContextSetter.set(null);
                 Thread.currentThread().setContextClassLoader(oldTCCL);
             }
         }

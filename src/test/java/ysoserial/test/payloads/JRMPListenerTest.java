@@ -7,6 +7,7 @@ import ysoserial.payloads.JRMPListener;
 import ysoserial.test.CustomTest;
 import ysoserial.test.util.Files;
 import ysoserial.test.util.ObjectInputFilters;
+import ysoserial.test.util.Randomized;
 
 import java.io.File;
 import java.rmi.Remote;
@@ -16,7 +17,7 @@ import java.util.concurrent.Callable;
 public class JRMPListenerTest implements CustomTest, NeedsAddlClasses {
     private final File testFile = Files.getTestFile();
 
-    private final int port = 16000 + new Random().nextInt(16000);
+    private final int port = Randomized.randPort();
 
     @Override
     public void run(Callable<Object> payload) throws Exception {

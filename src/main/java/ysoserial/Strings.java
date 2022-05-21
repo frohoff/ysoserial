@@ -1,7 +1,5 @@
 package ysoserial;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.*;
 
 public class Strings {
@@ -44,10 +42,6 @@ public class Strings {
             lines.add(join(Arrays.asList(row), " ", "", ""));
         }
         return lines;
-    }
-
-    public static String randUUID() {
-        return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
     public static class ToStringComparator implements Comparator<Object> {
