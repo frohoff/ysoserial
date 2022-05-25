@@ -42,7 +42,7 @@ jobs:
       - id: get-versions
         run: |
           URL="https://hub.docker.com/v2/repositories/vulhub/java/tags/?page_size=100"
-          VERSIONS=$(curl -s $URL "$URL&page=2" | jq -rc '[[.results[].name] | _nwise(2) | join(" ")]')
+          VERSIONS=$(curl -s $URL "$URL&page=2" | jq -rc '[[.results[].name] | _nwise(1) | join(" ")]')
           echo "::set-output name=versions::$VERSIONS"
     outputs:
       versions: ${{ steps.get-versions.outputs.versions }}
