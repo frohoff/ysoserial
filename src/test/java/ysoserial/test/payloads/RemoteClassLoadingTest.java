@@ -50,7 +50,12 @@ public class RemoteClassLoadingTest extends CommandExecTest implements WrappedTe
             pool.insertClassPath(new ClassClassPath(Exploit.class));
             final CtClass clazz = pool.get(Exploit.class.getName());
             clazz.setName(this.className);
-            clazz.makeClassInitializer().insertAfter("java.lang.Runtime.getRuntime().exec(\"" + getTouchCmd(testFile.toString()).replace("\\", "\\\\").replace("\"", "\\\"") + "\");");
+            clazz.makeClassInitializer().insertAfter(
+                "java.lang.Runtime.getRuntime().exec(\""
+                    + getTouchCmd(testFile.toString())
+                        .replace("\\", "\\\\")
+                        .replace("\"", "\\\"")
+                    + "\");");
             return clazz.toBytecode();
         }
         catch ( Exception e ) {

@@ -21,10 +21,9 @@ public class JRMPListenerTest implements CustomTest, NeedsAddlClasses {
 
     @Override
     public void run(Callable<Object> payload) throws Exception {
-        System.out.println(testFile);
         Assert.assertFalse("test file shouldn't exist", testFile.exists());
 
-        ObjectInputFilters.disableDcgFilter();
+//        ObjectInputFilters.disableDcgFilter();
 
         // open listener
         Remote res = (Remote) payload.call();
@@ -36,7 +35,6 @@ public class JRMPListenerTest implements CustomTest, NeedsAddlClasses {
             Files.waitForFile(testFile, 1000);
 
             Assert.assertTrue("test file should exist", testFile.exists());
-            System.out.println("passed");
         } finally {
             // close listener
             // TODO move to postDeserRelease
@@ -50,6 +48,7 @@ public class JRMPListenerTest implements CustomTest, NeedsAddlClasses {
     }
 
     public static void main(String[] args) throws Exception {
+//        ObjectInputFilters.disableDcgFilter();
         PayloadsTest.testPayload(JRMPListener.class, new Class[0]);
     }
 

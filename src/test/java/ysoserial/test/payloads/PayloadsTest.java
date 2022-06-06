@@ -151,6 +151,7 @@ public class PayloadsTest {
             }
         }
         if (ex != null) throw ex;
+        System.out.println("Successfully tested payload: " + payloadClass.getName());
     }
 
     private static boolean isForceTests() {
