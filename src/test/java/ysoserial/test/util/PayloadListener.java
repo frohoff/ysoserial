@@ -90,6 +90,6 @@ public class PayloadListener extends RunListener {
 
     // testPayload[payloadClass: class ysoserial.payloads.JavassistWeld1](ysoserial.test.payloads.PayloadsTest)
     public static String getPayload(String displayName) {
-        return displayName.replaceAll(".*\\[\\S+: class (\\w+\\.)+(\\w+)\\].*", "$2");
+        return displayName.replaceAll(".*\\[\\S+: class (\\w+[.$])+(\\w+)\\].*", "$2");
     }
 }
