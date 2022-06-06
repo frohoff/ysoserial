@@ -49,7 +49,7 @@ public class JRMPListenerTest implements CustomTest, NeedsAddlClasses {
 
     public static void main(String[] args) throws Exception {
 //        ObjectInputFilters.disableDcgFilter();
-        PayloadsTest.testPayload(JRMPListener.class, new Class[0]);
+        PayloadsTest.testPayload(JRMPListener.class);
     }
 
     public Class[] getAddlClasses() {
