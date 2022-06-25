@@ -1,5 +1,7 @@
 name: publish jar
 on: [push]
+permissions:
+  contents: write
 
 jobs:
   publish:
@@ -13,6 +15,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
+          cache: 'maven'
       - name: Set version
         run: mvn versions:set -DnewVersion=${{ github.ref_name }}-SNAPSHOT
       - name: Build jar
