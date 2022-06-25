@@ -13,7 +13,9 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
+      - name: Set version
+        run: mvn versions:set -DnewVersion=${{ github.ref_name }}-SNAPSHOT
       - name: Publish package
-        run: mvn -B clean deploy -DskipTests -DrepositoryId=github -Dversion=${{ github.ref_name }}-SNAPSHOT
+        run: mvn -B clean deploy -DskipTests -DrepositoryId=github
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
