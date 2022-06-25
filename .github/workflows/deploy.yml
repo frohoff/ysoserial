@@ -1,0 +1,19 @@
+name: Publish package to GitHub Packages
+on: [push]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - name: Publish package
+        run: mvn --batch-mode deploy -DrepositoryId=github -Dversion=${GITHUB_REF_NAME}-SNAPSHOT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
