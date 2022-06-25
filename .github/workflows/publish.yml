@@ -19,3 +19,8 @@ jobs:
         run: mvn -B clean deploy -DskipTests -DrepositoryId=github
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish release
+        uses: johnwbyrd/update-release@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: target/ysoserial-${{ github.ref_name }}-SNAPSHOT-all.jar
