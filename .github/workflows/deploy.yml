@@ -1,4 +1,4 @@
-name: Publish package to GitHub Packages
+name: publish jar
 on: [push]
 
 jobs:
@@ -14,6 +14,6 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - name: Publish package
-        run: mvn --batch-mode deploy -DrepositoryId=github -Dversion=${GITHUB_REF_NAME}-SNAPSHOT
+        run: mvn -B clean deploy -DskipTests -DrepositoryId=github -Dversion=${GITHUB_REF_NAME}-SNAPSHOT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
