@@ -13,14 +13,15 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: Set version
+      - name: set version
         run: mvn versions:set -DnewVersion=${{ github.ref_name }}-SNAPSHOT
-      - name: Publish package
-        run: mvn -B clean deploy -DskipTests -DrepositoryId=github
+      - name: build
+        run: mvn -B clean package -DskipTests 
+      # - name: publish maven jar
+      #   run: mvn -B deploy -DskipTests -DrepositoryId=github
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Publish release
-        uses: johnwbyrd/update-release@v1.0.0
+      - name: publish release
+        uses: softprops/action-gh-release@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           files: target/ysoserial-${{ github.ref_name }}-SNAPSHOT-all.jar
