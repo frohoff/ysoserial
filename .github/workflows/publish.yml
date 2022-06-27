@@ -27,6 +27,9 @@ jobs:
       #   run: mvn -B deploy -DskipTests -DrepositoryId=github
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - run: ls -la target/ysoserial-${{ github.ref_name }}-all.jar
+
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v1
         env:
