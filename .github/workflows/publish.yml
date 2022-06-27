@@ -1,5 +1,8 @@
 name: publish jar
-on: [push]
+on:
+  push:
+    tags:
+      - "v*.*.*"
 permissions:
   contents: write
 
@@ -17,7 +20,7 @@ jobs:
           distribution: 'adopt'
           cache: 'maven'
       - name: Set version
-        run: mvn versions:set -DnewVersion=${{ github.ref_name }}-SNAPSHOT
+        run: mvn versions:set -DnewVersion=${{ github.ref_name }}
       - name: Build jar
         run: mvn -B clean package -DskipTests 
       # - name: publish maven jar
@@ -29,5 +32,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
         with:
-          tag_name: ${{ github.ref_name }}
-          files: target/ysoserial-${{ github.ref_name }}-SNAPSHOT-all.jar
+          files: target/ysoserial-${{ github.ref_name }}-all.jar
