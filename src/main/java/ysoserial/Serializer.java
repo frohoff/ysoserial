@@ -86,7 +86,16 @@ public class Serializer implements Callable<byte[]> {
 		for (String serial : serials) {
 			String [] values = serial.split("=");
 			long newUid = new Long(values[1]);
-			byte[] lng = new byte[] { (byte) newUid, (byte) (newUid >> 8), (byte) (newUid >> 16), (byte) (newUid >> 24), (byte) (newUid >> 32), (byte) (newUid >> 40), (byte) (newUid >> 48), (byte) (newUid >> 56) };
+			byte[] lng = new byte[] {
+				(byte) (newUid >> 56),
+				(byte) (newUid >> 48),
+				(byte) (newUid >> 40),
+				(byte) (newUid >> 32),
+				(byte) (newUid >> 24),
+				(byte) (newUid >> 16),
+				(byte) (newUid >> 8),
+				(byte) newUid
+			};
 			byte[] classname = values[0].getBytes();
 			byte[] payload = new byte[classname.length + lng.length];
 			// byte[] concat classname|uid
