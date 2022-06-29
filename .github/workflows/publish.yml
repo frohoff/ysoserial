@@ -30,7 +30,7 @@ jobs:
 
 
       - name: Rename artifact
-        run: mv target/ysoserial-${{ github.ref_name }}-all.jar ysoserial-all.jar
+        run: mv target/ysoserial-${{ github.ref_name }}-all.jar target/ysoserial-all.jar
 
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v1
