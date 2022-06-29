@@ -1,0 +1,40 @@
+name: publish jar
+on:
+  push:
+    tags:
+      - "v*.*.*"
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+          cache: 'maven'
+      - name: Set version
+        run: mvn versions:set -DnewVersion=${{ github.ref_name }}
+      - name: Build jar
+        run: mvn -B clean package -DskipTests 
+      # - name: publish maven jar
+      #   run: mvn -B deploy -DskipTests -DrepositoryId=github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+      - name: Rename artifact
+        run: mv target/ysoserial-${{ github.ref_name }}-all.jar target/ysoserial-all.jar
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
+        with:
+          files: target/ysoserial-all.jar

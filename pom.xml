@@ -438,4 +438,11 @@
 		</profile>
 
 	</profiles>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/frohoff/ysoserial</url>
+        </repository>
+    </distributionManagement>	
 </project>
