@@ -103,14 +103,7 @@ $ java -cp ysoserial.jar ysoserial.exploit.RMIRegistryExploit myhost 1099 Common
 
 ## Installation
 
-1. Download the latest jar from
-[JitPack](https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar)
-[![Download Latest Snapshot](https://img.shields.io/badge/download-master-green.svg)](
-    https://jitpack.io/com/github/frohoff/ysoserial/master-SNAPSHOT/ysoserial-master-SNAPSHOT.jar)
-
-Note that GitHub-hosted releases were removed in compliance with the
-[GitHub Community Guidelines](
-    https://help.github.com/articles/github-community-guidelines/#what-is-not-allowed)
+Download the [latest release jar](https://github.com/frohoff/ysoserial/releases/latest/download/ysoserial-all.jar) from GitHub releases.
 
 ## Building
 
