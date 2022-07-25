@@ -336,6 +336,11 @@
             <artifactId>click-nodeps</artifactId>
             <version>2.3.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-connector</artifactId>
+            <version>26.0.1.Final</version>
+        </dependency>
 	</dependencies>
 
 	<profiles>
