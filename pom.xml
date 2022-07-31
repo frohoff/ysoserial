@@ -268,8 +268,8 @@
 		</dependency>
         <dependency>
             <groupId>org.python</groupId>
-            <artifactId>jython-standalone</artifactId>
-            <version>2.5.2</version>
+            <artifactId>jython</artifactId>
+            <version>2.7.2b2</version>
         </dependency>
 		<dependency>
 			<groupId>rhino</groupId>
