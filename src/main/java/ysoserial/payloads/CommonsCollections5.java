@@ -50,7 +50,7 @@ https://github.com/JetBrains/jdk8u_jdk/commit/af2361ee2878302012214299036b3a8b4e
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @PayloadTest ( precondition = "isApplicableJavaVersion")
-@Dependencies({"commons-collections:commons-collections:3.1"})
+@Dependencies({"commons-collections:commons-collections:3.2.1"})
 @Authors({ Authors.MATTHIASKAISER, Authors.JASINNER })
 public class CommonsCollections5 extends PayloadRunner implements ObjectPayload<BadAttributeValueExpException> {
 

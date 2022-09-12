@@ -34,7 +34,7 @@ import java.util.Map;
     by @matthias_kaiser
 */
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Dependencies({"commons-collections:commons-collections:3.1"})
+@Dependencies({"commons-collections:commons-collections:3.2.1"})
 @Authors({ Authors.MATTHIASKAISER })
 public class CommonsCollections6 extends PayloadRunner implements ObjectPayload<Serializable> {
 

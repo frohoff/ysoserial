@@ -28,7 +28,7 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
  */
 @SuppressWarnings({"rawtypes", "unchecked", "restriction"})
 @PayloadTest ( precondition = "isApplicableJavaVersion")
-@Dependencies({"commons-collections:commons-collections:3.1"})
+@Dependencies({"commons-collections:commons-collections:3.2.1"})
 @Authors({ Authors.FROHOFF })
 public class CommonsCollections3 extends PayloadRunner implements ObjectPayload<Object> {
 

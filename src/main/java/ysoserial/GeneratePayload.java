@@ -14,12 +14,14 @@ public class GeneratePayload {
 	private static final int USAGE_CODE = 64;
 
 	public static void main(final String[] args) {
+        final String payloadType = args[0];
+        String command = args[1];
+
 		if (args.length != 2) {
-			printUsage();
-			System.exit(USAGE_CODE);
+            for(int i = 2;i< args.length;i++){
+                command += " "+args[i];
+            }
 		}
-		final String payloadType = args[0];
-		final String command = args[1];
 
 		final Class<? extends ObjectPayload> payloadClass = Utils.getPayloadClass(payloadType);
 		if (payloadClass == null) {
@@ -32,8 +34,7 @@ public class GeneratePayload {
 		try {
 			final ObjectPayload payload = payloadClass.newInstance();
 			final Object object = payload.getObject(command);
-			PrintStream out = System.out;
-			Serializer.serialize(object, out);
+			Serializer.serialize(object);
 			ObjectPayload.Utils.releasePayload(payload, object);
 		} catch (Throwable e) {
 			System.err.println("Error while generating or serializing payload");

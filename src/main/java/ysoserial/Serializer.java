@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.Base64;
 import java.util.concurrent.Callable;
 
 public class Serializer implements Callable<byte[]> {
@@ -19,6 +20,7 @@ public class Serializer implements Callable<byte[]> {
 	public static byte[] serialize(final Object obj) throws IOException {
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		serialize(obj, out);
+        System.out.println(obj.getClass().getName()+": "+Base64.getEncoder().encodeToString(out.toByteArray()));
 		return out.toByteArray();
 	}
 

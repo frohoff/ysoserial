@@ -42,7 +42,7 @@ import ysoserial.payloads.util.Reflections;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @PayloadTest ( precondition = "isApplicableJavaVersion")
-@Dependencies({"commons-collections:commons-collections:3.1"})
+@Dependencies({"commons-collections:commons-collections:3.2.1"})
 @Authors({ Authors.FROHOFF })
 public class CommonsCollections1 extends PayloadRunner implements ObjectPayload<InvocationHandler> {
 

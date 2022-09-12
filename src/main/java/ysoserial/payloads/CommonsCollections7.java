@@ -33,7 +33,7 @@ import java.util.Map;
 */
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Dependencies({"commons-collections:commons-collections:3.1"})
+@Dependencies({"commons-collections:commons-collections:3.2.1"})
 @Authors({Authors.SCRISTALLI, Authors.HANYRAX, Authors.EDOARDOVIGNATI})
 
 public class CommonsCollections7 extends PayloadRunner implements ObjectPayload<Hashtable> {
