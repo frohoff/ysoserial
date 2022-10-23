@@ -14,8 +14,8 @@ import ysoserial.payloads.util.PayloadRunner;
 /*
 	Gadget chain:
 		ObjectInputStream.readObject()
-			PriorityQueue.readObject()
-				Comparator.compare() (Proxy)
+			AnnotationInvocationHandler.readObject()
+				Map.entrySet() (Proxy)
 					ConvertedClosure.invoke()
 						MethodClosure.call()
 							...
