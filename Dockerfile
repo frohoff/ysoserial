@@ -1,4 +1,4 @@
-FROM maven:3.5-jdk-8 as builder
+FROM maven:3-eclipse-temurin-8
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 RUN mv target/ysoserial-*all*.jar target/ysoserial.jar
 
-FROM java:8-jdk-alpine
+FROM eclipse-temurin:8-jdk
 
 WORKDIR /app
 
