@@ -1,4 +1,4 @@
-FROM maven:3-eclipse-temurin-8
+FROM maven:3-eclipse-temurin-8 as builder
 
 WORKDIR /app
 
