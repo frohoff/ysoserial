@@ -39,9 +39,9 @@
 							<mainClass>ysoserial.GeneratePayload</mainClass>
 						</manifest>
 					</archive>
-					<descriptors>
-                    	<descriptor>assembly.xml</descriptor>4
-					</descriptors>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
                 </configuration>
 				<executions>
 					<execution>
