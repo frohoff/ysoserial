@@ -79,7 +79,7 @@ public abstract class ParameterizedTransformersObjectPayload<T> extends Paramete
 
         HelpFormatter formatter = new HelpFormatter();
         StringWriter sw = new StringWriter();
-        formatter.printHelp(new PrintWriter(sw), 120,
+        formatter.printHelp(new PrintWriter(sw), 80,
             this.getClass().getSimpleName() + " [flags] -- [arguments ...]", header,
             CLI_OPTIONS, formatter.getLeftPadding(), formatter.getDescPadding(), examples,
             false);
