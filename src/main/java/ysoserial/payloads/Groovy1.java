@@ -19,7 +19,7 @@ import ysoserial.payloads.util.PayloadRunner;
 					ConvertedClosure.invoke()
 						MethodClosure.call()
 							...
-						  		Method.invoke()
+								Method.invoke()
 									Runtime.exec()
 
 	Requires:

