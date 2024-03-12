@@ -34,12 +34,20 @@ for the development of effective defensive techniques, and is not intended to be
 used to attack systems except where explicitly authorized. Project maintainers
 are not responsible or liable for misuse of the software. Use responsibly.
 
+## Dependencies issues
+
+As stated in [BishopFox's fork](https://github.com/BishopFox/ysoserial-bf?tab=readme-ov-file#missing-javaxinterceptor-api-library),
+javax.interceptor-api library version 3.1 was a bump version typo and was removed from central repositories.
+As a result, artifacts cannot be downloaded anymore.
+
+You can find this library and a workaround to fix this issue [here](https://github.com/BishopFox/ysoserial-bf?tab=readme-ov-file#missing-javaxinterceptor-api-library).
+
 ## Usage
 
 ```shell
 $  java -jar ysoserial.jar
 Y SO SERIAL?
-Usage: java -jar ysoserial.jar [payload] '[command]'
+Usage: java -jar ysoserial-[version]-all.jar [payload] [arguments ...]
   Available payload types:
      Payload             Authors                     Dependencies
      -------             -------                     ------------
@@ -77,6 +85,16 @@ Usage: java -jar ysoserial.jar [payload] '[command]'
      URLDNS              @gebl
      Vaadin1             @kai_ullrich                vaadin-server:7.7.14, vaadin-shared:7.7.14
      Wicket1             @jacob-baines               wicket-util:6.23.0, slf4j-api:1.6.4
+```
+
+A few arguments were added to customize gadget chains relying on Translets or CommonsCollections Transformers:
+
+```shell
+$ java -jar ysoserial.jar CommonsCollections1 --inline 'System.out.println("Hello world");'
+[...]
+
+$ java -jar ysoserial.jar CommonsBeanutils1  --jar-file /path/to/app.jar --jar-main org.random.Main -- arg0 arg1 arg2
+[...]
 ```
 
 ## Examples
