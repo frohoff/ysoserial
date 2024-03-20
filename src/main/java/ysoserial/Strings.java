@@ -21,6 +21,10 @@ public class Strings {
         return sb.toString();
     }
 
+    public static String join(Iterable<String> strings, String sep) {
+        return Strings.join(strings, sep, null, null);
+    }
+
     public static String repeat(String str, int num) {
         final String[] strs = new String[num];
         Arrays.fill(strs, str);
@@ -47,6 +51,19 @@ public class Strings {
             lines.add(join(Arrays.asList(row), " ", "", ""));
         }
         return lines;
+    }
+
+    public static String escapeJavaString(String str) {
+        return str.replace("\\", "\\\\")
+            .replace("\"", "\\\"");
+    }
+
+    public static String[] escapeJavaStrings(String[] strs) {
+        String[] res = new String[strs.length];
+        for(int i = 0; i < res.length; ++i) {
+            res[i] = escapeJavaString(strs[i]);
+        }
+        return res;
     }
 
     public static class ToStringComparator implements Comparator<Object> {

