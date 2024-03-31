@@ -2,8 +2,9 @@
 # ysoserial
 
 [![GitHub release](https://img.shields.io/github/downloads/frohoff/ysoserial/latest/total)](https://github.com/frohoff/ysoserial/releases/latest/download/ysoserial-all.jar)
-[![Travis Build Status](https://api.travis-ci.com/frohoff/ysoserial.svg?branch=master)](https://travis-ci.com/frohoff/ysoserial)
+[![Travis Build Status](https://api.travis-ci.com/frohoff/ysoserial.svg?branch=master)](https://travis-ci.com/github/frohoff/ysoserial)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/a8tbk9blgr3yut4g/branch/master?svg=true)](https://ci.appveyor.com/project/frohoff/ysoserial/branch/master)
+[![JitPack](https://jitpack.io/v/frohoff/ysoserial.svg)](https://jitpack.io/#frohoff/ysoserial)
 
 A proof-of-concept tool for generating payloads that exploit unsafe Java object deserialization.
 
@@ -111,7 +112,7 @@ Requires Java 1.7+ and Maven 3.x+
 
 ## Code Status
 
-[![Build Status](https://travis-ci.org/frohoff/ysoserial.svg?branch=master)](https://travis-ci.org/frohoff/ysoserial)
+[![Build Status](https://api.travis-ci.com/frohoff/ysoserial.svg?branch=master)](https://travis-ci.com/github/frohoff/ysoserial)
 [![Build status](https://ci.appveyor.com/api/projects/status/a8tbk9blgr3yut4g/branch/master?svg=true)](https://ci.appveyor.com/project/frohoff/ysoserial/branch/master)
 
 ## Contributing
