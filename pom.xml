@@ -67,6 +67,16 @@
 
 	<repositories>
 		<repository>
+			<id>central</id>
+			<layout>default</layout>
+			<url>https://repo.maven.apache.org/maven2/</url>
+		</repository>		
+		<repository>
+			<id>ysoserial-m2-repo</id>
+			<layout>default</layout>
+			<url>https://raw.githubusercontent.com/frohoff/ysoserial-m2-repo/master</url>
+		</repository>
+		<repository>
 			<id>jenkins</id>
 			<layout>default</layout>
 			<url>https://repo.jenkins-ci.org/public/</url>
