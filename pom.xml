@@ -25,9 +25,9 @@
 					<source>1.6</source>
 					<target>1.6</target>
 					<!-- ignore noisy internal api warnings -->
-                    <compilerArgument>-XDignore.symbol.file</compilerArgument>
-                    <fork>true</fork>
-                </configuration>
+					<compilerArgument>-XDignore.symbol.file</compilerArgument>
+					<fork>true</fork>
+				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -39,8 +39,10 @@
 							<mainClass>ysoserial.GeneratePayload</mainClass>
 						</manifest>
 					</archive>
-                    <descriptor>assembly.xml</descriptor>
-                </configuration>
+					<descriptors>
+						<descriptor>assembly.xml</descriptor>						
+					</descriptors>
+				</configuration>
 				<executions>
 					<execution>
 						<id>make-assembly</id>
@@ -52,16 +54,16 @@
 				</executions>
 			</plugin>
 			<plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M1</version>
-		        <configuration>
-			        <trimStackTrace>false</trimStackTrace>
-			        <systemPropertyVariables>
-			        	<java.rmi.server.useCodebaseOnly>false</java.rmi.server.useCodebaseOnly>
-			        </systemPropertyVariables>
-		        </configuration>
-		    </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M1</version>
+				<configuration>
+					<trimStackTrace>false</trimStackTrace>
+					<systemPropertyVariables>
+						<java.rmi.server.useCodebaseOnly>false</java.rmi.server.useCodebaseOnly>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -141,11 +143,11 @@
 			<artifactId>commons-codec</artifactId>
 			<version>1.9</version>
 		</dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.6</version>
-        </dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
+		</dependency>
 		<dependency>
 			<artifactId>remoting</artifactId>
 			<groupId>org.jenkins-ci.main</groupId>
@@ -246,7 +248,7 @@
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.3</version>
 		</dependency>
-        <dependency>
+		<dependency>
 			<groupId>org.apache.wicket</groupId>
 			<artifactId>wicket-util</artifactId>
 			<version>6.23.0</version>
@@ -276,11 +278,11 @@
 			<artifactId>rome</artifactId>
 			<version>1.0</version>
 		</dependency>
-        <dependency>
-            <groupId>org.python</groupId>
-            <artifactId>jython-standalone</artifactId>
-            <version>2.5.2</version>
-        </dependency>
+		<dependency>
+			<groupId>org.python</groupId>
+			<artifactId>jython-standalone</artifactId>
+			<version>2.5.2</version>
+		</dependency>
 		<dependency>
 			<groupId>rhino</groupId>
 			<artifactId>js</artifactId>
@@ -321,11 +323,11 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.21</version>
 		</dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.21</version>
-        </dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+			<version>1.7.21</version>
+		</dependency>
 		<dependency>
 			<groupId>org.clojure</groupId>
 			<artifactId>clojure</artifactId>
@@ -336,55 +338,55 @@
 			<artifactId>vaadin-server</artifactId>
 			<version>7.7.14</version>
 		</dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>1.9.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.click</groupId>
-            <artifactId>click-nodeps</artifactId>
-            <version>2.3.0</version>
-        </dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.9.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.click</groupId>
+			<artifactId>click-nodeps</artifactId>
+			<version>2.3.0</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
-        <profile>
-            <id>jdk6</id>
-            <activation>
-                <jdk>1.6</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.22.1</version>
-                    </plugin>
-                </plugins>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>javax.el</groupId>
-                    <artifactId>javax.el-api</artifactId>
-                    <version>3.0.0</version>
-                </dependency>
-            </dependencies>
-            <!-- workaround for non-overlapping TLS versions in JDK6 and central repo
-             https://central.sonatype.org/articles/2018/May/04/discontinued-support-for-tlsv11-and-below/ -->
-            <repositories>
-                <repository>
-                    <id>repo1</id>
-                    <url>http://repo1.maven.org/maven2</url><!-- intentionally http (see above) -->
-                </repository>
-            </repositories>
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>repo1</id>
-                    <url>http://repo1.maven.org/maven2</url><!-- intentionally http (see above) -->
-                </pluginRepository>
-            </pluginRepositories>
-        </profile>
+		<profile>
+			<id>jdk6</id>
+			<activation>
+				<jdk>1.6</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.22.1</version>
+					</plugin>
+				</plugins>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>javax.el</groupId>
+					<artifactId>javax.el-api</artifactId>
+					<version>3.0.0</version>
+				</dependency>
+			</dependencies>
+			<!-- workaround for non-overlapping TLS versions in JDK6 and central repo
+			 https://central.sonatype.org/articles/2018/May/04/discontinued-support-for-tlsv11-and-below/ -->
+			<repositories>
+				<repository>
+					<id>repo1</id>
+					<url>http://repo1.maven.org/maven2</url><!-- intentionally http (see above) -->
+				</repository>
+			</repositories>
+			<pluginRepositories>
+				<pluginRepository>
+					<id>repo1</id>
+					<url>http://repo1.maven.org/maven2</url><!-- intentionally http (see above) -->
+				</pluginRepository>
+			</pluginRepositories>
+		</profile>
 
 		<profile>
 			<id>hibernate5</id>
@@ -399,11 +401,11 @@
 					<artifactId>hibernate-core</artifactId>
 					<version>5.0.7.Final</version>
 				</dependency>
-                <dependency>
-                    <groupId>javax.el</groupId>
-                    <artifactId>javax.el-api</artifactId>
-                    <version>3.0.0</version>
-                </dependency>
+				<dependency>
+					<groupId>javax.el</groupId>
+					<artifactId>javax.el-api</artifactId>
+					<version>3.0.0</version>
+				</dependency>
 			</dependencies>
 		</profile>
 
@@ -448,11 +450,11 @@
 		</profile>
 
 	</profiles>
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/frohoff/ysoserial</url>
-        </repository>
-    </distributionManagement>	
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Packages</name>
+			<url>https://maven.pkg.github.com/frohoff/ysoserial</url>
+		</repository>
+	</distributionManagement>	
 </project>
