@@ -182,14 +182,7 @@ public class PayloadsTest {
 
 
     private static String[] buildDeps ( final Class<? extends ObjectPayload<?>> payloadClass ) throws Exception {
-        String[] baseDeps;
-        if ( DynamicDependencies.class.isAssignableFrom(payloadClass) ) {
-            Method method = payloadClass.getMethod("getDependencies");
-            baseDeps = (String[]) method.invoke(null);
-        }
-        else {
-            baseDeps = Dependencies.Utils.getDependencies(payloadClass);
-        }
+        String[] baseDeps = Dependencies.Utils.getDependencies(payloadClass);
         if ( System.getProperty("properXalan") != null ) {
             baseDeps = Arrays.copyOf(baseDeps, baseDeps.length + 1);
             baseDeps[ baseDeps.length - 1 ] = "xalan:xalan:2.7.2";
