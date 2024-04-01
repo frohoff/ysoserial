@@ -40,8 +40,20 @@ are not responsible or liable for misuse of the software. Use responsibly.
 ```shell
 $  java -jar ysoserial.jar
 Y SO SERIAL?
-Usage: java -jar ysoserial.jar [payload] '[command]'
-  Available payload types:
+Usage: java -jar ysoserial-[version]-all.jar [options] <payload> '<command>'
+  Options:
+    -h,--help                  Print usage
+
+    -s,--serial <Class=long>   Override serialVersionUID for a given class:
+      ex. -s org.apache.commons.beanutils.BeanComparator=-3490850999041592962 ...
+
+    -p,--prepend <Object=val>  Prepend payload with the following item(s):
+      Possible values:
+      - raw data: write=HEX, write{Boolean|Byte|Bytes|Char|Chars|Double|Float|Int|Long|Short|UTF}=STR
+      - serialized object: Class=STR or Class
+      ex. -p writeBoolean=true -p writeUTF=plop -p write=aced0005 -p java.util.ArrayList ...
+
+Available payload types:
      Payload             Authors                     Dependencies
      -------             -------                     ------------
      AspectJWeaver       @Jang                       aspectjweaver:1.9.2, commons-collections:3.2.2
