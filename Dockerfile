@@ -14,7 +14,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 RUN mv target/ysoserial-*all*.jar target/ysoserial.jar
 
-FROM openjdk:8-jdk-alpine
+FROM eclipse-temurin:8-jdk-alpine
 
 WORKDIR /app
 
