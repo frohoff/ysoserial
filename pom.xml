@@ -410,6 +410,27 @@
 		</profile>
 
 		<profile>
+			<id>hibernate5.3.11</id>
+			<activation>
+				<property>
+					<name>hibernate5.3.11</name>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-core</artifactId>
+					<version>5.3.11.Final</version>
+				</dependency>
+                <dependency>
+                    <groupId>javax.el</groupId>
+                    <artifactId>javax.el-api</artifactId>
+                    <version>3.0.0</version>
+                </dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
 			<id>apache-el</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
